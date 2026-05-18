@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PiMarket RW v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --pi:#7B4FFF;--pi-light:#A47FFF;--pi-dark:#4A1FCC;
+    --gold:#FFB830;--green:#00C896;--red:#FF4F6A;
+    --bg:#0D0B1A;--surface:#16132A;--card:#1E1A35;
+    --border:rgba(123,79,255,0.18);
+    --text:#F0EEFF;--muted:#9B94C0;
+    --font:'Sora',sans-serif;--mono:'Space Mono',monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(123,79,255,0.12),transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(255,184,48,0.07),transparent 60%);pointer-events:none;z-index:0}
+
+  /* TOPBAR */
+  .topbar{position:sticky;top:0;z-index:100;background:rgba(13,11,26,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:58px}
+  .logo{display:flex;align-items:center;gap:9px;font-size:1.05rem;font-weight:800;letter-spacing:-.5px}
+  .logo-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--pi),var(--gold));display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .logo span{color:var(--gold)}
+  .topbar-right{display:flex;align-items:center;gap:8px}
+  .gcv-badge{font-family:var(--mono);font-size:.6rem;background:rgba(255,184,48,.12);border:1px solid rgba(255,184,48,.3);color:var(--gold);padding:4px 9px;border-radius:20px;display:flex;align-items:center;gap:4px}
+  .gcv-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+
+  /* LANG SWITCHER */
+  .lang-switcher{display:flex;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:20px;padding:2px;gap:2px}
+  .lang-btn{padding:3px 8px;border-radius:16px;border:none;cursor:pointer;font-family:var(--font);font-size:.6rem;font-weight:700;background:transparent;color:var(--muted);transition:all .2s;letter-spacing:.3px}
+  .lang-btn.active{background:var(--pi);color:#fff}
+
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+  /* MAIN */
+  .app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:18px 15px 100px}
+
+  /* HERO */
+  .hero{text-align:center;padding:22px 0 20px}
+  .hero h1{font-size:1.55rem;font-weight:800;line-height:1.2;letter-spacing:-1px}
+  .hero h1 span{color:var(--pi-light)}
+  .hero p{color:var(--muted);font-size:.82rem;margin-top:7px;line-height:1.6}
+
+  /* TABS */
+  .tabs{display:flex;background:var(--surface);border-radius:13px;padding:3px;gap:3px;border:1px solid var(--border);margin-bottom:18px}
+  .tab{flex:1;padding:10px 6px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font);font-size:.78rem;font-weight:600;background:transparent;color:var(--muted);transition:all .25s;display:flex;align-items:center;justify-content:center;gap:5px}
+  .tab.active{background:linear-gradient(135deg,var(--pi),var(--pi-dark));color:#fff;box-shadow:0 4px 16px rgba(123,79,255,.35)}
+  .tab:hover:not(.active){color:var(--text);background:rgba(255,255,255,.04)}
+
+  /* PAYMENT MODE TABS */
+  .pay-tabs{display:flex;gap:8px;margin-bottom:16px}
+  .pay-tab{flex:1;padding:12px;border-radius:13px;border:1.5px solid var(--border);cursor:pointer;text-align:center;font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--muted);background:transparent;transition:all .22s}
+  .pay-tab.active{border-color:var(--pi);color:var(--pi-light);background:rgba(123,79,255,.08)}
+  .pay-tab .pay-icon{font-size:1.4rem;display:block;margin-bottom:5px}
+
+  /* CARDS */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:18px;margin-bottom:13px;animation:fadeUp .4s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .card-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:13px;display:flex;align-items:center;gap:6px}
+  .card-title .dot{width:5px;height:5px;border-radius:50%;background:var(--pi-light)}
+
+  /* FIELDS */
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:5px;letter-spacing:.3px}
+  .field input,.field select,.field textarea{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:11px;color:var(--text);font-family:var(--font);font-size:.88rem;transition:border-color .2s;outline:none;-webkit-appearance:none}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pi-light);background:rgba(123,79,255,.06)}
+  .field select option{background:var(--card);color:var(--text)}
+  .field textarea{resize:none;height:75px;line-height:1.5}
+  .field input[type="number"]{font-family:var(--mono)}
+
+  /* AMOUNT DISPLAY */
+  .amount-display{background:linear-gradient(135deg,rgba(123,79,255,.14),rgba(255,184,48,.07));border:1px solid rgba(123,79,255,.23);border-radius:15px;padding:16px;margin-bottom:13px}
+  .amount-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0}
+  .amount-row:not(:last-child){border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:9px;margin-bottom:5px}
+  .amount-label{font-size:.74rem;color:var(--muted)}
+  .amount-value{font-family:var(--mono);font-size:.85rem;font-weight:700}
+  .amount-value.pi{color:var(--pi-light)}
+  .amount-value.usd{color:var(--gold);font-size:.73rem}
+  .amount-value.fee{color:var(--red);font-size:.77rem}
+  .amount-value.total{color:var(--green);font-size:.95rem}
+
+  /* BUTTONS */
+  .btn{width:100%;padding:15px;border-radius:13px;border:none;cursor:pointer;font-family:var(--font);font-size:.92rem;font-weight:700;letter-spacing:.3px;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn-primary{background:linear-gradient(135deg,var(--pi),var(--pi-dark));color:#fff;box-shadow:0 6px 22px rgba(123,79,255,.33)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(123,79,255,.43)}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),#e8a010);color:#1a1000;box-shadow:0 6px 22px rgba(255,184,48,.28)}
+  .btn-gold:hover{transform:translateY(-2px)}
+  .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+  .btn-outline:hover{border-color:var(--pi-light);color:var(--text)}
+  .btn-sm{padding:9px 14px;font-size:.78rem;border-radius:9px;width:auto}
+  .btn-danger{background:rgba(255,79,106,.15);border:1.5px solid rgba(255,79,106,.3);color:var(--red)}
+
+  /* QR SCAN AREA */
+  .qr-scan-box{background:rgba(123,79,255,.07);border:2px dashed rgba(123,79,255,.3);border-radius:16px;padding:32px;text-align:center;margin-bottom:14px;cursor:pointer;transition:all .22s}
+  .qr-scan-box:hover{border-color:var(--pi);background:rgba(123,79,255,.12)}
+  .qr-scan-icon{font-size:2.8rem;margin-bottom:10px}
+  .qr-scan-title{font-weight:700;font-size:.9rem;margin-bottom:5px}
+  .qr-scan-sub{color:var(--muted);font-size:.75rem}
+
+  /* QR RESULT */
+  .qr-result{background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.25);border-radius:13px;padding:14px;margin-bottom:13px;display:none}
+  .qr-result-title{font-size:.68rem;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .qr-result-name{font-size:1rem;font-weight:700;margin-bottom:3px}
+  .qr-result-id{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+
+  /* DIVIDER WITH TEXT */
+  .divider-text{display:flex;align-items:center;gap:12px;margin:14px 0}
+  .divider-text::before,.divider-text::after{content:'';flex:1;height:1px;background:var(--border)}
+  .divider-text span{font-size:.68rem;color:var(--muted);font-weight:600;white-space:nowrap}
+
+  /* TX LIST */
+  .tx-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);animation:fadeUp .3s ease both}
+  .tx-item:last-child{border-bottom:none}
+  .tx-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+  .tx-icon.send{background:rgba(123,79,255,.14)}
+  .tx-icon.receive{background:rgba(0,200,150,.11)}
+  .tx-info{flex:1;min-width:0}
+  .tx-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tx-meta{font-size:.68rem;color:var(--muted);margin-top:2px}
+  .tx-memo{font-size:.65rem;color:rgba(155,148,192,.7);margin-top:2px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tx-amount{text-align:right;flex-shrink:0}
+  .tx-pi{font-family:var(--mono);font-size:.82rem;font-weight:700}
+  .tx-pi.out{color:var(--red)}
+  .tx-pi.in{color:var(--green)}
+  .tx-usd{font-size:.64rem;color:var(--muted);margin-top:2px}
+
+  /* BALANCE */
+  .balance-card{background:linear-gradient(135deg,#2A1A5E,#1A0E40);border:1px solid rgba(123,79,255,.3);border-radius:21px;padding:22px 20px;margin-bottom:15px;position:relative;overflow:hidden}
+  .balance-card::after{content:'π';position:absolute;right:-10px;top:-20px;font-size:8rem;font-weight:900;color:rgba(123,79,255,.07);font-family:var(--mono);pointer-events:none}
+  .balance-label{font-size:.68rem;color:var(--pi-light);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+  .balance-pi{font-family:var(--mono);font-size:2.2rem;font-weight:700;margin:7px 0 3px;letter-spacing:-1px}
+  .balance-usd{font-size:.78rem;color:var(--gold)}
+  .balance-actions{display:flex;gap:9px;margin-top:16px}
+
+  /* MARKETPLACE */
+  .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px}
+  .product-card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:13px;cursor:pointer;transition:all .22s;animation:fadeUp .35s ease both}
+  .product-card:hover{border-color:var(--pi-light);transform:translateY(-3px);box-shadow:0 8px 22px rgba(123,79,255,.14)}
+  .product-emoji{font-size:1.9rem;margin-bottom:9px;display:block}
+  .product-name{font-size:.8rem;font-weight:700;margin-bottom:3px}
+  .product-seller{font-size:.65rem;color:var(--muted);margin-bottom:7px}
+  .product-price{font-family:var(--mono);font-size:.75rem;color:var(--pi-light);font-weight:700}
+  .product-usd{font-size:.62rem;color:var(--muted)}
+
+  /* GCV */
+  .gcv-panel{background:rgba(255,184,48,.06);border:1px solid rgba(255,184,48,.2);border-radius:13px;padding:15px;margin-bottom:13px}
+  .gcv-title{font-size:.68rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:9px}
+  .gcv-value{font-family:var(--mono);font-size:1.35rem;color:var(--gold);font-weight:700}
+  .gcv-sub{font-size:.67rem;color:var(--muted);margin-top:3px}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity .3s}
+  .modal-overlay.show{opacity:1;pointer-events:all}
+  .modal{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:30px 22px;text-align:center;max-width:330px;width:100%;transform:scale(.9);transition:transform .3s}
+  .modal-overlay.show .modal{transform:scale(1)}
+  .modal-icon{font-size:3.2rem;margin-bottom:14px;display:block}
+  .modal h2{font-size:1.25rem;font-weight:800;margin-bottom:7px}
+  .modal p{color:var(--muted);font-size:.8rem;line-height:1.6;margin-bottom:18px}
+  .tx-id{font-family:var(--mono);font-size:.62rem;color:var(--pi-light);background:rgba(123,79,255,.1);padding:6px 11px;border-radius:8px;margin-bottom:18px;word-break:break-all}
+
+  /* NOTICE */
+  .notice{background:rgba(123,79,255,.07);border:1px solid rgba(123,79,255,.18);border-radius:11px;padding:11px 13px;font-size:.72rem;color:var(--muted);line-height:1.6;margin-bottom:13px;display:flex;gap:9px;align-items:flex-start}
+  .notice-icon{flex-shrink:0;font-size:.95rem;margin-top:1px}
+
+  /* BOTTOM NAV */
+  .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(22,19,42,.96);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;padding:9px 18px 15px;gap:3px;z-index:100}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 3px;border-radius:11px;cursor:pointer;transition:all .2s;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:.57rem;font-weight:600}
+  .nav-item.active{color:var(--pi-light);background:rgba(123,79,255,.1)}
+  .nav-icon{font-size:1.2rem}
+
+  /* SECTIONS */
+  .section{display:none}
+  .section.active{display:block}
+
+  /* QUICK ACTIONS */
+  .quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:18px}
+  .quick-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:13px 7px;border-radius:13px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all .22s;font-size:.62rem;color:var(--muted);font-family:var(--font);font-weight:600}
+  .quick-btn:hover{border-color:var(--pi-light);color:var(--text);transform:translateY(-2px)}
+  .quick-btn .qi{font-size:1.35rem}
+
+  /* PILLS */
+  .pills{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+  .pills::-webkit-scrollbar{display:none}
+  .pill{padding:6px 14px;border-radius:20px;font-size:.72rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .2s;background:var(--card);border:1px solid var(--border);color:var(--muted);font-family:var(--font)}
+  .pill.active{background:var(--pi);border-color:var(--pi);color:#fff}
+
+  /* RECEIVE QR */
+  .my-qr-wrap{background:#fff;border-radius:15px;padding:14px;margin:0 auto 14px;width:fit-content}
+
+  /* BADGE */
+  .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:20px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .badge-success{background:rgba(0,200,150,.14);color:var(--green)}
+  .badge-pending{background:rgba(255,184,48,.14);color:var(--gold)}
+
+  ::-webkit-scrollbar{width:3px}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">π</div>
+    PiMarket <span>RW</span>
+  </div>
+  <div class="topbar-right">
+    <div class="gcv-badge">
+      <div class="gcv-dot"></div>
+      $<span id="gcvDisplay">314,159</span>
+    </div>
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" onclick="setLang('kin')">KIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- HOME -->
+  <div class="section active" id="sec-home">
+    <div class="hero">
+      <h1 data-i18n="hero_title">Local Commerce<br/><span>Powered by π Pi</span></h1>
+      <p data-i18n="hero_sub">Buy & sell goods and services in your community.<br/>Fast, simple, trusted.</p>
+    </div>
+
+    <div class="balance-card">
+      <div class="balance-label" data-i18n="my_balance">My Pi Balance</div>
+      <div class="balance-pi" id="homeBalance">12.450000 π</div>
+      <div class="balance-usd" id="homeBalanceUsd">≈ $3,911,279.05 USD</div>
+      <div class="balance-actions">
+        <button class="btn btn-primary btn-sm" onclick="showSection('sec-send')">⬆ <span data-i18n="send">Send</span></button>
+        <button class="btn btn-gold btn-sm" onclick="showSection('sec-receive')">⬇ <span data-i18n="receive">Receive</span></button>
+        <button class="btn btn-outline btn-sm" onclick="showSection('sec-market')">🛒 <span data-i18n="market">Market</span></button>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="quick-btn" onclick="showSection('sec-send')"><span class="qi">⬆️</span><span data-i18n="send">Send</span></button>
+      <button class="quick-btn" onclick="showSection('sec-receive')"><span class="qi">⬇️</span><span data-i18n="receive">Receive</span></button>
+      <button class="quick-btn" onclick="showSection('sec-market')"><span class="qi">🛒</span><span data-i18n="market">Market</span></button>
+      <button class="quick-btn" onclick="showSection('sec-settings')"><span class="qi">⚙️</span><span data-i18n="settings">Settings</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="dot"></div><span data-i18n="recent_activity">Recent Activity</span></div>
+      <div id="txList"></div>
+    </div>
+  </div>
+
+  <!-- SEND -->
+  <div class="section" id="sec-send">
+    <div class="card">
+      <div class="card-title"><div class="dot"></div><span data-i18n="send_payment">Send Pi Payment</span></div>
+
+      <!-- PAYMENT MODE -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:8px" data-i18n="payment_method">Payment Method</div>
+        <div class="pay-tabs">
+          <button class="pay-tab active" id="ptQR" onclick="setPayMode('qr')">
+            <span class="pay-icon">📷</span>
+            <span data-i18n="scan_qr">Scan QR Code</span>
+          </button>
+          <button class="pay-tab" id="ptManual" onclick="setPayMode('manual')">
+            <span class="pay-icon">⌨️</span>
+            <span data-i18n="manual_entry">Manual Entry</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- QR MODE -->
+      <div id="modeQR">
+        <div class="qr-scan-box" onclick="simulateScan()">
+          <div class="qr-scan-icon">📷</div>
+          <div class="qr-scan-title" data-i18n="tap_to_scan">Tap to Scan QR Code</div>
+          <div class="qr-scan-sub" data-i18n="scan_sub">Point camera at recipient's QR code</div>
+        </div>
+        <div class="qr-result" id="qrResult">
+          <div class="qr-result-title" data-i18n="recipient_found">✅ Recipient Found</div>
+          <div class="qr-result-name" id="qrName">—</div>
+          <div class="qr-result-id" id="qrId">—</div>
+        </div>
+        <div class="divider-text"><span data-i18n="then_enter">Then enter amount below</span></div>
+      </div>
+
+      <!-- MANUAL MODE -->
+      <div id="modeManual" style="display:none">
+        <div class="field">
+          <label data-i18n="recipient_id">👤 Recipient Pi Username or ID</label>
+          <input type="text" id="manualTo" placeholder="@pioneer_rw or Pi ID"/>
+        </div>
+      </div>
+
+      <!-- COMMON FIELDS -->
+      <div class="field">
+        <label data-i18n="category_label">📋 Category</label>
+        <select id="sendCategory">
+          <option value="" data-i18n="select_cat">Select category...</option>
+          <option>🥩 Food & Market</option>
+          <option>👗 Clothing & Fashion</option>
+          <option>🛠️ Repair Services</option>
+          <option>🚗 Transport</option>
+          <option>🏥 Health & Wellness</option>
+          <option>📱 Electronics</option>
+          <option>🏠 Housing & Rent</option>
+          <option>📚 Education</option>
+          <option>💼 Business Services</option>
+          <option>🎁 Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label data-i18n="amount_pi">💰 Amount (π Pi)</label>
+        <input type="number" id="sendAmount" placeholder="0.000000" step="0.000001" min="0" oninput="calcSend()"/>
+      </div>
+
+      <!-- MEMO FIELD -->
+      <div class="field">
+        <label data-i18n="memo_label">📝 Memo — Payment Reason</label>
+        <textarea id="sendMemo" data-i18n-ph="memo_ph" placeholder="e.g. Payment for 2kg tomatoes at Kimironko Market — Invoice #045"></textarea>
+      </div>
+
+      <div class="amount-display" id="sendCalc" style="display:none">
+        <div class="amount-row">
+          <span class="amount-label" data-i18n="amount">Amount</span>
+          <div>
+            <div class="amount-value pi" id="calcAmount">0 π</div>
+            <div class="amount-value usd" id="calcAmountUsd">$0</div>
+          </div>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label" data-i18n="fee_label">Fee (1.5%)</span>
+          <div>
+            <div class="amount-value fee" id="calcFee">0 π</div>
+            <div class="amount-value usd" id="calcFeeUsd">$0</div>
+          </div>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label" data-i18n="total_deducted">Total Deducted</span>
+          <div>
+            <div class="amount-value total" id="calcTotal">0 π</div>
+            <div class="amount-value usd" id="calcTotalUsd">$0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice">
+        <span class="notice-icon">ℹ️</span>
+        <span data-i18n="fee_notice">A 1.5% transaction fee is applied to every payment to maintain and improve PiMarket RW for the community.</span>
+      </div>
+
+      <button class="btn btn-primary" onclick="doSend()">⬆ <span data-i18n="confirm_send">Confirm & Send Payment</span></button>
+    </div>
+  </div>
+
+  <!-- RECEIVE -->
+  <div class="section" id="sec-receive">
+    <div class="card" style="text-align:center">
+      <div class="card-title" style="justify-content:center"><div class="dot"></div><span data-i18n="my_qr">My Payment QR Code</span></div>
+      <div class="my-qr-wrap">
+        <canvas id="qrCanvas" width="180" height="180"></canvas>
+      </div>
+      <div style="font-family:var(--mono);font-size:.83rem;color:var(--pi-light);margin-bottom:3px">@pioneer_rw_demo</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:18px" data-i18n="show_code">Show this code to the sender</div>
+
+      <!-- RECEIVE MEMO -->
+      <div class="field" style="text-align:left">
+        <label data-i18n="req_amount">💰 Request specific amount (optional)</label>
+        <input type="number" id="reqAmount" placeholder="0.000000" step="0.000001" min="0" oninput="calcReq()"/>
+      </div>
+      <div class="field" style="text-align:left">
+        <label data-i18n="memo_label">📝 Memo — Payment Reason</label>
+        <textarea id="reqMemo" data-i18n-ph="memo_ph" placeholder="e.g. Invoice #045 — Tomatoes 2kg"></textarea>
+      </div>
+
+      <div id="reqDisplay" style="display:none;margin-bottom:13px;text-align:left">
+        <div class="amount-display">
+          <div class="amount-row">
+            <span class="amount-label" data-i18n="you_receive">You will receive</span>
+            <div>
+              <div class="amount-value pi" id="reqPi">0 π</div>
+              <div class="amount-value usd" id="reqUsd">$0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:9px">
+        <button class="btn btn-gold" onclick="copyId()" style="flex:1">📋 <span data-i18n="copy_id">Copy My Pi ID</span></button>
+        <button class="btn btn-outline btn-sm" onclick="shareQR()">🔗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKET -->
+  <div class="section" id="sec-market">
+    <div class="tabs" style="margin-bottom:11px">
+      <button class="tab active" onclick="mktTab(this,'browse')">🛒 <span data-i18n="browse">Browse</span></button>
+      <button class="tab" onclick="mktTab(this,'sell')">➕ <span data-i18n="list_item">List Item</span></button>
+    </div>
+
+    <div id="mkt-browse">
+      <div class="pills" id="catPills">
+        <div class="pill active" onclick="filterCat(this,'all')" data-i18n="all">All</div>
+        <div class="pill" onclick="filterCat(this,'food')">🥩 Food</div>
+        <div class="pill" onclick="filterCat(this,'clothing')">👗 Clothing</div>
+        <div class="pill" onclick="filterCat(this,'services')">🛠️ Services</div>
+        <div class="pill" onclick="filterCat(this,'transport')">🚗 Transport</div>
+        <div class="pill" onclick="filterCat(this,'electronics')">📱 Tech</div>
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+    </div>
+
+    <div id="mkt-sell" style="display:none">
+      <div class="card">
+        <div class="card-title"><div class="dot"></div><span data-i18n="list_product">List Your Product / Service</span></div>
+        <div class="field">
+          <label data-i18n="product_name">📦 Product / Service Name</label>
+          <input type="text" id="listName" data-i18n-ph="product_ph" placeholder="e.g. Fresh Tomatoes 1kg"/>
+        </div>
+        <div class="field">
+          <label data-i18n="category_label">🏷️ Category</label>
+          <select id="listCat">
+            <option value="food">🥩 Food & Market</option>
+            <option value="clothing">👗 Clothing</option>
+            <option value="services">🛠️ Services</option>
+            <option value="transport">🚗 Transport</option>
+            <option value="electronics">📱 Electronics</option>
+          </select>
+        </div>
+        <div class="field">
+          <label data-i18n="price_pi">💰 Price in Pi (π)</label>
+          <input type="number" id="listPrice" placeholder="0.000001" step="0.000001" min="0.000001" oninput="calcListPrice()"/>
+        </div>
+        <div id="listPriceDisplay" style="display:none;margin-bottom:13px">
+          <div class="amount-display">
+            <div class="amount-row">
+              <span class="amount-label" data-i18n="price">Price</span>
+              <div>
+                <div class="amount-value pi" id="lpPi">0 π</div>
+                <div class="amount-value usd" id="lpUsd">$0</div>
+              </div>
+            </div>
+            <div class="amount-row">
+              <span class="amount-label" data-i18n="you_receive_net">You receive (after 1.5% fee)</span>
+              <div>
+                <div class="amount-value total" id="lpNet">0 π</div>
+                <div class="amount-value usd" id="lpNetUsd">$0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label data-i18n="location">📍 Location</label>
+          <input type="text" id="listLocation" data-i18n-ph="location_ph" placeholder="e.g. Nyarugenge, Kigali"/>
+        </div>
+        <div class="field">
+          <label data-i18n="description">📝 Description</label>
+          <textarea id="listDesc" data-i18n-ph="desc_ph" placeholder="Describe your product or service..."></textarea>
+        </div>
+        <!-- MEMO FOR LISTING -->
+        <div class="field">
+          <label data-i18n="memo_listing">📋 Memo / Terms (optional)</label>
+          <textarea id="listMemo" data-i18n-ph="memo_listing_ph" placeholder="e.g. Delivery available, cash on delivery, contact before ordering..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="listItem()">✅ <span data-i18n="publish">Publish Listing</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="section" id="sec-settings">
+
+    <!-- LANGUAGE -->
+    <div class="card">
+      <div class="card-title"><div class="dot"></div><span data-i18n="language">Language / Ururimi / Langue</span></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline" id="langBtnEN" onclick="setLang('en')" style="font-weight:700">🇬🇧 English</button>
+        <button class="btn btn-outline" id="langBtnFR" onclick="setLang('fr')" style="font-weight:700">🇫🇷 Français</button>
+        <button class="btn btn-outline" id="langBtnKIN" onclick="setLang('kin')" style="font-weight:700">🇷🇼 Kinyarwanda</button>
+      </div>
+    </div>
+
+    <div class="gcv-panel">
+      <div class="gcv-title" data-i18n="gcv_title">🌐 GCV — Global Consensus Value</div>
+      <div class="gcv-value">$<span id="gcvVal">314,159</span></div>
+      <div class="gcv-sub" data-i18n="gcv_sub">1 Pi = $314,159.00 USD (updatable)</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="dot"></div><span data-i18n="update_gcv">Update GCV Rate</span></div>
+      <div class="field">
+        <label data-i18n="new_gcv">New GCV (USD per 1 Pi)</label>
+        <input type="number" id="gcvInput" placeholder="314159" value="314159" min="1"/>
+      </div>
+      <button class="btn btn-gold" onclick="updateGCV()">💾 <span data-i18n="save_gcv">Update GCV</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="dot"></div><span data-i18n="fee_title">Transaction Fee</span></div>
+      <div class="amount-display">
+        <div class="amount-row">
+          <span class="amount-label" data-i18n="current_fee">Current Fee</span>
+          <span class="amount-value pi">1.5%</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label" data-i18n="fee_purpose">Purpose</span>
+          <span class="amount-value" style="font-size:.7rem;color:var(--muted)" data-i18n="fee_purpose_val">App maintenance & growth</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="dot"></div><span data-i18n="about">About PiMarket RW</span></div>
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.9">
+        <div>📍 <span data-i18n="about1">Built for Rwanda local commerce</span></div>
+        <div>🌐 <span data-i18n="about2">Pi Network ecosystem app</span></div>
+        <div>💰 <span data-i18n="about3">GCV standard valuation</span></div>
+        <div>🔒 <span data-i18n="about4">Secure Pi payments</span></div>
+        <div>📝 <span data-i18n="about5">Memo on every transaction</span></div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:.67rem;color:rgba(155,148,192,.45)">PiMarket RW v2.0 — Pi App Studio</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .app -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="showSection('sec-home')">
+    <span class="nav-icon">🏠</span><span data-i18n="home">Home</span>
+  </button>
+  <button class="nav-item" id="nav-send" onclick="showSection('sec-send')">
+    <span class="nav-icon">⬆️</span><span data-i18n="send">Send</span>
+  </button>
+  <button class="nav-item" id="nav-receive" onclick="showSection('sec-receive')">
+    <span class="nav-icon">⬇️</span><span data-i18n="receive">Receive</span>
+  </button>
+  <button class="nav-item" id="nav-market" onclick="showSection('sec-market')">
+    <span class="nav-icon">🛒</span><span data-i18n="market">Market</span>
+  </button>
+  <button class="nav-item" id="nav-settings" onclick="showSection('sec-settings')">
+    <span class="nav-icon">⚙️</span><span data-i18n="settings">Settings</span>
+  </button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <span class="modal-icon" id="modalIcon">✅</span>
+    <h2 id="modalTitle">Done!</h2>
+    <p id="modalMsg">Operation successful.</p>
+    <div class="tx-id" id="modalTxId">TX#000000</div>
+    <button class="btn btn-primary" onclick="closeModal()" data-i18n="done">Done</button>
+  </div>
+</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────
+let GCV = 314159;
+const FEE = 0.015;
+let balance = 12.45;
+let payMode = 'qr';
+let scannedUser = null;
+let currentLang = 'en';
+let currentCat = 'all';
+
+let transactions = [
+  {type:'receive',name:'Mutoni Agnes',cat:'Food & Market',amount:0.002,time:'Today 09:14',memo:'Tomatoes & beans'},
+  {type:'send',name:'Kamanzi Tech',cat:'Electronics',amount:0.005,time:'Yesterday 14:30',memo:'Phone screen repair'},
+  {type:'receive',name:'Uwase Jean',cat:'Services',amount:0.001,time:'May 16',memo:'Haircut — Invoice #12'},
+  {type:'send',name:'Moto Kigali',cat:'Transport',amount:0.0005,time:'May 15',memo:'Ride to Nyabugogo'},
+];
+
+let products = [
+  {emoji:'🍅',name:'Fresh Tomatoes',seller:'Mutoni',price:0.000050,cat:'food',loc:'Kimironko'},
+  {emoji:'👗',name:'Igitenge Dress',seller:'Uwase Fashion',price:0.0008,cat:'clothing',loc:'Nyarugenge'},
+  {emoji:'🔧',name:'Phone Repair',seller:'Kamanzi Tech',price:0.0015,cat:'services',loc:'Remera'},
+  {emoji:'🍌',name:'Bananas (bunch)',seller:'Kagabo Farm',price:0.000030,cat:'food',loc:'Musanze'},
+  {emoji:'🚗',name:'Kigali Taxi',seller:'Moto Express',price:0.00010,cat:'transport',loc:'Kigali CBD'},
+  {emoji:'📱',name:'Charger Cable',seller:'TechHub RW',price:0.00040,cat:'electronics',loc:'CBD Kigali'},
+];
+
+// ─── TRANSLATIONS ─────────────────────────────────────────────────
+const i18n = {
+  en: {
+    hero_title:'Local Commerce<br/><span>Powered by π Pi</span>',
+    hero_sub:'Buy & sell goods and services in your community.<br/>Fast, simple, trusted.',
+    my_balance:'My Pi Balance',send:'Send',receive:'Receive',market:'Market',settings:'Settings',home:'Home',
+    recent_activity:'Recent Activity',
+    send_payment:'Send Pi Payment',
+    payment_method:'Payment Method',
+    scan_qr:'Scan QR Code',manual_entry:'Manual Entry',
+    tap_to_scan:'Tap to Scan QR Code',
+    scan_sub:'Point camera at recipient\'s QR code',
+    recipient_found:'✅ Recipient Found',
+    then_enter:'Then enter amount below',
+    recipient_id:'👤 Recipient Pi Username or ID',
+    category_label:'📋 Category',select_cat:'Select category...',
+    amount_pi:'💰 Amount (π Pi)',
+    memo_label:'📝 Memo — Payment Reason',
+    memo_ph:'e.g. Payment for 2kg tomatoes — Invoice #045',
+    fee_label:'Fee (1.5%)',amount:'Amount',total_deducted:'Total Deducted',
+    fee_notice:'A 1.5% transaction fee is applied to every payment to maintain PiMarket RW.',
+    confirm_send:'Confirm & Send Payment',
+    my_qr:'My Payment QR Code',
+    show_code:'Show this code to the sender',
+    req_amount:'💰 Request specific amount (optional)',
+    you_receive:'You will receive',copy_id:'Copy My Pi ID',
+    browse:'Browse',list_item:'List Item',
+    list_product:'List Your Product / Service',
+    product_name:'📦 Product / Service Name',
+    product_ph:'e.g. Fresh Tomatoes 1kg',
+    price_pi:'💰 Price in Pi (π)',price:'Price',
+    you_receive_net:'You receive (after 1.5% fee)',
+    location:'📍 Location',location_ph:'e.g. Nyarugenge, Kigali',
+    description:'📝 Description',desc_ph:'Describe your product or service...',
+    memo_listing:'📋 Memo / Terms (optional)',
+    memo_listing_ph:'e.g. Delivery available, contact before ordering...',
+    publish:'Publish Listing',
+    language:'Language / Ururimi / Langue',
+    gcv_title:'🌐 GCV — Global Consensus Value',
+    gcv_sub:'1 Pi = $314,159.00 USD (updatable)',
+    update_gcv:'Update GCV Rate',new_gcv:'New GCV (USD per 1 Pi)',save_gcv:'Update GCV',
+    fee_title:'Transaction Fee',current_fee:'Current Fee',fee_purpose:'Purpose',
+    fee_purpose_val:'App maintenance & growth',
+    about:'About PiMarket RW',about1:'Built for Rwanda local commerce',
+    about2:'Pi Network ecosystem app',about3:'GCV standard valuation',
+    about4:'Secure Pi payments',about5:'Memo on every transaction',
+    done:'Done',all:'All',
+  },
+  fr: {
+    hero_title:'Commerce Local<br/><span>Propulsé par π Pi</span>',
+    hero_sub:'Achetez et vendez biens et services dans votre communauté.<br/>Rapide, simple, fiable.',
+    my_balance:'Mon Solde Pi',send:'Envoyer',receive:'Recevoir',market:'Marché',settings:'Paramètres',home:'Accueil',
+    recent_activity:'Activité Récente',
+    send_payment:'Envoyer un Paiement Pi',
+    payment_method:'Mode de Paiement',
+    scan_qr:'Scanner QR Code',manual_entry:'Saisie Manuelle',
+    tap_to_scan:'Appuyer pour Scanner',
+    scan_sub:'Pointez la caméra sur le QR code du destinataire',
+    recipient_found:'✅ Destinataire Trouvé',
+    then_enter:'Puis entrez le montant ci-dessous',
+    recipient_id:'👤 Nom Pi ou ID du destinataire',
+    category_label:'📋 Catégorie',select_cat:'Sélectionner...',
+    amount_pi:'💰 Montant (π Pi)',
+    memo_label:'📝 Mémo — Motif du paiement',
+    memo_ph:'ex. Paiement pour 2kg tomates — Facture #045',
+    fee_label:'Frais (1.5%)',amount:'Montant',total_deducted:'Total Débité',
+    fee_notice:'Des frais de 1.5% sont appliqués à chaque paiement pour maintenir PiMarket RW.',
+    confirm_send:'Confirmer & Envoyer',
+    my_qr:'Mon QR Code de Paiement',
+    show_code:'Montrez ce code à l\'expéditeur',
+    req_amount:'💰 Demander un montant précis (optionnel)',
+    you_receive:'Vous recevrez',copy_id:'Copier mon ID Pi',
+    browse:'Parcourir',list_item:'Publier',
+    list_product:'Publier Produit / Service',
+    product_name:'📦 Nom du Produit / Service',
+    product_ph:'ex. Tomates fraîches 1kg',
+    price_pi:'💰 Prix en Pi (π)',price:'Prix',
+    you_receive_net:'Vous recevez (après frais 1.5%)',
+    location:'📍 Localisation',location_ph:'ex. Nyarugenge, Kigali',
+    description:'📝 Description',desc_ph:'Décrivez votre produit ou service...',
+    memo_listing:'📋 Mémo / Conditions (optionnel)',
+    memo_listing_ph:'ex. Livraison possible, contactez avant de commander...',
+    publish:'Publier l\'Annonce',
+    language:'Langue / Language / Ururimi',
+    gcv_title:'🌐 GCV — Valeur de Consensus Mondial',
+    gcv_sub:'1 Pi = 314 159 $ USD (modifiable)',
+    update_gcv:'Mettre à jour le GCV',new_gcv:'Nouveau GCV (USD par 1 Pi)',save_gcv:'Enregistrer GCV',
+    fee_title:'Frais de Transaction',current_fee:'Frais Actuels',fee_purpose:'Objectif',
+    fee_purpose_val:'Maintenance & développement',
+    about:'À propos de PiMarket RW',about1:'Conçu pour le commerce local au Rwanda',
+    about2:'Application dans l\'écosystème Pi Network',about3:'Valorisation standard GCV',
+    about4:'Paiements Pi sécurisés',about5:'Mémo sur chaque transaction',
+    done:'Terminé',all:'Tout',
+  },
+  kin: {
+    hero_title:'Ubucuruzi bw\'Akarere<br/><span>Ikoreshwa na π Pi</span>',
+    hero_sub:'Gura no kugurisha ibintu mu muryango wawe.<br/>Byihuse, byoroshye, byizewe.',
+    my_balance:'Amafaranga Yanjye ya Pi',send:'Ohereza',receive:'Akira',market:'Isoko',settings:'Igenamiterere',home:'Ahabanza',
+    recent_activity:'Ibikorwa bya Vuba',
+    send_payment:'Ohereza Amafaranga ya Pi',
+    payment_method:'Uburyo bwo Kwishyura',
+    scan_qr:'Soma Kode ya QR',manual_entry:'Injiza Nawe',
+    tap_to_scan:'Kanda Gusoma Kode ya QR',
+    scan_sub:'Erekeza kamera ku kode ya QR y\'uwakira',
+    recipient_found:'✅ Uwakira Yabonetse',
+    then_enter:'Injiza umubare hepfo',
+    recipient_id:'👤 Izina rya Pi cyangwa ID y\'uwakira',
+    category_label:'📋 Icyiciro',select_cat:'Hitamo...',
+    amount_pi:'💰 Umubare (π Pi)',
+    memo_label:'📝 Memo — Impamvu y\'Ubwishyu',
+    memo_ph:'urugero: Kwishyura kg 2 za tamato — Fagitire #045',
+    fee_label:'Amafaranga y\'Ubutumwa (1.5%)',amount:'Umubare',total_deducted:'Byose Bivanwe',
+    fee_notice:'Amafaranga ya 1.5% avanwa kuri buri butumwa kugira ngo PiMarket RW ikomeze gukorera.',
+    confirm_send:'Emeza & Ohereza',
+    my_qr:'Kode Yanjye ya QR',
+    show_code:'Erekana iyi kode uwishyura',
+    req_amount:'💰 Saba umubare runaka (bitagomba)',
+    you_receive:'Uzakira',copy_id:'Kopi ID Yanjye ya Pi',
+    browse:'Shakisha',list_item:'Shyira Igicuruzwa',
+    list_product:'Shyira Igicuruzwa / Serivisi',
+    product_name:'📦 Izina ry\'Igicuruzwa / Serivisi',
+    product_ph:'urugero: Tamato nziza 1kg',
+    price_pi:'💰 Igiciro mu Pi (π)',price:'Igiciro',
+    you_receive_net:'Uzakira (nyuma ya 1.5%)',
+    location:'📍 Aho Iherereye',location_ph:'urugero: Nyarugenge, Kigali',
+    description:'📝 Ibisobanuro',desc_ph:'Sobanura igicuruzwa cyangwa serivisi yawe...',
+    memo_listing:'📋 Memo / Amabwiriza (bitagomba)',
+    memo_listing_ph:'urugero: Gutanga birashoboka, baza mbere yo gutumiza...',
+    publish:'Tangaza',
+    language:'Ururimi / Language / Langue',
+    gcv_title:'🌐 GCV — Agaciro k\'Isi Yose',
+    gcv_sub:'1 Pi = $314,159 USD (irashobora guhindurwa)',
+    update_gcv:'Hindura GCV',new_gcv:'GCV Nshya (USD kuri 1 Pi)',save_gcv:'Bika GCV',
+    fee_title:'Amafaranga y\'Ubutumwa',current_fee:'Amafaranga Afashe',fee_purpose:'Intego',
+    fee_purpose_val:'Kubungabunga no gutera imbere',
+    about:'Ibyerekeye PiMarket RW',about1:'Yakozwe ku bucuruzi bw\'akarere i Rwanda',
+    about2:'App muri ecosteme ya Pi Network',about3:'Agaciro gakurikije GCV',
+    about4:'Kwishyura kwa Pi byizewe',about5:'Memo kuri buri butumwa',
+    done:'Birangiye',all:'Byose',
+  }
+};
+
+// ─── HELPERS ──────────────────────────────────────────────────────
+function t(key){return i18n[currentLang][key]||i18n['en'][key]||key}
+function piToUsd(pi){return pi*GCV}
+function fmt(n,d=6){return parseFloat(n).toFixed(d)}
+function fmtUsd(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function genTxId(){return 'TX#'+Math.random().toString(36).slice(2,10).toUpperCase()}
+
+// ─── LANGUAGE ─────────────────────────────────────────────────────
+function setLang(lang){
+  currentLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent.toLowerCase()===lang||
+      (lang==='kin'&&b.textContent==='KIN')||(lang==='en'&&b.textContent==='EN')||(lang==='fr'&&b.textContent==='FR'));
+  });
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    const val=t(key);
+    if(val) el.innerHTML=val;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const key=el.getAttribute('data-i18n-ph');
+    const val=t(key);
+    if(val) el.placeholder=val;
+  });
+  updateLangButtons();
+  updateBalanceDisplay();
+}
+
+function updateLangButtons(){
+  ['EN','FR','KIN'].forEach(l=>{
+    const btn=document.getElementById('langBtn'+l);
+    if(btn) btn.style.borderColor=currentLang===l.toLowerCase()?'var(--pi)':'var(--border)';
+    if(btn) btn.style.color=currentLang===l.toLowerCase()?'var(--pi-light)':'var(--muted)';
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+function init(){
+  renderTxList();
+  renderProducts();
+  drawQR();
+  updateBalanceDisplay();
+}
+
+function updateBalanceDisplay(){
+  document.getElementById('homeBalance').textContent=fmt(balance)+' π';
+  document.getElementById('homeBalanceUsd').textContent='≈ '+fmtUsd(piToUsd(balance))+' USD';
+}
+
+// ─── SECTIONS ─────────────────────────────────────────────────────
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const navMap={'sec-home':'nav-home','sec-send':'nav-send','sec-receive':'nav-receive','sec-market':'nav-market','sec-settings':'nav-settings'};
+  if(navMap[id])document.getElementById(navMap[id]).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── TX LIST ──────────────────────────────────────────────────────
+function renderTxList(){
+  document.getElementById('txList').innerHTML=transactions.slice(0,5).map(tx=>`
+    <div class="tx-item">
+      <div class="tx-icon ${tx.type==='receive'?'receive':'send'}">${tx.type==='receive'?'⬇️':'⬆️'}</div>
+      <div class="tx-info">
+        <div class="tx-name">${tx.name}</div>
+        <div class="tx-meta">${tx.cat} · ${tx.time}</div>
+        ${tx.memo?`<div class="tx-memo">📝 ${tx.memo}</div>`:''}
+      </div>
+      <div class="tx-amount">
+        <div class="tx-pi ${tx.type==='receive'?'in':'out'}">${tx.type==='receive'?'+':'-'}${fmt(tx.amount)} π</div>
+        <div class="tx-usd">${fmtUsd(piToUsd(tx.amount))}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── PAYMENT MODE ─────────────────────────────────────────────────
+function setPayMode(mode){
+  payMode=mode;
+  document.getElementById('ptQR').classList.toggle('active',mode==='qr');
+  document.getElementById('ptManual').classList.toggle('active',mode==='manual');
+  document.getElementById('modeQR').style.display=mode==='qr'?'block':'none';
+  document.getElementById('modeManual').style.display=mode==='manual'?'block':'none';
+  if(mode==='qr'){scannedUser=null;document.getElementById('qrResult').style.display='none';}
+}
+
+// QR SCAN SIMULATION
+const demoUsers=['@mutoni_agnes','@kamanzi_tech','@uwase_jean','@kagabo_farm','@pioneer_rw'];
+function simulateScan(){
+  const u=demoUsers[Math.floor(Math.random()*demoUsers.length)];
+  scannedUser=u;
+  document.getElementById('qrResult').style.display='block';
+  document.getElementById('qrName').textContent=u.replace('@','').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  document.getElementById('qrId').textContent=u+' · Pi ID: '+Math.random().toString(36).slice(2,10).toUpperCase();
+}
+
+// ─── SEND ─────────────────────────────────────────────────────────
+function calcSend(){
+  const amt=parseFloat(document.getElementById('sendAmount').value)||0;
+  const fee=amt*FEE;const total=amt+fee;
+  document.getElementById('sendCalc').style.display=amt>0?'block':'none';
+  document.getElementById('calcAmount').textContent=fmt(amt)+' π';
+  document.getElementById('calcAmountUsd').textContent=fmtUsd(piToUsd(amt));
+  document.getElementById('calcFee').textContent='-'+fmt(fee)+' π';
+  document.getElementById('calcFeeUsd').textContent=fmtUsd(piToUsd(fee));
+  document.getElementById('calcTotal').textContent=fmt(total)+' π';
+  document.getElementById('calcTotalUsd').textContent=fmtUsd(piToUsd(total));
+}
+
+function doSend(){
+  let recipient='';
+  if(payMode==='qr'){
+    if(!scannedUser){alert(currentLang==='fr'?'Veuillez scanner un QR code d\'abord':currentLang==='kin'?'Soma kode ya QR mbere':'Please scan a QR code first');return;}
+    recipient=scannedUser;
+  }else{
+    recipient=document.getElementById('manualTo').value.trim();
+    if(!recipient){alert(currentLang==='fr'?'Entrez le destinataire':currentLang==='kin'?'Injiza uwakira':'Enter recipient');return;}
+  }
+  const amt=parseFloat(document.getElementById('sendAmount').value)||0;
+  const cat=document.getElementById('sendCategory').value;
+  const memo=document.getElementById('sendMemo').value.trim();
+  if(amt<=0){alert(currentLang==='fr'?'Montant invalide':currentLang==='kin'?'Umubare si wo':'Invalid amount');return;}
+  if(!cat){alert(currentLang==='fr'?'Sélectionnez une catégorie':currentLang==='kin'?'Hitamo icyiciro':'Select a category');return;}
+  const total=amt*(1+FEE);
+  if(total>balance){alert(currentLang==='fr'?'Solde insuffisant':currentLang==='kin'?'Amafaranga ntahagije':'Insufficient balance');return;}
+  balance-=total;
+  transactions.unshift({type:'send',name:recipient,cat:cat.replace(/^[^ ]+ /,''),amount:amt,time:'Just now',memo:memo||'—'});
+  renderTxList();updateBalanceDisplay();
+  document.getElementById('manualTo').value='';
+  document.getElementById('sendAmount').value='';
+  document.getElementById('sendMemo').value='';
+  document.getElementById('sendCategory').value='';
+  document.getElementById('sendCalc').style.display='none';
+  scannedUser=null;document.getElementById('qrResult').style.display='none';
+  const msg=currentLang==='fr'?`${fmt(amt)} π envoyé à ${recipient}<br/>Frais: ${fmt(amt*FEE,6)} π<br/>Mémo: ${memo||'—'}`:
+            currentLang==='kin'?`${fmt(amt)} π yoherejwe kuri ${recipient}<br/>Amafaranga: ${fmt(amt*FEE,6)} π`:
+            `${fmt(amt)} π sent to ${recipient}<br/>Fee: ${fmt(amt*FEE,6)} π<br/>Memo: ${memo||'—'}`;
+  showModal('✅',currentLang==='fr'?'Paiement Envoyé!':currentLang==='kin'?'Yoherejwe!':'Payment Sent!',msg,genTxId());
+}
+
+// ─── RECEIVE ──────────────────────────────────────────────────────
+function calcReq(){
+  const amt=parseFloat(document.getElementById('reqAmount').value)||0;
+  document.getElementById('reqDisplay').style.display=amt>0?'block':'none';
+  document.getElementById('reqPi').textContent=fmt(amt)+' π';
+  document.getElementById('reqUsd').textContent=fmtUsd(piToUsd(amt));
+}
+
+function copyId(){
+  navigator.clipboard?.writeText('@pioneer_rw_demo').catch(()=>{});
+  const msg=currentLang==='fr'?'Votre ID Pi a été copié.':currentLang==='kin'?'ID yawe ya Pi yakopiwe.':'Your Pi ID has been copied.';
+  showModal('📋',currentLang==='fr'?'Copié!':currentLang==='kin'?'Kopiwe!':'Copied!',msg,genTxId());
+}
+
+function shareQR(){
+  showModal('🔗',currentLang==='fr'?'Partager QR':currentLang==='kin'?'Sangira QR':'Share QR','@pioneer_rw_demo',genTxId());
+}
+
+// ─── MARKET ───────────────────────────────────────────────────────
+function mktTab(btn,tab){
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('mkt-browse').style.display=tab==='browse'?'block':'none';
+  document.getElementById('mkt-sell').style.display=tab==='sell'?'block':'none';
+}
+
+function filterCat(pill,cat){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  pill.classList.add('active');currentCat=cat;renderProducts();
+}
+
+function renderProducts(){
+  const filtered=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
+  document.getElementById('productGrid').innerHTML=filtered.map((p,i)=>`
+    <div class="product-card" onclick="buyProduct(${products.indexOf(p)})" style="animation-delay:${i*0.05}s">
+      <span class="product-emoji">${p.emoji}</span>
+      <div class="product-name">${p.name}</div>
+      <div class="product-seller">📍 ${p.loc} · ${p.seller}</div>
+      <div class="product-price">${fmt(p.price,6)} π</div>
+      <div class="product-usd">${fmtUsd(piToUsd(p.price))}</div>
+    </div>
+  `).join('');
+}
+
+function buyProduct(idx){
+  const p=products[idx];
+  const fee=p.price*FEE;const total=p.price+fee;
+  if(total>balance){alert(currentLang==='fr'?'Solde insuffisant':currentLang==='kin'?'Ntahagije':'Insufficient balance');return;}
+  const confirmMsg=currentLang==='fr'?
+    `Acheter "${p.name}" de ${p.seller}?\n\nPrix: ${fmt(p.price,6)} π\nFrais: ${fmt(fee,6)} π\nTotal: ${fmt(total,6)} π\n≈ ${fmtUsd(piToUsd(total))} USD`:
+    currentLang==='kin'?
+    `Gura "${p.name}" kuri ${p.seller}?\n\nIgiciro: ${fmt(p.price,6)} π\nAmafaranga: ${fmt(fee,6)} π\nByose: ${fmt(total,6)} π`:
+    `Buy "${p.name}" from ${p.seller}?\n\nPrice: ${fmt(p.price,6)} π\nFee: ${fmt(fee,6)} π\nTotal: ${fmt(total,6)} π\n≈ ${fmtUsd(piToUsd(total))} USD`;
+  if(!confirm(confirmMsg))return;
+  balance-=total;
+  transactions.unshift({type:'send',name:p.seller,cat:p.name,amount:p.price,time:'Just now',memo:`Gura: ${p.name}`});
+  updateBalanceDisplay();renderTxList();
+  const msg=currentLang==='fr'?`Vous avez acheté <strong>${p.name}</strong>.<br/>Total: ${fmt(total,6)} π`:
+            currentLang==='kin'?`Waguze <strong>${p.name}</strong>.<br/>Byose: ${fmt(total,6)} π`:
+            `You bought <strong>${p.name}</strong> from ${p.seller}.<br/>Total: ${fmt(total,6)} π`;
+  showModal('🛒',currentLang==='fr'?'Achat Réussi!':currentLang==='kin'?'Wagize Neza!':'Purchase Complete!',msg,genTxId());
+}
+
+function calcListPrice(){
+  const p=parseFloat(document.getElementById('listPrice').value)||0;
+  document.getElementById('listPriceDisplay').style.display=p>0?'block':'none';
+  document.getElementById('lpPi').textContent=fmt(p)+' π';
+  document.getElementById('lpUsd').textContent=fmtUsd(piToUsd(p));
+  const net=p*(1-FEE);
+  document.getElementById('lpNet').textContent=fmt(net)+' π';
+  document.getElementById('lpNetUsd').textContent=fmtUsd(piToUsd(net));
+}
+
+function listItem(){
+  const name=document.getElementById('listName').value.trim();
+  const price=parseFloat(document.getElementById('listPrice').value)||0;
+  const cat=document.getElementById('listCat').value;
+  const loc=document.getElementById('listLocation').value.trim();
+  if(!name||!price||!loc){alert(currentLang==='fr'?'Remplissez tous les champs':currentLang==='kin'?'Uzuza imyanya yose':'Fill all required fields');return;}
+  const emojiMap={food:'🥘',clothing:'👔',services:'🔧',transport:'🚌',electronics:'📟'};
+  products.unshift({emoji:emojiMap[cat]||'📦',name,seller:currentLang==='fr'?'Vous':currentLang==='kin'?'Wewe':'You',price,cat,loc});
+  document.getElementById('listName').value='';
+  document.getElementById('listPrice').value='';
+  document.getElementById('listLocation').value='';
+  document.getElementById('listDesc').value='';
+  document.getElementById('listMemo').value='';
+  document.getElementById('listPriceDisplay').style.display='none';
+  currentCat='all';
+  document.querySelectorAll('.pill').forEach((p,i)=>p.classList.toggle('active',i===0));
+  const msg=currentLang==='fr'?`"${name}" est maintenant visible aux acheteurs.`:
+            currentLang==='kin'?`"${name}" iraboneka ku bagura.`:`"${name}" is now visible to buyers.`;
+  showModal('✅',currentLang==='fr'?'Publié!':currentLang==='kin'?'Tangajwe!':'Listed!',msg,genTxId());
+}
+
+// ─── GCV ──────────────────────────────────────────────────────────
+function updateGCV(){
+  const v=parseFloat(document.getElementById('gcvInput').value)||0;
+  if(v<1){alert('GCV must be > 1');return;}
+  GCV=v;
+  document.getElementById('gcvVal').textContent=v.toLocaleString();
+  document.getElementById('gcvDisplay').textContent=v.toLocaleString();
+  updateBalanceDisplay();renderTxList();renderProducts();
+  showModal('🌐',currentLang==='fr'?'GCV Mis à Jour!':currentLang==='kin'?'GCV Yahindutse!':'GCV Updated!',
+    `1 π = $${v.toLocaleString()} USD`,genTxId());
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────
+function showModal(icon,title,msg,txid){
+  document.getElementById('modalIcon').textContent=icon;
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalMsg').innerHTML=msg;
+  document.getElementById('modalTxId').textContent=txid;
+  document.getElementById('successModal').classList.add('show');
+}
+function closeModal(){document.getElementById('successModal').classList.remove('show')}
+
+// ─── QR CANVAS ───────────────────────────────────────────────────
+function drawQR(){
+  const canvas=document.getElementById('qrCanvas');
+  const ctx=canvas.getContext('2d');
+  const size=180;const cells=21;const cell=size/cells;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);
+  function hash(s,i){let h=0;for(let j=0;j<s.length;j++)h=(h*31+s.charCodeAt(j))^i;return h;}
+  ctx.fillStyle='#111';
+  for(let r=0;r<cells;r++){
+    for(let c=0;c<cells;c++){
+      const inTL=r<7&&c<7;const inTR=r<7&&c>=cells-7;const inBL=r>=cells-7&&c<7;
+      if(inTL||inTR||inBL){
+        const isEdge=(r===0||r===6)&&c<7||(c===0||c===6)&&r<7||
+                     (r===0||r===6)&&c>=cells-7||(c===cells-7||c===cells-1)&&r<7||
+                     (r===cells-7||r===cells-1)&&c<7||(r>=cells-7&&(c===0||c===6));
+        const isInner=(r>=2&&r<=4&&c>=2&&c<=4)||(r>=2&&r<=4&&c>=cells-5&&c<=cells-3)||(r>=cells-5&&r<=cells-3&&c>=2&&c<=4);
+        ctx.fillStyle=(isEdge||isInner)?'#111':'#fff';
+      }else{
+        ctx.fillStyle=hash('pioneer_rw',r*cells+c)%2===0?'#111':'#fff';
+      }
+      ctx.fillRect(c*cell,r*cell,cell,cell);
+    }
+  }
+  ctx.fillStyle='rgba(123,79,255,0.92)';
+  ctx.beginPath();ctx.arc(size/2,size/2,17,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='white';ctx.font='bold 17px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('π',size/2,size/2+1);
+}
+
+init();
+</script>
+</body>
+</html>
