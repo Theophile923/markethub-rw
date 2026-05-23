@@ -1,1517 +1,1271 @@
- <!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PiHub RW — Transport Powered by Pi</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
+<title>PiHub RW — Transport Pi-Powered</title>
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --pi:#0A7C4E;--pi-light:#16C979;--pi-dark:#065C38;--pi-glow:rgba(10,124,78,0.25);
-  --gold:#F5A623;--gold-light:#FFD080;--gold-bg:rgba(245,166,35,0.1);
+  --pi:#0A7C4E;--pi2:#16C979;--pi3:#065C38;
+  --gold:#F5A623;--gold2:#FFD080;
   --blue:#2196F3;--green:#00C896;--red:#FF5252;--orange:#FF9800;
-  --bg:#07120E;--surface:#0D1F18;--card:#112219;--card2:#152B1F;
-  --border:rgba(22,201,121,0.15);--border2:rgba(22,201,121,0.25);
-  --text:#E8F8F0;--muted:#6B9E84;--faint:#3A5E4A;
-  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
-  --FRW_PER_USD:1490;
+  --bg:#07120E;--surf:#0D1F18;--card:#112219;--card2:#152B1F;
+  --bdr:rgba(22,201,121,0.14);--bdr2:rgba(22,201,121,0.28);
+  --txt:#E8F8F0;--muted:#6B9E84;
+  --fn:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
-
-/* ── AMBIENT BACKGROUND ── */
-body::before{content:'';position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 5%,rgba(10,124,78,0.10),transparent 55%),
-    radial-gradient(ellipse 50% 40% at 85% 85%,rgba(245,166,35,0.06),transparent 50%),
-    radial-gradient(ellipse 40% 30% at 50% 50%,rgba(10,124,78,0.04),transparent 60%);
-  pointer-events:none;z-index:0}
-
-/* ══════════════════════
-   AUTH SCREEN
-══════════════════════ */
-.auth-screen{position:fixed;inset:0;z-index:300;background:linear-gradient(170deg,#07120E 0%,#0A2416 55%,#07120E 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;text-align:center;transition:opacity .5s,transform .5s}
-.auth-screen.hidden{opacity:0;pointer-events:none;transform:scale(1.05)}
-.auth-logo{width:90px;height:90px;border-radius:24px;background:linear-gradient(135deg,var(--pi),var(--pi-dark));display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:#fff;margin:0 auto 22px;box-shadow:0 0 0 1px rgba(22,201,121,0.3),0 20px 50px rgba(10,124,78,0.4);animation:floatY 3s ease-in-out infinite;letter-spacing:-1px}
-@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.auth-title{font-size:2rem;font-weight:800;letter-spacing:-1.5px;margin-bottom:8px}
-.auth-title em{color:var(--pi-light);font-style:normal}
-.auth-sub{color:var(--muted);font-size:.85rem;line-height:1.7;margin-bottom:8px;max-width:280px}
-.auth-disclaimer{background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.2);border-radius:10px;padding:9px 13px;font-size:.68rem;color:rgba(245,166,35,0.75);line-height:1.55;margin-bottom:22px;max-width:310px;text-align:left}
-.auth-btn{width:100%;max-width:300px;padding:17px;border-radius:14px;border:none;cursor:pointer;font-family:var(--font);font-size:.95rem;font-weight:700;background:linear-gradient(135deg,var(--pi-light),var(--pi));color:#fff;box-shadow:0 8px 28px rgba(10,124,78,0.4);transition:all .2s;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;gap:8px}
-.auth-btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(10,124,78,0.5)}
-.auth-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
-.auth-btn-ghost{width:100%;max-width:300px;padding:14px;border-radius:14px;border:1.5px solid var(--border2);cursor:pointer;font-family:var(--font);font-size:.85rem;font-weight:600;background:transparent;color:var(--muted);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin:0 auto}
-.auth-btn-ghost:hover{border-color:var(--pi-light);color:var(--text)}
-.auth-status{margin-top:16px;font-size:.75rem;color:var(--muted);min-height:20px;display:flex;align-items:center;justify-content:center;gap:6px}
-.spin{width:13px;height:13px;border:2px solid rgba(22,201,121,.25);border-top-color:var(--pi-light);border-radius:50%;animation:rotate .7s linear infinite}
-@keyframes rotate{to{transform:rotate(360deg)}}
-
-/* ══════════════════════
-   TOPBAR
-══════════════════════ */
-.topbar{position:sticky;top:0;z-index:100;background:rgba(7,18,14,0.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:54px}
-.logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:800;letter-spacing:-.5px}
-.logo-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--pi-light),var(--pi));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#fff}
-.logo em{color:var(--pi-light);font-style:normal}
-.topbar-right{display:flex;align-items:center;gap:8px}
-.gcv-pill{font-family:var(--mono);font-size:.58rem;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:var(--gold);padding:4px 8px;border-radius:20px;display:flex;align-items:center;gap:3px}
-.gcv-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:blink 2s infinite}
+body{font-family:var(--fn);background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 5%,rgba(10,124,78,.09),transparent 55%),radial-gradient(ellipse 50% 40% at 90% 90%,rgba(245,166,35,.05),transparent 50%);pointer-events:none;z-index:0}
+/* AUTH */
+.auth{position:fixed;inset:0;z-index:300;background:linear-gradient(170deg,#07120E,#0A2416 55%,#07120E);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;text-align:center;transition:opacity .5s,transform .5s}
+.auth.hidden{opacity:0;pointer-events:none;transform:scale(1.04)}
+.auth-logo{width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg,var(--pi2),var(--pi));display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#fff;margin:0 auto 18px;box-shadow:0 0 0 1px rgba(22,201,121,.3),0 18px 46px rgba(10,124,78,.4);animation:fly 3s ease-in-out infinite}
+@keyframes fly{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.auth h1{font-size:1.85rem;font-weight:800;letter-spacing:-1.5px;margin-bottom:6px}
+.auth h1 em{color:var(--pi2);font-style:normal}
+.auth-sub{color:var(--muted);font-size:.82rem;line-height:1.7;margin-bottom:8px;max-width:260px}
+.auth-disc{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:9px 13px;font-size:.65rem;color:rgba(245,166,35,.75);line-height:1.55;margin-bottom:18px;max-width:290px;text-align:left}
+.auth-btn{width:100%;max-width:280px;padding:15px;border-radius:13px;border:none;cursor:pointer;font-family:var(--fn);font-size:.9rem;font-weight:700;background:linear-gradient(135deg,var(--pi2),var(--pi));color:#fff;box-shadow:0 8px 26px rgba(10,124,78,.4);transition:all .2s;margin:0 auto 9px;display:flex;align-items:center;justify-content:center;gap:8px}
+.auth-btn:hover{transform:translateY(-2px)}.auth-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.auth-ghost{width:100%;max-width:280px;padding:12px;border-radius:13px;border:1.5px solid var(--bdr2);cursor:pointer;font-family:var(--fn);font-size:.82rem;font-weight:600;background:transparent;color:var(--muted);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin:0 auto}
+.auth-ghost:hover{border-color:var(--pi2);color:var(--txt)}
+.auth-st{margin-top:13px;font-size:.7rem;color:var(--muted);min-height:18px;display:flex;align-items:center;justify-content:center;gap:5px}
+.spin{width:12px;height:12px;border:2px solid rgba(22,201,121,.2);border-top-color:var(--pi2);border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0}
+@keyframes rot{to{transform:rotate(360deg)}}
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(7,18,14,.95);backdrop-filter:blur(18px);border-bottom:1px solid var(--bdr);padding:0 13px;display:flex;align-items:center;justify-content:space-between;height:52px}
+.logo{display:flex;align-items:center;gap:7px;font-size:.93rem;font-weight:800;letter-spacing:-.5px}
+.logo-mk{width:27px;height:27px;border-radius:7px;background:linear-gradient(135deg,var(--pi2),var(--pi));display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:900;color:#fff}
+.logo em{color:var(--pi2);font-style:normal}
+.topbar-r{display:flex;align-items:center;gap:6px}
+.odot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;transition:all .3s}
+.odot.off{background:var(--red);box-shadow:0 0 6px var(--red)}
+.gcv-pill{font-family:var(--mono);font-size:.55rem;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.22);color:var(--gold);padding:3px 7px;border-radius:18px;display:flex;align-items:center;gap:3px}
+.gcv-d{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.lang-bar{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:2px;gap:1px}
-.lang-btn{padding:3px 7px;border-radius:16px;border:none;cursor:pointer;font-family:var(--font);font-size:.58rem;font-weight:700;background:transparent;color:var(--muted);transition:all .18s}
-.lang-btn.active{background:var(--pi);color:#fff}
-
-/* ══════════════════════
-   LAYOUT
-══════════════════════ */
-.app{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:14px 13px 95px}
-.section{display:none}
-.section.active{display:block}
-
-/* ══════════════════════
-   HERO
-══════════════════════ */
-.hero{padding:16px 0 14px;text-align:center}
-.mod-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(22,201,121,0.1);border:1px solid var(--border2);border-radius:20px;padding:5px 13px;font-size:.7rem;font-weight:700;color:var(--pi-light);margin-bottom:10px}
-.mod-dot{width:5px;height:5px;border-radius:50%;background:var(--pi-light);animation:blink 2s infinite}
-.hero h1{font-size:1.45rem;font-weight:800;line-height:1.2;letter-spacing:-1px}
-.hero h1 em{color:var(--pi-light);font-style:normal}
-.hero p{color:var(--muted);font-size:.8rem;margin-top:6px;line-height:1.65}
-
-/* ══════════════════════
-   CARDS
-══════════════════════ */
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;animation:fadeUp .35s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.card-hd{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:5px}
-.card-hd .dot{width:4px;height:4px;border-radius:50%;background:var(--pi-light)}
-
-/* ══════════════════════
-   USER BANNER
-══════════════════════ */
-.user-banner{background:linear-gradient(135deg,rgba(10,124,78,.12),rgba(245,166,35,.06));border:1px solid rgba(10,124,78,.2);border-radius:13px;padding:11px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-.user-info{display:flex;align-items:center;gap:9px}
-.user-av{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--pi),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:800;color:#fff}
-.user-name{font-size:.85rem;font-weight:700}
-.user-tag{font-size:.62rem;color:var(--green);margin-top:1px}
-.btn-signout{padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:var(--font);font-size:.62rem;cursor:pointer;transition:all .18s}
-.btn-signout:hover{border-color:var(--red);color:var(--red)}
-
-/* ══════════════════════
-   BALANCE
-══════════════════════ */
-.balance-card{background:linear-gradient(135deg,#0A2417,#071510);border:1px solid rgba(10,124,78,.25);border-radius:18px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
-.balance-card::after{content:'π';position:absolute;right:10px;top:-10px;font-size:5.5rem;color:rgba(10,124,78,0.06);pointer-events:none;font-weight:900}
-.bal-label{font-size:.65rem;color:var(--pi-light);font-weight:600;text-transform:uppercase;letter-spacing:1px}
-.bal-pi{font-family:var(--mono);font-size:1.9rem;font-weight:700;margin:6px 0 2px;letter-spacing:-1px}
-.bal-multi{display:flex;gap:12px;margin-top:3px}
-.bal-sub{font-size:.72rem;color:var(--gold)}
-.bal-frw{font-size:.72rem;color:var(--pi-light)}
-.bal-actions{display:flex;gap:8px;margin-top:15px}
-
-/* ══════════════════════
-   QUICK ACTIONS
-══════════════════════ */
-.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.quick-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 6px;border-radius:13px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all .2s;font-size:.64rem;color:var(--muted);font-family:var(--font);font-weight:600}
-.quick-btn:hover,.quick-btn:active{border-color:var(--pi-light);color:var(--text);transform:translateY(-2px);background:var(--card2)}
-.qi{font-size:1.5rem;display:block}
-
-/* ══════════════════════
-   TRANSPORT TABS
-══════════════════════ */
-.mode-tabs{display:flex;background:var(--surface);border-radius:12px;padding:3px;gap:2px;border:1px solid var(--border);margin-bottom:16px}
-.mode-tab{flex:1;padding:10px 4px;border-radius:9px;border:none;cursor:pointer;font-family:var(--font);font-size:.75rem;font-weight:700;background:transparent;color:var(--muted);transition:all .22s;display:flex;align-items:center;justify-content:center;gap:4px}
-.mode-tab.active{background:linear-gradient(135deg,var(--pi-light),var(--pi));color:#fff;box-shadow:0 4px 14px rgba(10,124,78,.35)}
-
-/* ══════════════════════
-   FIELDS
-══════════════════════ */
-.field{margin-bottom:11px}
-.field label{display:block;font-size:.7rem;font-weight:600;color:var(--muted);margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;padding:12px 13px;background:rgba(255,255,255,.03);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font);font-size:.85rem;transition:border-color .18s;outline:none;-webkit-appearance:none}
-.field input:focus,.field select:focus{border-color:var(--pi-light);background:rgba(10,124,78,.05)}
-.field select option{background:var(--card);color:var(--text)}
-.field textarea{resize:none;height:70px;line-height:1.5}
-.field input[type="number"]{font-family:var(--mono)}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-
-/* ══════════════════════
-   PAYMENT METHOD SELECTOR
-══════════════════════ */
-.pay-method-wrap{margin-bottom:12px}
-.pay-method-label{font-size:.7rem;font-weight:600;color:var(--muted);margin-bottom:7px;display:block}
-.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pay-method{padding:12px;border-radius:11px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;text-align:center;background:rgba(255,255,255,.02)}
-.pay-method.active{border-color:var(--pi-light);background:rgba(22,201,121,.08)}
-.pay-method-icon{font-size:1.3rem;display:block;margin-bottom:4px}
-.pay-method-name{font-size:.72rem;font-weight:700;color:var(--text);display:block}
-.pay-method-desc{font-size:.6rem;color:var(--muted);display:block;margin-top:1px}
-
-/* ══════════════════════
-   TRIP TYPE SELECTOR (one-way / round-trip)
-══════════════════════ */
-.trip-type-wrap{margin-bottom:12px}
-.trip-types{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.trip-type{padding:10px 6px;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;text-align:center;background:rgba(255,255,255,.02)}
-.trip-type.active{border-color:var(--gold);background:rgba(245,166,35,.08)}
-.trip-type-icon{font-size:1.1rem;display:block;margin-bottom:3px}
-.trip-type-name{font-size:.66rem;font-weight:700;color:var(--text);display:block}
-
-/* ══════════════════════
-   AMOUNT DISPLAY
-══════════════════════ */
-.amount-box{background:linear-gradient(135deg,rgba(10,124,78,.12),rgba(245,166,35,.05));border:1px solid rgba(10,124,78,.2);border-radius:14px;padding:15px;margin-bottom:12px}
-.amount-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0}
-.amount-row:not(:last-child){border-bottom:1px solid rgba(255,255,255,.04)}
-.amount-label{font-size:.72rem;color:var(--muted);padding-top:2px}
-.amount-vals{text-align:right}
-.a-pi{font-family:var(--mono);font-size:.82rem;font-weight:700}
-.a-pi.main{color:var(--pi-light)}
-.a-pi.fee{color:var(--red)}
-.a-pi.total{color:var(--green);font-size:.92rem}
-.a-usd{font-size:.62rem;color:var(--gold);margin-top:1px}
-.a-frw{font-size:.62rem;color:var(--pi-light);margin-top:1px}
-
-/* ESCROW BOX */
-.escrow-box{background:rgba(33,150,243,0.06);border:1px solid rgba(33,150,243,0.2);border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;gap:9px;align-items:flex-start}
-.escrow-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
-.escrow-text{font-size:.7rem;color:rgba(180,220,255,.8);line-height:1.55}
-.escrow-text strong{color:#90caf9;display:block;margin-bottom:2px;font-size:.72rem}
-
-/* BARGAINING INPUT */
-.bargain-box{background:rgba(245,166,35,0.05);border:1px solid rgba(245,166,35,0.2);border-radius:12px;padding:13px;margin-bottom:12px}
-.bargain-title{font-size:.68rem;font-weight:700;color:var(--gold);margin-bottom:9px;display:flex;align-items:center;gap:5px}
-.bargain-conversion{margin-top:9px;display:flex;gap:8px;flex-wrap:wrap}
-.conv-pill{font-family:var(--mono);font-size:.65rem;background:rgba(255,255,255,.05);border:1px solid var(--border);padding:4px 9px;border-radius:8px;color:var(--text)}
-.conv-pill span{color:var(--gold)}
-
-/* ══════════════════════
-   BUTTONS
-══════════════════════ */
-.btn{width:100%;padding:15px;border-radius:12px;border:none;cursor:pointer;font-family:var(--font);font-size:.9rem;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
-.btn-primary{background:linear-gradient(135deg,var(--pi-light),var(--pi));color:#fff;box-shadow:0 6px 20px rgba(10,124,78,.3)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(10,124,78,.4)}
-.btn-gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#1a0e00;box-shadow:0 6px 18px rgba(245,166,35,.2)}
-.btn-blue{background:linear-gradient(135deg,#42A5F5,#1976D2);color:#fff}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
-.btn-outline:hover{border-color:var(--pi-light);color:var(--text)}
-.btn-sm{padding:9px 14px;font-size:.76rem;border-radius:9px;width:auto}
-.btn-row{display:flex;gap:8px}
-
-/* ══════════════════════
-   NOTICE
-══════════════════════ */
-.notice{background:rgba(10,124,78,.06);border:1px solid rgba(10,124,78,.15);border-radius:10px;padding:10px 12px;font-size:.7rem;color:var(--muted);line-height:1.6;margin-bottom:11px;display:flex;gap:8px;align-items:flex-start}
-.n-icon{flex-shrink:0;font-size:.9rem;margin-top:1px}
-.notice-warn{background:rgba(245,166,35,.05);border-color:rgba(245,166,35,.18)}
-.notice-blue{background:rgba(33,150,243,.05);border-color:rgba(33,150,243,.18);color:rgba(180,220,255,.75)}
-
-/* ══════════════════════
-   TRIPS LIST
-══════════════════════ */
-.tx-item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.tx-item:last-child{border-bottom:none}
-.tx-ico{width:38px;height:38px;border-radius:10px;background:rgba(10,124,78,.12);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.tx-info{flex:1;min-width:0}
-.tx-name{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tx-meta{font-size:.65rem;color:var(--muted);margin-top:2px}
-.tx-badge{font-size:.56rem;background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.2);color:var(--green);padding:2px 6px;border-radius:6px;display:inline-block;margin-left:4px}
-.tx-right{text-align:right;flex-shrink:0}
-.tx-pi{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--red)}
-.tx-usd{font-size:.6rem;color:var(--gold);margin-top:1px}
-.tx-frw{font-size:.6rem;color:var(--pi-light);margin-top:1px}
-
-/* ══════════════════════
-   GCV PANEL
-══════════════════════ */
-.gcv-card{background:rgba(245,166,35,.05);border:1px solid rgba(245,166,35,.18);border-radius:12px;padding:14px;margin-bottom:12px}
-.gcv-hd{font-size:.65rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.gcv-val{font-family:var(--mono);font-size:1.3rem;color:var(--gold);font-weight:700}
-.gcv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
-.gcv-item{background:rgba(255,255,255,.03);border-radius:8px;padding:8px 10px}
-.gcv-item-label{font-size:.6rem;color:var(--muted);margin-bottom:2px}
-.gcv-item-val{font-family:var(--mono);font-size:.78rem;font-weight:600;color:var(--text)}
-
-/* ══════════════════════
-   MODAL
-══════════════════════ */
-.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .28s}
-.modal-overlay.show{opacity:1;pointer-events:all}
-.modal{background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:28px 20px;text-align:center;max-width:310px;width:100%;transform:scale(.88);transition:transform .28s}
-.modal-overlay.show .modal{transform:scale(1)}
-.m-ico{font-size:2.8rem;margin-bottom:12px;display:block}
-.modal h2{font-size:1.15rem;font-weight:800;margin-bottom:6px}
-.modal p{color:var(--muted);font-size:.78rem;line-height:1.6;margin-bottom:14px}
-.m-txid{font-family:var(--mono);font-size:.6rem;color:var(--pi-light);background:rgba(10,124,78,.08);padding:6px 10px;border-radius:8px;margin-bottom:16px;word-break:break-all}
-
-/* ESCROW MODAL */
-.escrow-status{background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:10px;padding:12px;margin-bottom:14px;text-align:left}
-.e-row{display:flex;justify-content:space-between;font-size:.72rem;padding:3px 0}
-.e-row .lbl{color:var(--muted)}
-.e-row .val{font-family:var(--mono);font-weight:700}
-.e-row .val.refund{color:var(--green)}
-
-/* ══════════════════════
-   BOTTOM NAV
-══════════════════════ */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:460px;background:rgba(7,18,14,.97);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;padding:8px 14px 14px;gap:2px;z-index:100}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 3px;border-radius:10px;cursor:pointer;transition:all .18s;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:.56rem;font-weight:700}
-.nav-btn.active{color:var(--pi-light);background:rgba(10,124,78,.1)}
-.nav-ico{font-size:1.15rem}
-
-/* ══════════════════════
-   QR
-══════════════════════ */
-.qr-wrap{background:#fff;border-radius:14px;padding:12px;margin:0 auto 12px;width:fit-content}
-.status-ok{background:rgba(0,200,150,.1);color:var(--green);border:1px solid rgba(0,200,150,.2);font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center;gap:3px}
-
-/* ══════════════════════
-   LANGUAGE PROFILE BUTTONS
-══════════════════════ */
-.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.lang-card{padding:13px;border-radius:11px;border:1.5px solid var(--border);cursor:pointer;text-align:center;background:var(--card);transition:all .2s;font-family:var(--font)}
-.lang-card.active{border-color:var(--pi-light);background:rgba(22,201,121,.07)}
-.lang-card-flag{font-size:1.5rem;display:block;margin-bottom:4px}
-.lang-card-name{font-size:.72rem;font-weight:700;color:var(--text)}
-.lang-card-native{font-size:.62rem;color:var(--muted);margin-top:1px}
-
-/* HELPERS */
-.mt8{margin-top:8px}.mb8{margin-bottom:8px}
-.txt-center{text-align:center}
-.empty-state{text-align:center;color:var(--muted);padding:24px;font-size:.78rem}
+.lw{position:relative}
+.ltog{background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:18px;color:var(--txt);font-family:var(--fn);font-size:.63rem;font-weight:700;padding:5px 9px;cursor:pointer;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.ldrop{position:absolute;right:0;top:calc(100% + 5px);background:var(--card2);border:1px solid var(--bdr2);border-radius:12px;padding:4px;z-index:200;display:none;min-width:140px;box-shadow:0 8px 22px rgba(0,0,0,.55)}
+.ldrop.open{display:block}
+.ldrop button{width:100%;padding:9px 11px;border:none;background:transparent;color:var(--txt);font-family:var(--fn);font-size:.75rem;font-weight:600;text-align:left;cursor:pointer;border-radius:8px;transition:background .14s}
+.ldrop button:hover{background:rgba(22,201,121,.1)}
+.offbar{display:none;position:fixed;top:52px;left:50%;transform:translateX(-50%);width:100%;max-width:460px;background:rgba(255,82,82,.92);color:#fff;font-size:.7rem;font-weight:700;text-align:center;padding:5px 12px;z-index:99}
+.offbar.show{display:block}
+/* LAYOUT */
+.app{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:13px 12px 92px}
+.sec{display:none}.sec.active{display:block}
+/* HERO */
+.hero{padding:14px 0 12px;text-align:center}
+.mbadge{display:inline-flex;align-items:center;gap:5px;background:rgba(22,201,121,.09);border:1px solid var(--bdr2);border-radius:18px;padding:4px 12px;font-size:.67rem;font-weight:700;color:var(--pi2);margin-bottom:9px}
+.mdot{width:5px;height:5px;border-radius:50%;background:var(--pi2);animation:blink 2s infinite}
+.hero h1{font-size:1.35rem;font-weight:800;line-height:1.2;letter-spacing:-1px}
+.hero h1 em{color:var(--pi2);font-style:normal}
+.hero p{color:var(--muted);font-size:.77rem;margin-top:5px;line-height:1.65}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:15px;padding:15px;margin-bottom:11px;animation:up .32s ease both}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.chd{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:5px}
+.chd .dot{width:4px;height:4px;border-radius:50%;background:var(--pi2)}
+/* USER BANNER */
+.ubanner{background:linear-gradient(135deg,rgba(10,124,78,.11),rgba(245,166,35,.05));border:1px solid rgba(10,124,78,.19);border-radius:12px;padding:10px 13px;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}
+.uinfo{display:flex;align-items:center;gap:8px}
+.uav{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--pi),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;color:#fff}
+.uname{font-size:.82rem;font-weight:700}.utag{font-size:.6rem;color:var(--green);margin-top:1px}
+.sout{padding:5px 10px;border-radius:7px;border:1px solid var(--bdr);background:transparent;color:var(--muted);font-family:var(--fn);font-size:.6rem;cursor:pointer;transition:all .17s}
+.sout:hover{border-color:var(--red);color:var(--red)}
+/* BALANCE */
+.balcard{background:linear-gradient(135deg,#0A2417,#071510);border:1px solid rgba(10,124,78,.23);border-radius:17px;padding:18px;margin-bottom:11px;position:relative;overflow:hidden}
+.balcard::after{content:'π';position:absolute;right:8px;top:-8px;font-size:5rem;color:rgba(10,124,78,.05);pointer-events:none;font-weight:900}
+.ballbl{font-size:.62rem;color:var(--pi2);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.balpi{font-family:var(--mono);font-size:1.75rem;font-weight:700;margin:5px 0 2px;letter-spacing:-1px}
+.balrow{display:flex;gap:10px;flex-wrap:wrap}
+.balusd{font-size:.7rem;color:var(--gold)}.balfrw{font-size:.7rem;color:var(--pi2)}
+.balrate{font-size:.57rem;color:var(--muted);margin-top:2px}
+.balacts{display:flex;gap:7px;margin-top:13px}
+/* QUICK */
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:13px}
+.qbtn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:13px 5px;border-radius:12px;background:var(--card);border:1px solid var(--bdr);cursor:pointer;transition:all .18s;font-size:.61rem;color:var(--muted);font-family:var(--fn);font-weight:600}
+.qbtn:hover,.qbtn:active{border-color:var(--pi2);color:var(--txt);transform:translateY(-2px);background:var(--card2)}
+.qi{font-size:1.4rem}
+/* TABS */
+.mtabs{display:flex;background:var(--surf);border-radius:11px;padding:3px;gap:2px;border:1px solid var(--bdr);margin-bottom:14px}
+.mtab{flex:1;padding:9px 3px;border-radius:8px;border:none;cursor:pointer;font-family:var(--fn);font-size:.7rem;font-weight:700;background:transparent;color:var(--muted);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:3px}
+.mtab.active{background:linear-gradient(135deg,var(--pi2),var(--pi));color:#fff;box-shadow:0 3px 12px rgba(10,124,78,.32)}
+/* FIELDS */
+.f{margin-bottom:10px}
+.f label{display:block;font-size:.67rem;font-weight:600;color:var(--muted);margin-bottom:4px}
+.f input,.f select{width:100%;padding:11px 12px;background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-family:var(--fn);font-size:.83rem;transition:border-color .17s;outline:none;-webkit-appearance:none}
+.f input:focus,.f select:focus{border-color:var(--pi2);background:rgba(10,124,78,.05)}
+.f select option{background:var(--card);color:var(--txt)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* PAY METHOD */
+.pmwrap{margin-bottom:10px}
+.pmlbl{font-size:.67rem;font-weight:600;color:var(--muted);margin-bottom:6px;display:block}
+.pmgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pm{padding:11px;border-radius:10px;border:1.5px solid var(--bdr);cursor:pointer;transition:all .18s;text-align:center;background:rgba(255,255,255,.02)}
+.pm.active{border-color:var(--pi2);background:rgba(22,201,121,.07)}
+.pmico{font-size:1.2rem;display:block;margin-bottom:3px}
+.pmname{font-size:.7rem;font-weight:700;color:var(--txt);display:block}
+.pmdesc{font-size:.58rem;color:var(--muted);display:block;margin-top:1px}
+/* TRIP TYPE */
+.ttgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.tt{padding:10px;border-radius:10px;border:1.5px solid var(--bdr);cursor:pointer;transition:all .18s;text-align:center;background:rgba(255,255,255,.02)}
+.tt.active{border-color:var(--gold);background:rgba(245,166,35,.07)}
+.ttico{font-size:1rem;display:block;margin-bottom:2px}
+.ttname{font-size:.65rem;font-weight:700;color:var(--txt)}
+/* GPS */
+.gpsbox{background:rgba(33,150,243,.05);border:1px solid rgba(33,150,243,.18);border-radius:11px;padding:12px;margin-bottom:10px}
+.gpstitle{font-size:.65rem;font-weight:700;color:#64B5F6;margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.btngps{background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.3);color:#64B5F6;width:100%;padding:11px;border-radius:10px;cursor:pointer;font-family:var(--fn);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .18s}
+.btngps:hover{background:rgba(33,150,243,.18)}
+.gpsres{background:rgba(0,200,150,.06);border:1px solid rgba(0,200,150,.18);border-radius:8px;padding:9px 11px;margin-top:8px;display:none}
+.gpskm{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--green)}
+.gpssub{font-size:.62rem;color:var(--muted);margin-top:1px}
+.gpsbuf{font-size:.61rem;color:var(--orange);margin-top:2px}
+/* BARGAIN */
+.bgbox{background:rgba(245,166,35,.04);border:1px solid rgba(245,166,35,.18);border-radius:11px;padding:12px;margin-bottom:10px}
+.bgttl{font-size:.65rem;font-weight:700;color:var(--gold);margin-bottom:8px}
+.cvrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.cvpill{font-family:var(--mono);font-size:.62rem;background:rgba(255,255,255,.04);border:1px solid var(--bdr);padding:3px 8px;border-radius:7px;color:var(--txt)}
+.cvpill em{color:var(--gold);font-style:normal}
+/* AMOUNT */
+.amtbox{background:linear-gradient(135deg,rgba(10,124,78,.11),rgba(245,166,35,.04));border:1px solid rgba(10,124,78,.19);border-radius:13px;padding:13px;margin-bottom:11px}
+.amtrow{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0}
+.amtrow:not(:last-child){border-bottom:1px solid rgba(255,255,255,.04)}
+.amtlbl{font-size:.69rem;color:var(--muted);padding-top:1px}
+.amtvals{text-align:right}
+.api{font-family:var(--mono);font-size:.79rem;font-weight:700}
+.api.main{color:var(--pi2)}.api.fee{color:var(--red)}.api.tot{color:var(--green);font-size:.9rem}
+.ausd{font-size:.59rem;color:var(--gold);margin-top:1px}
+.afrw{font-size:.59rem;color:var(--pi2);margin-top:1px}
+/* SPLIT */
+.splitbox{background:rgba(33,150,243,.04);border:1px solid rgba(33,150,243,.15);border-radius:11px;padding:11px;margin-bottom:10px}
+.splitttl{font-size:.62rem;font-weight:700;color:#64B5F6;margin-bottom:7px}
+.splitrow{display:flex;justify-content:space-between;font-size:.67rem;padding:2px 0}
+.slbl{color:var(--muted)}.sval{font-family:var(--mono);font-weight:600}
+.sval.drv{color:var(--green)}.sval.appc{color:var(--blue)}.sval.promo{color:var(--gold)}
+/* ESCROW */
+.escbox{background:rgba(33,150,243,.04);border:1px solid rgba(33,150,243,.15);border-radius:11px;padding:11px 13px;margin-bottom:10px;display:flex;gap:8px;align-items:flex-start}
+.escico{font-size:1rem;flex-shrink:0;margin-top:1px}
+.esctxt{font-size:.67rem;color:rgba(180,220,255,.78);line-height:1.55}
+.esctxt strong{color:#90caf9;display:block;margin-bottom:1px;font-size:.69rem}
+/* NOTICE */
+.notice{background:rgba(10,124,78,.05);border:1px solid rgba(10,124,78,.13);border-radius:9px;padding:9px 11px;font-size:.67rem;color:var(--muted);line-height:1.6;margin-bottom:10px;display:flex;gap:7px;align-items:flex-start}
+.nico{flex-shrink:0;font-size:.87rem;margin-top:1px}
+.notice.warn{background:rgba(245,166,35,.04);border-color:rgba(245,166,35,.16)}
+.notice.info{background:rgba(33,150,243,.04);border-color:rgba(33,150,243,.15);color:rgba(180,220,255,.75)}
+.notice.offw{background:rgba(255,82,82,.05);border-color:rgba(255,82,82,.18);color:rgba(255,180,180,.8)}
+/* BUTTONS */
+.btn{width:100%;padding:14px;border-radius:11px;border:none;cursor:pointer;font-family:var(--fn);font-size:.87rem;font-weight:700;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btnpi{background:linear-gradient(135deg,var(--pi2),var(--pi));color:#fff;box-shadow:0 5px 18px rgba(10,124,78,.28)}
+.btnpi:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(10,124,78,.38)}
+.btngold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a0e00}
+.btnblue{background:linear-gradient(135deg,#42A5F5,#1976D2);color:#fff}
+.btnout{background:transparent;border:1.5px solid var(--bdr);color:var(--muted)}
+.btnout:hover{border-color:var(--pi2);color:var(--txt)}
+.btnsm{padding:8px 13px;font-size:.73rem;border-radius:8px;width:auto}
+/* TRIPS */
+.txitem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.txitem:last-child{border-bottom:none}
+.txic{width:36px;height:36px;border-radius:9px;background:rgba(10,124,78,.11);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.txinfo{flex:1;min-width:0}
+.txname{font-size:.79rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txmeta{font-size:.62rem;color:var(--muted);margin-top:1px}
+.txbadge{font-size:.53rem;background:rgba(0,200,150,.09);border:1px solid rgba(0,200,150,.18);color:var(--green);padding:1px 5px;border-radius:5px;display:inline-block;margin-left:3px}
+.txr{text-align:right;flex-shrink:0}
+.txpi{font-family:var(--mono);font-size:.74rem;font-weight:700;color:var(--red)}
+.txusd{font-size:.57rem;color:var(--gold);margin-top:1px}.txfrw{font-size:.57rem;color:var(--pi2)}
+/* GCV */
+.gcvpanel{background:rgba(245,166,35,.05);border:1px solid rgba(245,166,35,.17);border-radius:12px;padding:13px;margin-bottom:11px}
+.gcvhd{font-size:.61rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.gcvval{font-family:var(--mono);font-size:1.22rem;color:var(--gold);font-weight:700}
+.gcvgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.gcvitem{background:rgba(255,255,255,.03);border-radius:7px;padding:7px 9px}
+.gcvil{font-size:.57rem;color:var(--muted);margin-bottom:1px}.gcviv{font-family:var(--mono);font-size:.73rem;font-weight:600}
+.rlive{color:var(--green);font-size:.59rem}.rcache{color:var(--orange);font-size:.59rem}
+/* LANG GRID */
+.lggrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.lc{padding:12px;border-radius:10px;border:1.5px solid var(--bdr);cursor:pointer;text-align:center;background:var(--card);transition:all .18s}
+.lc.active{border-color:var(--pi2);background:rgba(22,201,121,.07)}
+.lcflag{font-size:1.4rem;display:block;margin-bottom:3px}.lcname{font-size:.7rem;font-weight:700}.lcnat{font-size:.59rem;color:var(--muted);margin-top:1px}
+/* MODAL */
+.mov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.76);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:15px;opacity:0;pointer-events:none;transition:opacity .27s}
+.mov.show{opacity:1;pointer-events:all}
+.modal{background:var(--card2);border:1px solid var(--bdr2);border-radius:19px;padding:25px 18px;text-align:center;max-width:290px;width:100%;transform:scale(.88);transition:transform .27s}
+.mov.show .modal{transform:scale(1)}
+.mico{font-size:2.6rem;margin-bottom:10px;display:block}
+.modal h2{font-size:1.08rem;font-weight:800;margin-bottom:5px}
+.modal p{color:var(--muted);font-size:.75rem;line-height:1.6;margin-bottom:11px}
+.mesc{background:rgba(33,150,243,.07);border:1px solid rgba(33,150,243,.18);border-radius:9px;padding:10px;margin-bottom:11px;text-align:left}
+.erow{display:flex;justify-content:space-between;font-size:.69rem;padding:2px 0}
+.elbl{color:var(--muted)}.eval{font-family:var(--mono);font-weight:700}.eval.ref{color:var(--green)}
+.mtxid{font-family:var(--mono);font-size:.57rem;color:var(--pi2);background:rgba(10,124,78,.07);padding:5px 9px;border-radius:7px;margin-bottom:12px;word-break:break-all}
+/* NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:460px;background:rgba(7,18,14,.97);backdrop-filter:blur(16px);border-top:1px solid var(--bdr);display:flex;padding:7px 12px 13px;gap:2px;z-index:100}
+.nbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;border-radius:9px;cursor:pointer;transition:all .16s;border:none;background:none;color:var(--muted);font-family:var(--fn);font-size:.53rem;font-weight:700}
+.nbtn.active{color:var(--pi2);background:rgba(10,124,78,.09)}
+.nico2{font-size:1.1rem}
+.empty{text-align:center;color:var(--muted);padding:22px;font-size:.75rem}
+.qrwrap{background:#fff;border-radius:13px;padding:11px;margin:0 auto 11px;width:fit-content}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════
-     AUTH SCREEN
-══════════════════════════════ -->
-<div class="auth-screen" id="authScreen">
+<div class="offbar" id="offbar">📴 Mode hors ligne — données en cache</div>
+
+<!-- AUTH -->
+<div class="auth" id="authScreen">
   <div class="auth-logo">Hub</div>
-  <h1 class="auth-title">PiHub <em>RW</em></h1>
-  <p class="auth-sub">Transport au Rwanda — payé en Pi.<br/>Urban · Intercity · Transfrontalier</p>
-  <div class="auth-disclaimer">
-    ⚠️ Application indépendante par un développeur Pi community. PAS affiliée à la Pi Network Core Team. "Pi" désigne la cryptomonnaie Pi uniquement.
-  </div>
-  <button class="auth-btn" id="signInBtn" onclick="handleLogin()">
-    🔐 Sign In with Pi Network
-  </button>
-  <button class="auth-btn-ghost" onclick="continueAsGuest()">
-    👁️ Continuer en mode visiteur
-  </button>
-  <div class="auth-status" id="authStatus"></div>
+  <h1>PiHub <em>RW</em></h1>
+  <p class="auth-sub" data-i18n="auth_sub">Transport au Rwanda — payé en Pi.</p>
+  <div class="auth-disc" data-i18n="auth_disc">⚠️ Application indépendante. PAS affiliée à Pi Network Core Team.</div>
+  <button class="auth-btn" id="signInBtn" onclick="handleLogin()">🔐 Sign In with Pi Network</button>
+  <button class="auth-ghost" onclick="guestMode()" data-i18n="browse_guest">👁️ Mode visiteur</button>
+  <div class="auth-st" id="authSt"></div>
 </div>
 
-<!-- ══════════════════════════════
-     TOPBAR
-══════════════════════════════ -->
+<!-- TOPBAR -->
 <div class="topbar">
-  <div class="logo">
-    <div class="logo-mark">Hub</div>
-    PiHub <em>RW</em>
-  </div>
-  <div class="topbar-right">
-    <div class="gcv-pill">
-      <div class="gcv-dot"></div>
-      $<span id="gcvDisplay">314,159</span>
-    </div>
-    <div class="lang-bar">
-      <button class="lang-btn active" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" onclick="setLang('fr')">FR</button>
-      <button class="lang-btn" onclick="setLang('kin')">KIN</button>
-      <button class="lang-btn" onclick="setLang('sw')">SW</button>
+  <div class="logo"><div class="logo-mk">Hub</div>PiHub <em>RW</em></div>
+  <div class="topbar-r">
+    <div class="odot" id="odot"></div>
+    <div class="gcv-pill"><div class="gcv-d"></div>$<span id="gcvDisp">314,159</span></div>
+    <div class="lw">
+      <button class="ltog" id="ltog" onclick="toggleLD()">🌐 <span id="lcur">FR</span> ▾</button>
+      <div class="ldrop" id="ldrop">
+        <button onclick="applyLang('fr')">🇫🇷 Français</button>
+        <button onclick="applyLang('en')">🇬🇧 English</button>
+        <button onclick="applyLang('kin')">🇷🇼 Kinyarwanda</button>
+        <button onclick="applyLang('sw')">🇰🇪 Kiswahili</button>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="app">
 
-<!-- ══════════════════════════════
-     HOME
-══════════════════════════════ -->
-<div class="section active" id="sec-home">
+<!-- HOME -->
+<div class="sec active" id="sec-home">
   <div class="hero">
-    <div class="mod-badge"><div class="mod-dot"></div><span data-i18n="mod_badge">Module 1 : Transport</span></div>
-    <h1 data-i18n="hero_title">Rwanda<br/><em>Pi Transport</em></h1>
-    <p data-i18n="hero_sub">Transport urbain, intercity et transfrontalier — payé en Pi.</p>
+    <div class="mbadge"><div class="mdot"></div><span data-i18n="mod_badge">Module 1 : Transport</span></div>
+    <h1 data-i18n="hero_h">Rwanda<br/><em>Pi Transport</em></h1>
+    <p data-i18n="hero_p">Transport urbain, intercity & transfrontalier — payé en Pi.</p>
   </div>
-
-  <div class="user-banner" id="userBanner" style="display:none">
-    <div class="user-info">
-      <div class="user-av" id="userAv">?</div>
-      <div>
-        <div class="user-name" id="userName">Pioneer</div>
-        <div class="user-tag">✅ Pi Pioneer vérifié</div>
-      </div>
+  <div class="ubanner" id="ubanner" style="display:none">
+    <div class="uinfo">
+      <div class="uav" id="uav">?</div>
+      <div><div class="uname" id="uname">Pioneer</div><div class="utag">✅ Pi Pioneer vérifié</div></div>
     </div>
-    <button class="btn-signout" onclick="signOut()" data-i18n="sign_out">Déconnexion</button>
+    <button class="sout" onclick="signOut()" data-i18n="sign_out">Déconnexion</button>
   </div>
-
-  <div class="balance-card">
-    <div class="bal-label" data-i18n="my_balance">Mon Solde Pi</div>
-    <div class="bal-pi" id="homeBalance">0.000000 π</div>
-    <div class="bal-multi">
-      <div class="bal-sub" id="homeBalUsd">≈ $0.00</div>
-      <div class="bal-frw" id="homeBalFrw">≈ 0 FRw</div>
-    </div>
-    <div class="bal-actions">
-      <button class="btn btn-primary btn-sm" onclick="showSection('sec-transport')">🚕 <span data-i18n="book">Réserver</span></button>
-      <button class="btn btn-gold btn-sm" onclick="showSection('sec-trips')">📋 <span data-i18n="my_trips">Voyages</span></button>
-      <button class="btn btn-outline btn-sm" onclick="showSection('sec-profile')">⚙️</button>
+  <div class="balcard">
+    <div class="ballbl" data-i18n="my_bal">Mon Solde Pi</div>
+    <div class="balpi">0.000000 π</div>
+    <div class="balrow"><div class="balusd" id="balusd">≈ $0.00</div><div class="balfrw" id="balfrw">≈ 0 FRw</div></div>
+    <div class="balrate" id="balrate"></div>
+    <div class="balacts">
+      <button class="btn btnpi btnsm" onclick="goT('urban')">🚕 <span data-i18n="book">Réserver</span></button>
+      <button class="btn btngold btnsm" onclick="showSec('sec-trips')">📋 <span data-i18n="my_trips">Voyages</span></button>
+      <button class="btn btnout btnsm" onclick="showSec('sec-profile')">⚙️</button>
     </div>
   </div>
-
-  <div class="quick-grid">
-    <button class="quick-btn" onclick="goTransport('urban')"><span class="qi">🏍️</span><span data-i18n="urban">Urbain</span></button>
-    <button class="quick-btn" onclick="goTransport('intercity')"><span class="qi">🚌</span><span data-i18n="intercity">Intercity</span></button>
-    <button class="quick-btn" onclick="goTransport('border')"><span class="qi">🌍</span><span data-i18n="border">Frontière</span></button>
+  <div class="quick">
+    <button class="qbtn" onclick="goT('urban')"><span class="qi">🏍️</span><span data-i18n="urban">Urbain</span></button>
+    <button class="qbtn" onclick="goT('intercity')"><span class="qi">🚌</span><span data-i18n="intercity">Intercity</span></button>
+    <button class="qbtn" onclick="goT('border')"><span class="qi">🌍</span><span data-i18n="border">Frontière</span></button>
   </div>
-
   <div class="card">
-    <div class="card-hd"><div class="dot"></div><span data-i18n="recent">Voyages récents</span></div>
-    <div id="txListHome"><div class="empty-state">Aucun voyage pour l'instant</div></div>
+    <div class="chd"><div class="dot"></div><span data-i18n="recent">Voyages récents</span></div>
+    <div id="txhome"><div class="empty" data-i18n="no_trips">Aucun voyage</div></div>
   </div>
-
-  <div class="notice notice-warn">
-    <span class="n-icon">⚠️</span>
-    <span data-i18n="disclaimer">PiHub RW est indépendant — PAS affilié à la Pi Core Team. 100% Pi uniquement.</span>
-  </div>
+  <div class="notice warn"><span class="nico">⚠️</span><span data-i18n="disclaimer">PiHub RW est indépendant — PAS affilié à Pi Core Team.</span></div>
 </div>
 
-<!-- ══════════════════════════════
-     TRANSPORT
-══════════════════════════════ -->
-<div class="section" id="sec-transport">
-
-  <div class="mode-tabs">
-    <button class="mode-tab active" id="tab-urban" onclick="setMode('urban')">🏍️ <span data-i18n="urban">Urbain</span></button>
-    <button class="mode-tab" id="tab-intercity" onclick="setMode('intercity')">🚌 <span data-i18n="intercity">Intercity</span></button>
-    <button class="mode-tab" id="tab-border" onclick="setMode('border')">🌍 <span data-i18n="border">Frontière</span></button>
+<!-- TRANSPORT -->
+<div class="sec" id="sec-transport">
+  <div class="mtabs">
+    <button class="mtab active" id="tab-urban" onclick="setMode('urban')">🏍️ <span data-i18n="urban">Urbain</span></button>
+    <button class="mtab" id="tab-intercity" onclick="setMode('intercity')">🚌 <span data-i18n="intercity">Intercity</span></button>
+    <button class="mtab" id="tab-border" onclick="setMode('border')">🌍 <span data-i18n="border">Frontière</span></button>
   </div>
 
-  <!-- ──── URBAN ──── -->
+  <!-- URBAN -->
   <div id="mode-urban">
     <div class="card">
-      <div class="card-hd"><div class="dot"></div><span data-i18n="urban_title">Transport Urbain — Kigali & villes</span></div>
-      <div class="notice"><span class="n-icon">⚡</span><span data-i18n="urban_note">Paiement direct au chauffeur via système escrow Pi sécurisé.</span></div>
-
-      <!-- Véhicule -->
-      <div class="field">
-        <label data-i18n="vehicle_type">Type de véhicule</label>
-        <select id="urbanType" onchange="onUrbanTypeChange()">
-          <option value="">Choisir...</option>
-          <option value="moto">🏍️ Taxi-Moto (Bodaboda)</option>
-          <option value="taxi">🚕 Taxi-Voiture</option>
-          <option value="bus">🚌 Taxi-Bus</option>
-        </select>
-      </div>
-
-      <!-- Méthode de paiement (moto & taxi only) -->
-      <div id="payMethodWrap" style="display:none">
-        <div class="pay-method-wrap">
-          <span class="pay-method-label" data-i18n="pay_method">Méthode de tarification</span>
-          <div class="pay-methods">
-            <div class="pay-method active" id="pm-km" onclick="setPayMethod('km')">
-              <span class="pay-method-icon">📏</span>
-              <span class="pay-method-name" data-i18n="by_km">Par kilomètre</span>
-              <span class="pay-method-desc" data-i18n="km_desc">Tarif fixe / km</span>
-            </div>
-            <div class="pay-method" id="pm-bargain" onclick="setPayMethod('bargain')">
-              <span class="pay-method-icon">🤝</span>
-              <span class="pay-method-name" data-i18n="bargaining">Négociation</span>
-              <span class="pay-method-desc" data-i18n="bargain_desc">Prix librement négocié</span>
-            </div>
+      <div class="chd"><div class="dot"></div><span data-i18n="urban_title">Transport Urbain</span></div>
+      <div class="notice"><span class="nico">🔒</span><span data-i18n="urban_note">Paiement sécurisé via escrow Pi — excédent remboursé automatiquement.</span></div>
+      <div class="f"><label data-i18n="vehicle">Véhicule</label><select id="uType" onchange="onUType()"></select></div>
+      <div id="upmwrap" style="display:none">
+        <div class="pmwrap">
+          <span class="pmlbl" data-i18n="pay_method">Méthode de tarification</span>
+          <div class="pmgrid">
+            <div class="pm active" id="pm-km" onclick="setUPM('km')"><span class="pmico">📏</span><span class="pmname" data-i18n="by_km">Par km</span><span class="pmdesc" data-i18n="km_desc">GPS auto</span></div>
+            <div class="pm" id="pm-bg" onclick="setUPM('bargain')"><span class="pmico">🤝</span><span class="pmname" data-i18n="bargaining">Négociation</span><span class="pmdesc" data-i18n="bg_desc">Prix négocié</span></div>
           </div>
         </div>
       </div>
-
-      <!-- Départ / Arrivée -->
-      <div class="field-row">
-        <div class="field">
-          <label data-i18n="from">Départ (zone)</label>
-          <input type="text" id="urbanFrom" placeholder="ex: Kimironko"/>
-        </div>
-        <div class="field">
-          <label data-i18n="to">Arrivée (zone)</label>
-          <input type="text" id="urbanTo" placeholder="ex: CBD"/>
-        </div>
+      <div class="frow">
+        <div class="f"><label data-i18n="from">Départ</label><input type="text" id="uFrom" placeholder="ex: Kimironko" oninput="clearGPS()"/></div>
+        <div class="f"><label data-i18n="to">Arrivée</label><input type="text" id="uTo" placeholder="ex: CBD" oninput="clearGPS()"/></div>
       </div>
-
-      <!-- Mode KM -->
-      <div id="urbanKmBlock">
-        <div class="field">
-          <label data-i18n="dist_km">Distance estimée (km)</label>
-          <input type="number" id="urbanKm" placeholder="ex: 5" min="0.5" step="0.5" oninput="calcUrban()"/>
-        </div>
-      </div>
-
-      <!-- Mode BARGAINING -->
-      <div id="urbanBargainBlock" style="display:none">
-        <div class="bargain-box">
-          <div class="bargain-title">🤝 <span data-i18n="enter_price">Entrez le prix négocié</span></div>
-          <div class="field mb8">
-            <label data-i18n="price_frw">Prix en Francs Rwandais (FRw)</label>
-            <input type="number" id="bargainFrw" placeholder="ex: 1500" min="100" oninput="calcBargain()"/>
+      <!-- GPS -->
+      <div id="ugpsblock">
+        <div class="gpsbox">
+          <div class="gpstitle">📍 <span data-i18n="gps_title">Distance automatique</span></div>
+          <button class="btngps" id="gpsbtn" onclick="calcGPS()"><span>🛰️</span><span data-i18n="calc_dist">Calculer via GPS/OpenStreetMap</span></button>
+          <div class="notice offw" id="offgpswarn" style="display:none"><span class="nico">📴</span><span data-i18n="offline_gps">Hors ligne — entrez la distance manuellement.</span></div>
+          <div class="gpsres" id="gpsres">
+            <div class="gpskm" id="gpskm">— km</div>
+            <div class="gpssub" id="gpsdur">—</div>
+            <div class="gpsbuf" id="gpsbuf">+15% tampon de sécurité</div>
           </div>
-          <div class="bargain-conversion" id="bargainConv" style="display:none">
-            <div class="conv-pill">Pi: <span id="bcPi">—</span></div>
-            <div class="conv-pill">$: <span id="bcUsd">—</span></div>
-            <div class="conv-pill">FRw: <span id="bcFrw">—</span></div>
+          <div id="uoffline" style="display:none;margin-top:8px">
+            <div class="f" style="margin-bottom:0"><label data-i18n="manual_km">Distance manuelle (km)</label><input type="number" id="ukmman" placeholder="ex: 5" min="0.5" step="0.5" oninput="calcUrban()"/></div>
           </div>
         </div>
       </div>
-
-      <!-- Calcul -->
-      <div class="amount-box" id="urbanCalc" style="display:none">
-        <div class="amount-row">
-          <span class="amount-label" data-i18n="fare">Tarif trajet</span>
-          <div class="amount-vals">
-            <div class="a-pi main" id="uFarePi">0 π</div>
-            <div class="a-usd" id="uFareUsd">$0</div>
-            <div class="a-frw" id="uFareFrw">0 FRw</div>
-          </div>
-        </div>
-        <div class="amount-row">
-          <span class="amount-label">PiHub RW (8%)</span>
-          <div class="amount-vals">
-            <div class="a-pi fee" id="uFeePi">0 π</div>
-            <div class="a-usd" id="uFeeUsd">$0</div>
-            <div class="a-frw" id="uFeeFrw">0 FRw</div>
-          </div>
-        </div>
-        <div class="amount-row">
-          <span class="amount-label" data-i18n="total"><strong>Total</strong></span>
-          <div class="amount-vals">
-            <div class="a-pi total" id="uTotalPi">0 π</div>
-            <div class="a-usd" id="uTotalUsd">$0</div>
-            <div class="a-frw" id="uTotalFrw">0 FRw</div>
+      <!-- BARGAIN -->
+      <div id="ubgblock" style="display:none">
+        <div class="bgbox">
+          <div class="bgttl">🤝 <span data-i18n="neg_price">Prix négocié avec le chauffeur</span></div>
+          <div class="f" style="margin-bottom:4px"><label data-i18n="price_frw">Prix en FRw</label><input type="number" id="ubgfrw" placeholder="ex: 1500" min="100" oninput="calcUrban()"/></div>
+          <div class="cvrow" id="ubgconv" style="display:none">
+            <div class="cvpill">π: <em id="bpi2">—</em></div>
+            <div class="cvpill">$: <em id="busd2">—</em></div>
+            <div class="cvpill">FRw: <em id="bfrw2">—</em></div>
           </div>
         </div>
       </div>
-
-      <div class="escrow-box">
-        <span class="escrow-icon">🔒</span>
-        <div class="escrow-text">
-          <strong data-i18n="escrow_title">Système Escrow PiHub RW</strong>
-          <span data-i18n="escrow_desc">Le paiement est temporairement bloqué dans PiHub RW. Après le trajet, le montant exact est calculé et l'excédent vous est remboursé automatiquement.</span>
-        </div>
+      <!-- AMOUNT -->
+      <div class="amtbox" id="uamt" style="display:none">
+        <div class="amtrow"><span class="amtlbl" data-i18n="fare">Tarif trajet</span><div class="amtvals"><div class="api main" id="ufpi">—</div><div class="ausd" id="ufusd">—</div><div class="afrw" id="uffrw">—</div></div></div>
+        <div class="amtrow"><span class="amtlbl" data-i18n="svc_fee">Frais PiHub RW (8%)</span><div class="amtvals"><div class="api fee" id="ufepi">—</div><div class="ausd" id="ufeusd">—</div><div class="afrw" id="ufefrw">—</div></div></div>
+        <div class="amtrow"><strong class="amtlbl" data-i18n="total">Total</strong><div class="amtvals"><div class="api tot" id="utotpi">—</div><div class="ausd" id="utotusd">—</div><div class="afrw" id="utotfrw">—</div></div></div>
       </div>
-
-      <button class="btn btn-primary" onclick="doUrbanPay()" data-i18n="pay_btn">🔒 Payer en Pi (Escrow)</button>
+      <!-- SPLIT -->
+      <div class="splitbox" id="usplit" style="display:none">
+        <div class="splitttl">💰 <span data-i18n="split_title">Répartition des fonds</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="driver_share">🏍️ Chauffeur (85%)</span><span class="sval drv" id="udrv">—</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="app_share">📱 PiHub RW (5%)</span><span class="sval appc" id="uapp">—</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="promo_share">🎯 Promoteur (3%)</span><span class="sval promo" id="upromo">—</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="tarif_ref">Tarif RULA</span><span class="sval" id="urula" style="color:var(--muted)">—</span></div>
+      </div>
+      <div class="escbox"><span class="escico">🔒</span><div class="esctxt"><strong data-i18n="escrow_t">Système Escrow Pi</strong><span data-i18n="escrow_d">Paiement bloqué. Excédent remboursé après confirmation.</span></div></div>
+      <button class="btn btnpi" onclick="doUrbanPay()" data-i18n="pay_btn">🔒 Payer en Pi (Escrow)</button>
     </div>
   </div>
 
-  <!-- ──── INTERCITY ──── -->
+  <!-- INTERCITY -->
   <div id="mode-intercity" style="display:none">
     <div class="card">
-      <div class="card-hd"><div class="dot"></div><span data-i18n="intercity_title">Réservation Intercity</span></div>
-
-      <div class="field-row">
-        <div class="field">
-          <label data-i18n="dep_city">Ville départ</label>
-          <select id="interFrom" onchange="calcInter()">
-            <option value="">Choisir...</option>
-            <option>Kigali</option><option>Butare / Huye</option><option>Musanze</option>
-            <option>Gisenyi / Rubavu</option><option>Cyangugu / Rusizi</option>
-            <option>Rwamagana</option><option>Nyamata</option>
-            <option>Kibungo / Ngoma</option><option>Byumba / Gicumbi</option>
-            <option>Kibuye / Karongi</option>
-          </select>
-        </div>
-        <div class="field">
-          <label data-i18n="dest_city">Ville arrivée</label>
-          <select id="interTo" onchange="calcInter()">
-            <option value="">Choisir...</option>
-            <option>Kigali</option><option>Butare / Huye</option><option>Musanze</option>
-            <option>Gisenyi / Rubavu</option><option>Cyangugu / Rusizi</option>
-            <option>Rwamagana</option><option>Nyamata</option>
-            <option>Kibungo / Ngoma</option><option>Byumba / Gicumbi</option>
-            <option>Kibuye / Karongi</option>
-          </select>
-        </div>
+      <div class="chd"><div class="dot"></div><span data-i18n="intercity_title">Réservation Intercity</span></div>
+      <div class="frow">
+        <div class="f"><label data-i18n="dep_city">Ville départ</label><select id="iFrom" onchange="calcInter()"></select></div>
+        <div class="f"><label data-i18n="dest_city">Ville arrivée</label><select id="iTo" onchange="calcInter()"></select></div>
       </div>
-
-      <div class="field">
-        <label data-i18n="transport_type">Type de transport</label>
-        <select id="interType" onchange="calcInter()">
-          <option value="bus">🚌 Bus</option>
-          <option value="taxi">🚕 Taxi partagé (Twegerane)</option>
-          <option value="private">🚗 Voiture privée</option>
-        </select>
+      <div class="f"><label data-i18n="transport_type">Type de transport</label><select id="iType" onchange="calcInter()"></select></div>
+      <div class="frow">
+        <div class="f"><label data-i18n="travel_date">Date & heure</label><input type="datetime-local" id="iDate"/></div>
+        <div class="f"><label data-i18n="passengers">Passagers</label><input type="number" id="iPax" value="1" min="1" max="50" oninput="calcInter()"/></div>
       </div>
-
-      <div class="field-row">
-        <div class="field">
-          <label data-i18n="travel_date">Date & heure</label>
-          <input type="datetime-local" id="interDate"/>
-        </div>
-        <div class="field">
-          <label data-i18n="passengers">Passagers</label>
-          <input type="number" id="interPax" value="1" min="1" max="50" oninput="calcInter()"/>
-        </div>
+      <div class="amtbox" id="iamt" style="display:none">
+        <div class="amtrow"><div><span class="amtlbl" data-i18n="seat_price">Prix / siège</span><div style="font-size:.57rem;color:var(--muted)" id="idistlbl"></div></div><div class="amtvals"><div class="api main" id="ispi">—</div><div class="ausd" id="isusd">—</div><div class="afrw" id="isfrw">—</div></div></div>
+        <div class="amtrow"><span class="amtlbl" data-i18n="svc_fee">Frais PiHub RW (10%)</span><div class="amtvals"><div class="api fee" id="ifepi">—</div><div class="ausd" id="ifeusd">—</div><div class="afrw" id="ifefrw">—</div></div></div>
+        <div class="amtrow"><strong class="amtlbl" data-i18n="total">Total</strong><div class="amtvals"><div class="api tot" id="itotpi">—</div><div class="ausd" id="ototusd">—</div><div class="afrw" id="ototfrw">—</div></div></div>
       </div>
-
-      <div class="amount-box" id="interCalc" style="display:none">
-        <div class="amount-row">
-          <div>
-            <span class="amount-label" data-i18n="price_seat">Prix / siège</span>
-            <div style="font-size:.6rem;color:var(--faint)" id="interDistLabel"></div>
-          </div>
-          <div class="amount-vals">
-            <div class="a-pi main" id="iSeatPi">0 π</div>
-            <div class="a-usd" id="iSeatUsd">$0</div>
-            <div class="a-frw" id="iSeatFrw">0 FRw</div>
-          </div>
-        </div>
-        <div class="amount-row">
-          <span class="amount-label">PiHub RW (10%)</span>
-          <div class="amount-vals">
-            <div class="a-pi fee" id="iFeePi">0 π</div>
-            <div class="a-usd" id="iFeeUsd">$0</div>
-            <div class="a-frw" id="iFeeFrw">0 FRw</div>
-          </div>
-        </div>
-        <div class="amount-row">
-          <span class="amount-label" data-i18n="total"><strong>Total</strong></span>
-          <div class="amount-vals">
-            <div class="a-pi total" id="iTotalPi">0 π</div>
-            <div class="a-usd" id="iTotalUsd">$0</div>
-            <div class="a-frw" id="iTotalFrw">0 FRw</div>
-          </div>
-        </div>
+      <div class="splitbox" id="isplit" style="display:none">
+        <div class="splitttl">💰 <span data-i18n="split_title">Répartition des fonds</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="driver_share">🚌 Transporteur (85%)</span><span class="sval drv" id="idrv">—</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="app_share">📱 PiHub RW (7%)</span><span class="sval appc" id="iapp">—</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="promo_share">🎯 Promoteur (3%)</span><span class="sval promo" id="ipromo">—</span></div>
       </div>
-
-      <button class="btn btn-primary" onclick="doInterBook()">📋 <span data-i18n="book_pay">Réserver & Payer en Pi</span></button>
+      <button class="btn btnpi" onclick="doInterBook()" data-i18n="book_pay">📋 Réserver & Payer en Pi</button>
     </div>
   </div>
 
-  <!-- ──── CROSS-BORDER ──── -->
+  <!-- BORDER -->
   <div id="mode-border" style="display:none">
     <div class="card">
-      <div class="card-hd"><div class="dot"></div><span data-i18n="border_title">Voyage Transfrontalier</span></div>
-      <div class="notice notice-warn"><span class="n-icon">🌍</span><span data-i18n="border_note">Munissez-vous de documents valides. Kenya accessible via Uganda.</span></div>
-
-      <!-- Type de voyage -->
-      <div class="trip-type-wrap">
-        <span class="pay-method-label" data-i18n="trip_type">Type de voyage</span>
-        <div class="trip-types">
-          <div class="trip-type active" id="tt-oneway" onclick="setTripType('oneway')">
-            <span class="trip-type-icon">➡️</span>
-            <span class="trip-type-name" data-i18n="one_way">Aller simple</span>
-          </div>
-          <div class="trip-type" id="tt-round1" onclick="setTripType('round1')">
-            <span class="trip-type-icon">🔄</span>
-            <span class="trip-type-name" data-i18n="round1">Aller-retour</span>
-          </div>
-          <div class="trip-type" id="tt-round2" onclick="setTripType('round2')">
-            <span class="trip-type-icon">🔁</span>
-            <span class="trip-type-name" data-i18n="round2">2 allers-retours</span>
-          </div>
+      <div class="chd"><div class="dot"></div><span data-i18n="border_title">Voyage Transfrontalier</span></div>
+      <div class="notice warn"><span class="nico">🌍</span><span data-i18n="border_note">Documents obligatoires. Kenya via Uganda transit.</span></div>
+      <!-- Trip type -->
+      <div class="pmwrap">
+        <span class="pmlbl" data-i18n="trip_type">Type de voyage</span>
+        <div class="ttgrid">
+          <div class="tt active" id="tt-1" onclick="setTT(1)"><span class="ttico">➡️</span><span class="ttname" data-i18n="one_way">Aller simple</span></div>
+          <div class="tt" id="tt-2" onclick="setTT(2)"><span class="ttico">🔄</span><span class="ttname" data-i18n="round_trip">Aller-retour</span></div>
         </div>
       </div>
-
-      <div class="field">
-        <label data-i18n="dest_country">Pays de destination</label>
-        <select id="borderDest" onchange="calcBorder()">
-          <option value="">Choisir...</option>
-          <option value="uganda">🇺🇬 Uganda — Kampala (via Gatuna) · ~500 km</option>
-          <option value="tanzania">🇹🇿 Tanzania — Dar es Salaam (via Rusumo) · ~1 400 km</option>
-          <option value="burundi">🇧🇮 Burundi — Bujumbura (via Nemba) · ~300 km</option>
-          <option value="drc_goma">🇨🇩 DRC — Goma (via Rubavu) · ~170 km</option>
-          <option value="drc_bukavu">🇨🇩 DRC — Bukavu (via Bugarama) · ~250 km</option>
-        </select>
+      <div class="frow">
+        <div class="f"><label data-i18n="dep_city">Ville départ</label><select id="bFrom" onchange="calcBorder()"></select></div>
+        <div class="f"><label data-i18n="dest_country">Pays destination</label><select id="bCountry" onchange="onBCountry()"></select></div>
       </div>
-
-      <div class="field">
-        <label data-i18n="agency">Agence de transport</label>
-        <select id="borderAgency" onchange="calcBorder()">
-          <option value="">Choisir...</option>
-          <option>Volcano Express</option>
-          <option>Yahoo Car</option>
-          <option>Trinity Express</option>
-          <option>Stella Express</option>
-          <option>Other / Autre</option>
-        </select>
+      <div class="f"><label data-i18n="dest_city">Ville destination</label><select id="bCity" onchange="calcBorder()"></select></div>
+      <div class="f"><label data-i18n="agency">Agence</label><select id="bAgency"></select></div>
+      <div class="frow">
+        <div class="f"><label data-i18n="travel_date">Date départ</label><input type="date" id="bDate"/></div>
+        <div class="f"><label data-i18n="passengers">Passagers</label><input type="number" id="bPax" value="1" min="1" max="50" oninput="calcBorder()"/></div>
       </div>
-
-      <div class="field-row">
-        <div class="field">
-          <label data-i18n="travel_date">Date de départ</label>
-          <input type="date" id="borderDate"/>
-        </div>
-        <div class="field">
-          <label data-i18n="passengers">Passagers</label>
-          <input type="number" id="borderPax" value="1" min="1" max="50" oninput="calcBorder()"/>
+      <!-- Pay method -->
+      <div class="pmwrap">
+        <span class="pmlbl" data-i18n="pay_method">Méthode de tarification</span>
+        <div class="pmgrid">
+          <div class="pm active" id="bpm-km" onclick="setBPM('km')"><span class="pmico">📏</span><span class="pmname" data-i18n="by_km">Par km</span><span class="pmdesc" data-i18n="km_auto">Tarif officiel/km</span></div>
+          <div class="pm" id="bpm-bg" onclick="setBPM('bargain')"><span class="pmico">🤝</span><span class="pmname" data-i18n="bargaining">Négociation</span><span class="pmdesc" data-i18n="bg_desc">Prix négocié</span></div>
         </div>
       </div>
-
-      <!-- Méthode de tarification transfrontalière -->
-      <div class="pay-method-wrap">
-        <span class="pay-method-label" data-i18n="border_pay_method">Méthode de tarification</span>
-        <div class="pay-methods">
-          <div class="pay-method active" id="bpm-km" onclick="setBorderPayMethod('km')">
-            <span class="pay-method-icon">📏</span>
-            <span class="pay-method-name" data-i18n="by_km">Par kilomètre</span>
-            <span class="pay-method-desc" data-i18n="km_desc">Tarif fixe / km</span>
-          </div>
-          <div class="pay-method" id="bpm-bargain" onclick="setBorderPayMethod('bargain')">
-            <span class="pay-method-icon">🤝</span>
-            <span class="pay-method-name" data-i18n="bargaining">Négociation</span>
-            <span class="pay-method-desc" data-i18n="bargain_desc">Prix librement négocié</span>
-          </div>
-        </div>
+      <div id="bbgblock" style="display:none">
+        <div class="bgbox"><div class="bgttl">🤝 <span data-i18n="neg_price">Prix négocié (par siège, aller simple)</span></div>
+        <div class="f" style="margin-bottom:0"><label data-i18n="price_frw">Prix en FRw</label><input type="number" id="bbgfrw" placeholder="ex: 25000" oninput="calcBorder()"/></div></div>
       </div>
-
-      <!-- Border Bargaining Input -->
-      <div id="borderBargainBlock" style="display:none">
-        <div class="bargain-box">
-          <div class="bargain-title">🤝 <span data-i18n="enter_price">Entrez le prix négocié</span></div>
-          <div class="field mb8">
-            <label data-i18n="price_frw">Prix total en FRw (pour 1 passager, aller simple)</label>
-            <input type="number" id="borderBargainFrw" placeholder="ex: 25000" min="1000" oninput="calcBorder()"/>
-          </div>
-        </div>
+      <div class="amtbox" id="bamt" style="display:none">
+        <div class="amtrow"><div><span class="amtlbl" data-i18n="seat_price">Prix / siège</span><div style="font-size:.57rem;color:var(--muted)" id="blbl"></div></div><div class="amtvals"><div class="api main" id="bspi">—</div><div class="ausd" id="bsusd">—</div><div class="afrw" id="bsfrw">—</div></div></div>
+        <div class="amtrow"><span class="amtlbl" data-i18n="svc_fee">Frais PiHub RW (12%)</span><div class="amtvals"><div class="api fee" id="bfepi">—</div><div class="ausd" id="bfeusd">—</div><div class="afrw" id="bfefrw">—</div></div></div>
+        <div class="amtrow"><strong class="amtlbl" data-i18n="total">Total</strong><div class="amtvals"><div class="api tot" id="btotpi">—</div><div class="ausd" id="btotusd">—</div><div class="afrw" id="btotfrw">—</div></div></div>
       </div>
-
-      <div class="amount-box" id="borderCalc" style="display:none">
-        <div class="amount-row">
-          <div>
-            <span class="amount-label" data-i18n="price_seat">Prix / siège</span>
-            <div style="font-size:.6rem;color:var(--faint)" id="borderTripLabel"></div>
-          </div>
-          <div class="amount-vals">
-            <div class="a-pi main" id="bSeatPi">0 π</div>
-            <div class="a-usd" id="bSeatUsd">$0</div>
-            <div class="a-frw" id="bSeatFrw">0 FRw</div>
-          </div>
-        </div>
-        <div class="amount-row">
-          <span class="amount-label">PiHub RW (12%)</span>
-          <div class="amount-vals">
-            <div class="a-pi fee" id="bFeePi">0 π</div>
-            <div class="a-usd" id="bFeeUsd">$0</div>
-            <div class="a-frw" id="bFeeFrw">0 FRw</div>
-          </div>
-        </div>
-        <div class="amount-row">
-          <span class="amount-label" data-i18n="total"><strong>Total</strong></span>
-          <div class="amount-vals">
-            <div class="a-pi total" id="bTotalPi">0 π</div>
-            <div class="a-usd" id="bTotalUsd">$0</div>
-            <div class="a-frw" id="bTotalFrw">0 FRw</div>
-          </div>
-        </div>
+      <div class="splitbox" id="bsplit" style="display:none">
+        <div class="splitttl">💰 <span data-i18n="split_title">Répartition des fonds</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="driver_share">🚌 Transporteur (85%)</span><span class="sval drv" id="bdrv">—</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="app_share">📱 PiHub RW (8%)</span><span class="sval appc" id="bapp">—</span></div>
+        <div class="splitrow"><span class="slbl" data-i18n="promo_share">🎯 Promoteur (4%)</span><span class="sval promo" id="bpromo">—</span></div>
       </div>
-
-      <div class="escrow-box">
-        <span class="escrow-icon">🔒</span>
-        <div class="escrow-text">
-          <strong data-i18n="escrow_title">Système Escrow PiHub RW</strong>
-          <span data-i18n="escrow_border_desc">Paiement sécurisé en escrow. L'excédent est remboursé automatiquement après confirmation de votre arrivée.</span>
-        </div>
-      </div>
-
-      <button class="btn btn-blue" onclick="doBorderBook()">🌍 <span data-i18n="book_border">Réserver Voyage Transfrontalier</span></button>
-    </div>
-  </div>
-
-</div><!-- /sec-transport -->
-
-<!-- ══════════════════════════════
-     MES VOYAGES
-══════════════════════════════ -->
-<div class="section" id="sec-trips">
-  <div class="card">
-    <div class="card-hd"><div class="dot"></div><span data-i18n="my_trips_hist">Mes Voyages & Réservations</span></div>
-    <div id="tripsList"><div class="empty-state">Aucun voyage pour l'instant</div></div>
-  </div>
-
-  <div class="card">
-    <div class="card-hd"><div class="dot"></div><span data-i18n="my_qr">Mon QR Code de Paiement</span></div>
-    <div class="txt-center">
-      <div class="qr-wrap"><canvas id="qrCanvas" width="170" height="170"></canvas></div>
-      <div style="font-family:var(--mono);font-size:.8rem;color:var(--pi-light);margin-bottom:2px" id="myPiId">@pioneer_rw</div>
-      <div style="font-size:.68rem;color:var(--muted);margin-bottom:12px" data-i18n="show_code">Montrez au chauffeur pour recevoir le paiement Pi</div>
-      <button class="btn btn-gold" onclick="copyId()" data-i18n="copy_id">Copier mon Pi ID</button>
+      <div class="escbox"><span class="escico">🔒</span><div class="esctxt"><strong data-i18n="escrow_t">Système Escrow Pi</strong><span data-i18n="escrow_border">Paiement bloqué. Libéré après confirmation d'arrivée.</span></div></div>
+      <button class="btn btnblue" onclick="doBorderBook()" data-i18n="book_border">🌍 Réserver Voyage Transfrontalier</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════
-     PROFIL & PARAMÈTRES
-══════════════════════════════ -->
-<div class="section" id="sec-profile">
-
-  <!-- Langue -->
+<!-- TRIPS -->
+<div class="sec" id="sec-trips">
   <div class="card">
-    <div class="card-hd"><div class="dot"></div><span data-i18n="language">Langue / Language / Ururimi / Lugha</span></div>
-    <div class="lang-grid">
-      <div class="lang-card active" id="lc-fr" onclick="setLangCard('fr')">
-        <span class="lang-card-flag">🇫🇷</span>
-        <div class="lang-card-name">Français</div>
-        <div class="lang-card-native">French</div>
-      </div>
-      <div class="lang-card" id="lc-en" onclick="setLangCard('en')">
-        <span class="lang-card-flag">🇬🇧</span>
-        <div class="lang-card-name">English</div>
-        <div class="lang-card-native">Anglais</div>
-      </div>
-      <div class="lang-card" id="lc-kin" onclick="setLangCard('kin')">
-        <span class="lang-card-flag">🇷🇼</span>
-        <div class="lang-card-name">Kinyarwanda</div>
-        <div class="lang-card-native">Ikinyarwanda</div>
-      </div>
-      <div class="lang-card" id="lc-sw" onclick="setLangCard('sw')">
-        <span class="lang-card-flag">🇰🇪</span>
-        <div class="lang-card-name">Kiswahili</div>
-        <div class="lang-card-native">Swahili</div>
-      </div>
-    </div>
+    <div class="chd"><div class="dot"></div><span data-i18n="my_trips_h">Mes Voyages & Réservations</span></div>
+    <div id="tripslist"><div class="empty" data-i18n="no_trips">Aucun voyage</div></div>
   </div>
-
-  <!-- GCV Panel -->
-  <div class="gcv-card">
-    <div class="gcv-hd">GCV — Global Consensus Value</div>
-    <div class="gcv-val">$<span id="gcvVal">314,159</span> / π</div>
-    <div class="gcv-grid">
-      <div class="gcv-item">
-        <div class="gcv-item-label">1 Pi en FRw</div>
-        <div class="gcv-item-val" id="gcvFrwDisplay">≈ 468 M FRw</div>
-      </div>
-      <div class="gcv-item">
-        <div class="gcv-item-label">1 USD en FRw</div>
-        <div class="gcv-item-val">≈ 1,490 FRw</div>
-      </div>
-    </div>
-  </div>
-
   <div class="card">
-    <div class="card-hd"><div class="dot"></div>Mettre à jour le GCV</div>
-    <div class="field-row">
-      <div class="field">
-        <label>Nouveau GCV ($ / 1 Pi)</label>
-        <input type="number" id="gcvInput" value="314159" min="1"/>
-      </div>
-      <div class="field">
-        <label>Taux USD/FRw</label>
-        <input type="number" id="frwInput" value="1490" min="100"/>
-      </div>
+    <div class="chd"><div class="dot"></div><span data-i18n="my_qr">Mon QR Code Pi</span></div>
+    <div style="text-align:center">
+      <div class="qrwrap"><canvas id="qrCanvas" width="155" height="155"></canvas></div>
+      <div style="font-family:var(--mono);font-size:.78rem;color:var(--pi2);margin-bottom:2px" id="mypiid">@pioneer_rw</div>
+      <div style="font-size:.64rem;color:var(--muted);margin-bottom:11px" data-i18n="show_code">Montrez au chauffeur pour recevoir Pi</div>
+      <button class="btn btngold" onclick="copyId()" data-i18n="copy_id">📋 Copier mon Pi ID</button>
     </div>
-    <button class="btn btn-gold" onclick="updateGCV()">🌐 Mettre à jour</button>
   </div>
+</div>
 
-  <div class="card" id="settingsAuthCard">
-    <div class="card-hd"><div class="dot"></div>Compte Pi Network</div>
-    <div id="settingsUserInfo" style="display:none">
-      <div style="font-size:.8rem;margin-bottom:11px;color:var(--muted)">Connecté en tant que : <strong id="settingsUsername" style="color:var(--text)">—</strong></div>
-      <button class="btn btn-outline" onclick="signOut()" data-i18n="sign_out">Déconnexion</button>
-    </div>
-    <div id="settingsSignIn">
-      <button class="btn btn-primary" onclick="handleLogin()">🔐 Sign In with Pi Network</button>
+<!-- PROFILE -->
+<div class="sec" id="sec-profile">
+  <div class="card">
+    <div class="chd"><div class="dot"></div><span data-i18n="language">Langue</span></div>
+    <div class="lggrid">
+      <div class="lc active" id="lc-fr" onclick="applyLang('fr')"><span class="lcflag">🇫🇷</span><div class="lcname">Français</div><div class="lcnat">French</div></div>
+      <div class="lc" id="lc-en" onclick="applyLang('en')"><span class="lcflag">🇬🇧</span><div class="lcname">English</div><div class="lcnat">Anglais</div></div>
+      <div class="lc" id="lc-kin" onclick="applyLang('kin')"><span class="lcflag">🇷🇼</span><div class="lcname">Kinyarwanda</div><div class="lcnat">Ikinyarwanda</div></div>
+      <div class="lc" id="lc-sw" onclick="applyLang('sw')"><span class="lcflag">🇰🇪</span><div class="lcname">Kiswahili</div><div class="lcnat">Swahili</div></div>
     </div>
   </div>
-
-  <div class="notice notice-warn">
-    <span class="n-icon">⚠️</span>
-    <span>PiHub RW est une application indépendante — PAS affiliée à la Pi Network Core Team. Développée par un membre de la communauté Pi.</span>
+  <div class="gcvpanel">
+    <div class="gcvhd">GCV — Global Consensus Value</div>
+    <div class="gcvval">$<span id="gcvval">314,159</span> / π</div>
+    <div class="gcvgrid">
+      <div class="gcvitem"><div class="gcvil">1 Pi en FRw</div><div class="gcviv" id="pifrwdisp">—</div></div>
+      <div class="gcvitem"><div class="gcvil">1 USD en FRw</div><div class="gcviv" id="usdfrwdisp">1 490 FRw</div></div>
+    </div>
+    <div id="ratestatus" style="margin-top:5px"></div>
   </div>
+  <div class="card">
+    <div class="chd"><div class="dot"></div>GCV & Taux de change</div>
+    <div class="frow">
+      <div class="f"><label>GCV ($ / 1 π)</label><input type="number" id="gcvinp" value="314159" min="1"/></div>
+      <div class="f"><label>USD → FRw <span id="ratetime" style="font-size:.55rem;color:var(--muted)"></span></label><input type="number" id="frwinp" value="1490" min="100"/></div>
+    </div>
+    <button class="btn btngold" onclick="updateGCV()" data-i18n="update_gcv">🌐 Mettre à jour</button>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot"></div>Tarifs RULA (FRw/km)</div>
+    <div class="notice info"><span class="nico">ℹ️</span><span data-i18n="rula_note">Modifiez sans republier l'application.</span></div>
+    <div class="frow">
+      <div class="f"><label>🏍️ Taxi-Moto</label><input type="number" id="tMoto" value="60" min="1"/></div>
+      <div class="f"><label>🚕 Taxi-Voiture</label><input type="number" id="tTaxi" value="120" min="1"/></div>
+    </div>
+    <div class="frow">
+      <div class="f"><label>🚌 Taxi-Bus</label><input type="number" id="tBus" value="30" min="1"/></div>
+      <div class="f"><label>🌍 Frontière</label><input type="number" id="tBorder" value="40" min="1"/></div>
+    </div>
+    <button class="btn btnpi" onclick="updateTarifs()" data-i18n="update_tarifs">✅ Sauvegarder les tarifs</button>
+    <div id="tarifok" style="text-align:center;font-size:.62rem;color:var(--green);margin-top:6px"></div>
+  </div>
+  <div class="card">
+    <div class="chd"><div class="dot"></div>Compte Pi Network</div>
+    <div id="profinfo" style="display:none">
+      <div style="font-size:.78rem;margin-bottom:10px;color:var(--muted)">Connecté : <strong id="profuser" style="color:var(--txt)">—</strong></div>
+      <button class="btn btnout" onclick="signOut()" data-i18n="sign_out">Déconnexion</button>
+    </div>
+    <div id="profsignin"><button class="btn btnpi" onclick="handleLogin()">🔐 Sign In with Pi Network</button></div>
+  </div>
+  <div class="notice warn"><span class="nico">⚠️</span><span>PiHub RW — Application indépendante. PAS affiliée à Pi Network Core Team.</span></div>
 </div>
 
 </div><!-- /app -->
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <button class="nav-btn active" id="nav-home" onclick="showSection('sec-home')"><span class="nav-ico">🏠</span><span data-i18n="home">Accueil</span></button>
-  <button class="nav-btn" id="nav-transport" onclick="showSection('sec-transport')"><span class="nav-ico">🚕</span><span data-i18n="transport">Transport</span></button>
-  <button class="nav-btn" id="nav-trips" onclick="showSection('sec-trips')"><span class="nav-ico">📋</span><span data-i18n="trips">Voyages</span></button>
-  <button class="nav-btn" id="nav-profile" onclick="showSection('sec-profile')"><span class="nav-ico">⚙️</span><span data-i18n="profile">Profil</span></button>
+<!-- NAV -->
+<div class="bnav">
+  <button class="nbtn active" id="nav-home" onclick="showSec('sec-home')"><span class="nico2">🏠</span><span data-i18n="home">Accueil</span></button>
+  <button class="nbtn" id="nav-transport" onclick="showSec('sec-transport')"><span class="nico2">🚕</span><span data-i18n="transport">Transport</span></button>
+  <button class="nbtn" id="nav-trips" onclick="showSec('sec-trips')"><span class="nico2">📋</span><span data-i18n="trips">Voyages</span></button>
+  <button class="nbtn" id="nav-profile" onclick="showSec('sec-profile')"><span class="nico2">⚙️</span><span data-i18n="profile">Profil</span></button>
 </div>
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal">
+<div class="mov" id="modal">
   <div class="modal">
-    <span class="m-ico" id="mIco">✅</span>
-    <h2 id="mTitle">—</h2>
-    <p id="mMsg"></p>
-    <div class="escrow-status" id="mEscrow" style="display:none">
-      <div class="e-row"><span class="lbl">Paiement initial (escrow)</span><span class="val" id="mEscrowInit">—</span></div>
-      <div class="e-row"><span class="lbl">Montant réel trajet</span><span class="val" id="mEscrowReal">—</span></div>
-      <div class="e-row"><span class="lbl">Remboursement</span><span class="val refund" id="mEscrowRefund">—</span></div>
+    <span class="mico" id="mico">✅</span>
+    <h2 id="mtitle">—</h2>
+    <p id="mmsg"></p>
+    <div class="mesc" id="mesc" style="display:none">
+      <div class="erow"><span class="elbl" data-i18n="escrow_init">Escrow initial</span><span class="eval" id="mei">—</span></div>
+      <div class="erow"><span class="elbl" data-i18n="escrow_real">Montant réel</span><span class="eval" id="mer">—</span></div>
+      <div class="erow"><span class="elbl" data-i18n="escrow_refund">Remboursement</span><span class="eval ref" id="meref">—</span></div>
     </div>
-    <div class="m-txid" id="mTxId"></div>
-    <button class="btn btn-primary" onclick="closeModal()" data-i18n="done">Terminé</button>
+    <div class="mtxid" id="mtxid"></div>
+    <button class="btn btnpi" onclick="closeModal()" data-i18n="done">Terminé</button>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-//  CONSTANTES & ÉTAT
-// ══════════════════════════════════════════════════════════
-
-let GCV = 314159;          // 1 Pi = GCV USD
-let FRW_PER_USD = 1490;    // 1 USD = 1490 FRw
-
-// Prix urban en FRw/km
-const URBAN_RATE = { moto: 60, taxi: 120, bus: 30 };
-const URBAN_MIN  = { moto: 500, taxi: 1000, bus: 200 }; // FRw minimum
-
-// Distances intercity en km (depuis Kigali)
-const INTER_KM = {
-  'Kigali-Butare / Huye': 130, 'Butare / Huye-Kigali': 130,
-  'Kigali-Musanze': 110,       'Musanze-Kigali': 110,
-  'Kigali-Gisenyi / Rubavu': 165, 'Gisenyi / Rubavu-Kigali': 165,
-  'Kigali-Cyangugu / Rusizi': 225, 'Cyangugu / Rusizi-Kigali': 225,
-  'Kigali-Rwamagana': 50,      'Rwamagana-Kigali': 50,
-  'Kigali-Nyamata': 45,        'Nyamata-Kigali': 45,
-  'Kigali-Kibungo / Ngoma': 115, 'Kibungo / Ngoma-Kigali': 115,
-  'Kigali-Byumba / Gicumbi': 60, 'Byumba / Gicumbi-Kigali': 60,
-  'Kigali-Kibuye / Karongi': 120, 'Kibuye / Karongi-Kigali': 120,
+'use strict';
+// ═══════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════
+const CFG={
+  gcv:314159, frwPerUsd:1490,
+  tarifs:{moto:60,taxi:120,bus:30,border:40,
+    inter:{bus:1.0,taxi:2.0,private:3.5}},
+  minFare:{moto:500,taxi:1000,bus:200},
+  fees:{
+    urban:{total:.08,app:.05,promo:.03},
+    intercity:{total:.10,app:.07,promo:.03},
+    border:{total:.12,app:.08,promo:.04}
+  },
+  buf:0.15
 };
 
-// Prix intercity en FRw/km
-const INTER_RATE = { bus: 50, taxi: 100, private: 200 };
-
-// Distances transfrontalières en km (depuis Kigali)
-const BORDER_KM = {
-  uganda: 500, tanzania: 1400, burundi: 300, drc_goma: 170, drc_bukavu: 250
+const INTER_KM={
+  'Kigali-Butare / Huye':130,'Kigali-Musanze':110,'Kigali-Gisenyi / Rubavu':165,
+  'Kigali-Cyangugu / Rusizi':225,'Kigali-Rwamagana':50,'Kigali-Nyamata':45,
+  'Kigali-Kibungo / Ngoma':115,'Kigali-Byumba / Gicumbi':60,'Kigali-Kibuye / Karongi':120,
+  'Butare / Huye-Musanze':220,'Musanze-Gisenyi / Rubavu':70,'Musanze-Byumba / Gicumbi':80,
+  'Cyangugu / Rusizi-Kibuye / Karongi':130
 };
-// Prix transfrontalier en FRw/km (bus longue distance)
-const BORDER_RATE_FRW = 40;
 
-// Frais de service
-const FEES = { urban: 0.08, intercity: 0.10, border: 0.12 };
+const BORDER_KM={uganda:500,tanzania:1400,burundi:300,drc:180,kenya:900};
 
-// État
-let currentLang = 'fr';
-let currentMode = 'urban';
-let urbanPayMethod = 'km';
-let borderPayMethod = 'km';
-let borderTripType = 'oneway';
+// ═══════════════════════════════════════
+//  I18N COMPLET
+// ═══════════════════════════════════════
+const I18N={
+  fr:{
+    auth_sub:'Transport au Rwanda — payé en Pi.',
+    auth_disc:'⚠️ Application indépendante. PAS affiliée à Pi Network Core Team.',
+    browse_guest:'👁️ Mode visiteur',
+    mod_badge:'Module 1 : Transport',hero_h:'Rwanda<br/><em>Pi Transport</em>',
+    hero_p:'Transport urbain, intercity & transfrontalier — payé en Pi.',
+    my_bal:'Mon Solde Pi',book:'Réserver',my_trips:'Voyages',
+    urban:'Urbain',intercity:'Intercity',border:'Frontière',
+    urban_title:'Transport Urbain',urban_note:'Paiement sécurisé via escrow Pi.',
+    vehicle:'Véhicule',pay_method:'Méthode de tarification',
+    by_km:'Par km',km_desc:'GPS auto',km_auto:'Tarif officiel/km',
+    bargaining:'Négociation',bg_desc:'Prix négocié',
+    from:'Départ',to:'Arrivée',
+    gps_title:'Distance automatique',calc_dist:'Calculer via GPS/OpenStreetMap',
+    offline_gps:'Hors ligne — entrez la distance manuellement.',
+    manual_km:'Distance manuelle (km)',neg_price:'Prix négocié avec le chauffeur',
+    price_frw:'Prix en FRw',fare:'Tarif trajet',svc_fee:'Frais PiHub RW',total:'Total',
+    split_title:'Répartition des fonds',driver_share:'Chauffeur (85%)',
+    app_share:'PiHub RW',promo_share:'Promoteur',tarif_ref:'Tarif RULA',
+    escrow_t:'Système Escrow Pi',escrow_d:'Paiement bloqué. Excédent remboursé après confirmation.',
+    escrow_border:"Paiement bloqué. Libéré après confirmation d'arrivée.",
+    pay_btn:'🔒 Payer en Pi (Escrow)',
+    intercity_title:'Réservation Intercity',dep_city:'Ville départ',dest_city:'Ville arrivée',
+    transport_type:'Type de transport',travel_date:'Date & heure',passengers:'Passagers',
+    seat_price:'Prix / siège',book_pay:'📋 Réserver & Payer en Pi',
+    border_title:'Voyage Transfrontalier',border_note:'Documents obligatoires. Kenya via Uganda.',
+    trip_type:'Type de voyage',one_way:'Aller simple',round_trip:'Aller-retour',
+    dest_country:'Pays destination',agency:'Agence',book_border:'🌍 Réserver Voyage Transfrontalier',
+    my_trips_h:'Mes Voyages & Réservations',my_qr:'Mon QR Code Pi',
+    show_code:'Montrez au chauffeur pour recevoir Pi',copy_id:'📋 Copier mon Pi ID',
+    home:'Accueil',transport:'Transport',trips:'Voyages',profile:'Profil',
+    language:'Langue',done:'Terminé',sign_out:'Déconnexion',
+    recent:'Voyages récents',no_trips:'Aucun voyage',
+    disclaimer:'PiHub RW est indépendant — PAS affilié à Pi Core Team.',
+    update_gcv:'🌐 Mettre à jour',rula_note:"Modifiez sans republier l'application.",
+    update_tarifs:'✅ Sauvegarder les tarifs',
+    escrow_init:'Escrow initial',escrow_real:'Montant réel',escrow_refund:'Remboursement',
+    vehicles:[['','Choisir...'],['moto','🏍️ Taxi-Moto (Bodaboda)'],['taxi','🚕 Taxi-Voiture'],['bus','🚌 Taxi-Bus']],
+    rwcities:['','Kigali','Butare / Huye','Musanze','Gisenyi / Rubavu','Cyangugu / Rusizi','Rwamagana','Nyamata','Kibungo / Ngoma','Byumba / Gicumbi','Kibuye / Karongi'],
+    itypes:[['','Choisir...'],['bus','🚌 Bus'],['taxi','🚕 Taxi partagé (Twegerane)'],['private','🚗 Voiture privée']],
+    bfroms:['','Kigali','Gisenyi / Rubavu','Cyangugu / Rusizi','Butare / Huye','Kibungo / Ngoma','Byumba / Gicumbi'],
+    bcountries:[['','Choisir...'],['uganda','🇺🇬 Uganda'],['tanzania','🇹🇿 Tanzania'],['burundi','🇧🇮 Burundi'],['drc','🇨🇩 RD Congo'],['kenya','🇰🇪 Kenya (via Uganda)']],
+    bcities:{uganda:['Kampala','Mbarara','Kabale'],tanzania:['Dar es Salaam','Mwanza','Bukoba','Arusha'],burundi:['Bujumbura','Ngozi','Gitega'],drc:['Goma','Bukavu','Kinshasa'],kenya:['Nairobi','Mombasa']},
+    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Autre agence']
+  },
+  en:{
+    auth_sub:'Transport in Rwanda — paid in Pi.',
+    auth_disc:'⚠️ Independent app. NOT affiliated with Pi Network Core Team.',
+    browse_guest:'👁️ Guest mode',
+    mod_badge:'Module 1: Transport',hero_h:'Rwanda<br/><em>Pi Transport</em>',
+    hero_p:'Urban, intercity & cross-border transport — paid in Pi.',
+    my_bal:'My Pi Balance',book:'Book',my_trips:'Trips',
+    urban:'Urban',intercity:'Intercity',border:'Cross-Border',
+    urban_title:'Urban Transport',urban_note:'Secure payment via Pi escrow.',
+    vehicle:'Vehicle',pay_method:'Pricing method',
+    by_km:'Per km',km_desc:'Auto GPS',km_auto:'Official rate/km',
+    bargaining:'Bargaining',bg_desc:'Negotiated price',
+    from:'From',to:'To',
+    gps_title:'Automatic distance',calc_dist:'Calculate via GPS/OpenStreetMap',
+    offline_gps:'Offline — enter distance manually.',
+    manual_km:'Manual distance (km)',neg_price:'Price negotiated with driver',
+    price_frw:'Price in FRw',fare:'Trip fare',svc_fee:'PiHub RW fee',total:'Total',
+    split_title:'Fund distribution',driver_share:'Driver (85%)',
+    app_share:'PiHub RW',promo_share:'Promoter',tarif_ref:'RULA tariff',
+    escrow_t:'Pi Escrow System',escrow_d:'Payment held. Excess refunded after confirmation.',
+    escrow_border:'Payment held. Released after arrival confirmation.',
+    pay_btn:'🔒 Pay in Pi (Escrow)',
+    intercity_title:'Intercity Booking',dep_city:'Departure city',dest_city:'Destination city',
+    transport_type:'Transport type',travel_date:'Date & time',passengers:'Passengers',
+    seat_price:'Price / seat',book_pay:'📋 Book & Pay in Pi',
+    border_title:'Cross-Border Trip',border_note:'Valid documents required. Kenya via Uganda.',
+    trip_type:'Trip type',one_way:'One way',round_trip:'Round trip',
+    dest_country:'Destination country',agency:'Agency',book_border:'🌍 Book Cross-Border Trip',
+    my_trips_h:'My Trips & Bookings',my_qr:'My Pi QR Code',
+    show_code:'Show driver to receive Pi',copy_id:'📋 Copy my Pi ID',
+    home:'Home',transport:'Transport',trips:'Trips',profile:'Profile',
+    language:'Language',done:'Done',sign_out:'Sign Out',
+    recent:'Recent Trips',no_trips:'No trips yet',
+    disclaimer:'PiHub RW is independent — NOT affiliated with Pi Core Team.',
+    update_gcv:'🌐 Update',rula_note:'Update RULA rates without republishing.',
+    update_tarifs:'✅ Save tariffs',
+    escrow_init:'Initial escrow',escrow_real:'Actual amount',escrow_refund:'Refund',
+    vehicles:[['','Choose...'],['moto','🏍️ Moto Taxi (Bodaboda)'],['taxi','🚕 City Taxi'],['bus','🚌 Urban Bus']],
+    rwcities:['','Kigali','Butare / Huye','Musanze','Gisenyi / Rubavu','Cyangugu / Rusizi','Rwamagana','Nyamata','Kibungo / Ngoma','Byumba / Gicumbi','Kibuye / Karongi'],
+    itypes:[['','Choose...'],['bus','🚌 Bus'],['taxi','🚕 Shared Taxi (Twegerane)'],['private','🚗 Private Car']],
+    bfroms:['','Kigali','Gisenyi / Rubavu','Cyangugu / Rusizi','Butare / Huye','Kibungo / Ngoma','Byumba / Gicumbi'],
+    bcountries:[['','Choose...'],['uganda','🇺🇬 Uganda'],['tanzania','🇹🇿 Tanzania'],['burundi','🇧🇮 Burundi'],['drc','🇨🇩 DR Congo'],['kenya','🇰🇪 Kenya (via Uganda)']],
+    bcities:{uganda:['Kampala','Mbarara','Kabale'],tanzania:['Dar es Salaam','Mwanza','Bukoba','Arusha'],burundi:['Bujumbura','Ngozi','Gitega'],drc:['Goma','Bukavu','Kinshasa'],kenya:['Nairobi','Mombasa']},
+    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Other agency']
+  },
+  kin:{
+    auth_sub:"Gutwara mu Rwanda — kwishyura mu Pi.",
+    auth_disc:'⚠️ App yigenga. Ntiyunganye na Pi Core Team.',
+    browse_guest:'👁️ Injira nta konti',
+    mod_badge:'Inzira 1: Gutwara',hero_h:'Rwanda<br/><em>Pi Transport</em>',
+    hero_p:"Gutwara mu murwa, hagati y'imijyi no gutwara amahanga — mu Pi.",
+    my_bal:'Amafaranga Yanjye ya Pi',book:'Saba',my_trips:'Ingendo',
+    urban:'Mu Murwa',intercity:"Hagati y'Imijyi",border:'Amahanga',
+    urban_title:'Gutwara mu Murwa',urban_note:'Kwishyura mu mutekano ukoresheje escrow ya Pi.',
+    vehicle:"Ubwoko bw'imodoka",pay_method:'Uburyo bwo kwishyura',
+    by_km:'Ku km',km_desc:'GPS otomatike',km_auto:'Igiciro/km',
+    bargaining:'Kuganira igiciro',bg_desc:'Igiciro cyumvikanwaho',
+    from:'Ahatuwe',to:'Ahagana',
+    gps_title:'Kubara intera otomatike',calc_dist:'Bara intera ukoresheje GPS',
+    offline_gps:'Nta interineti — injiza intera mu buryo bwukuri.',
+    manual_km:'Intera (km) ubwawe',neg_price:"Igiciro cyumvikanwaho n'umushoferi",
+    price_frw:'Igiciro mu FRw',fare:"Igiciro cy'ingendo",svc_fee:'Amafaranga PiHub RW',total:'Byose bishyurwa',
+    split_title:"Ikigabane cy'amafaranga",driver_share:'Umushoferi (85%)',
+    app_share:'PiHub RW',promo_share:'Umuhinduzi',tarif_ref:'Igiciro rya RULA',
+    escrow_t:'Sisitemu ya Escrow ya Pi',escrow_d:'Amafaranga abitswe. Ubunini busubizwa nyuma.',
+    escrow_border:'Amafaranga abitswe. Afunguwe nyuma yo kugera.',
+    pay_btn:'🔒 Ishyura mu Pi (Escrow)',
+    intercity_title:"Booking hagati y'Imijyi",dep_city:"Umujyi wo gutahukira",dest_city:"Umujyi ujya",
+    transport_type:"Ubwoko bw'imodoka",travel_date:"Itariki y'ingendo",passengers:"Inomero y'abantu",
+    seat_price:'Igiciro ku ntebe',book_pay:'📋 Saba no Kwishyura mu Pi',
+    border_title:"Ingendo z'Amahanga",border_note:"Zana impapuro z'ingendo. Kenya binyuze mu Uganda.",
+    trip_type:"Ubwoko bw'ingendo",one_way:'Aho gusa',round_trip:'Kujya no kugaruka',
+    dest_country:'Igihugu ujya',agency:"Sosiyete y'imodoka",book_border:"🌍 Saba ingendo z'Amahanga",
+    my_trips_h:'Ingendo Zanjye & Booking',my_qr:'Kode Yanjye ya QR',
+    show_code:'Erekana umushoferi kwakira Pi',copy_id:'📋 Kopi Pi ID yanjye',
+    home:'Ahabanza',transport:'Gutwara',trips:'Ingendo',profile:'Umwirondoro',
+    language:'Ururimi',done:'Birangiye',sign_out:'Sohoka',
+    recent:'Ingendo za Vuba',no_trips:'Nta ngendo',
+    disclaimer:'PiHub RW ni app yigenga — ntiyunganye na Pi Core Team.',
+    update_gcv:'🌐 Hindura',rula_note:'Hindura igiciro cya RULA utasubira gushyira app.',
+    update_tarifs:'✅ Bika igiciro',
+    escrow_init:'Escrow ntangiriro',escrow_real:'Umubare nyawo',escrow_refund:'Gusubiza',
+    vehicles:[['','Hitamo...'],['moto','🏍️ Taxi-Moto (Bodaboda)'],['taxi','🚕 Taxi-Modoka'],['bus','🚌 Bisi']],
+    rwcities:['','Kigali','Butare / Huye','Musanze','Gisenyi / Rubavu','Cyangugu / Rusizi','Rwamagana','Nyamata','Kibungo / Ngoma','Byumba / Gicumbi','Kibuye / Karongi'],
+    itypes:[['','Hitamo...'],['bus','🚌 Bisi'],['taxi','🚕 Taxi isangirwa (Twegerane)'],['private','🚗 Modoka yigenga']],
+    bfroms:['','Kigali','Gisenyi / Rubavu','Cyangugu / Rusizi','Butare / Huye','Kibungo / Ngoma','Byumba / Gicumbi'],
+    bcountries:[['','Hitamo...'],['uganda','🇺🇬 Uganda'],['tanzania','🇹🇿 Tanzaniya'],['burundi','🇧🇮 Uburundi'],['drc','🇨🇩 Kongo'],['kenya','🇰🇪 Kenya (binyuze Uganda)']],
+    bcities:{uganda:['Kampala','Mbarara','Kabale'],tanzania:['Dar es Salaam','Mwanza','Bukoba','Arusha'],burundi:['Bujumbura','Ngozi','Gitega'],drc:['Goma','Bukavu','Kinshasa'],kenya:['Nairobi','Mombasa']},
+    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Ikindi kigo']
+  },
+  sw:{
+    auth_sub:'Usafiri nchini Rwanda — kulipwa kwa Pi.',
+    auth_disc:'⚠️ Programu huru. HAINA uhusiano na Pi Network Core Team.',
+    browse_guest:'👁️ Hali ya mgeni',
+    mod_badge:'Moduli 1: Usafiri',hero_h:'Rwanda<br/><em>Pi Transport</em>',
+    hero_p:'Usafiri wa mjini, baina ya miji na wa kimataifa — kulipwa kwa Pi.',
+    my_bal:'Salio Langu la Pi',book:'Hifadhi',my_trips:'Safari',
+    urban:'Mjini',intercity:'Baina ya Miji',border:'Mpakani',
+    urban_title:'Usafiri wa Mjini',urban_note:'Malipo salama kupitia escrow ya Pi.',
+    vehicle:'Aina ya gari',pay_method:'Njia ya bei',
+    by_km:'Kwa km',km_desc:'GPS kiotomatiki',km_auto:'Bei rasmi/km',
+    bargaining:'Kujadiliana',bg_desc:'Bei inayokubaliwa',
+    from:'Kutoka',to:'Kwenda',
+    gps_title:'Hesabu umbali kiotomatiki',calc_dist:'Hesabu umbali via GPS',
+    offline_gps:'Nje ya mtandao — weka umbali mwenyewe.',
+    manual_km:'Umbali (km) kwa mkono',neg_price:'Bei iliyokubaliwa na dereva',
+    price_frw:'Bei kwa FRw',fare:'Nauli ya safari',svc_fee:'Ada ya PiHub RW',total:'Jumla',
+    split_title:'Mgawanyo wa fedha',driver_share:'Dereva (85%)',
+    app_share:'PiHub RW',promo_share:'Mratibu',tarif_ref:'Bei ya RULA',
+    escrow_t:'Mfumo wa Escrow ya Pi',escrow_d:'Malipo yanashikiliwa. Ziada itarudishwa baada ya safari.',
+    escrow_border:'Malipo yanashikiliwa. Yataachiwa baada ya kuwasili.',
+    pay_btn:'🔒 Lipa kwa Pi (Escrow)',
+    intercity_title:'Uhifadhi wa Safari baina ya Miji',dep_city:'Mji wa kuondoka',dest_city:'Mji wa kwenda',
+    transport_type:'Aina ya usafiri',travel_date:'Tarehe & saa',passengers:'Abiria',
+    seat_price:'Bei / kiti',book_pay:'📋 Hifadhi & Lipa kwa Pi',
+    border_title:'Safari ya Mpakani',border_note:'Nyaraka sahihi zinahitajika. Kenya kupitia Uganda.',
+    trip_type:'Aina ya safari',one_way:'Kwenda tu',round_trip:'Kwenda na kurudi',
+    dest_country:'Nchi ya kwenda',agency:'Kampuni ya usafiri',book_border:'🌍 Hifadhi Safari ya Mpakani',
+    my_trips_h:'Safari Zangu & Uhifadhi',my_qr:'Msimbo wangu wa QR',
+    show_code:'Onyesha dereva kupokea Pi',copy_id:'📋 Nakili Pi ID yangu',
+    home:'Nyumbani',transport:'Usafiri',trips:'Safari',profile:'Wasifu',
+    language:'Lugha',done:'Imekamilika',sign_out:'Toka',
+    recent:'Safari za Hivi Karibuni',no_trips:'Hakuna safari',
+    disclaimer:'PiHub RW ni huru — HAINA uhusiano na Pi Core Team.',
+    update_gcv:'🌐 Sasisha',rula_note:'Badilisha bei za RULA bila kuchapisha upya.',
+    update_tarifs:'✅ Hifadhi bei',
+    escrow_init:'Escrow ya awali',escrow_real:'Kiasi halisi',escrow_refund:'Kurejesha',
+    vehicles:[['','Chagua...'],['moto','🏍️ Bodaboda'],['taxi','🚕 Teksi ya Mji'],['bus','🚌 Basi la Mji']],
+    rwcities:['','Kigali','Butare / Huye','Musanze','Gisenyi / Rubavu','Cyangugu / Rusizi','Rwamagana','Nyamata','Kibungo / Ngoma','Byumba / Gicumbi','Kibuye / Karongi'],
+    itypes:[['','Chagua...'],['bus','🚌 Basi'],['taxi','🚕 Teksi ya pamoja (Twegerane)'],['private','🚗 Gari la kibinafsi']],
+    bfroms:['','Kigali','Gisenyi / Rubavu','Cyangugu / Rusizi','Butare / Huye','Kibungo / Ngoma','Byumba / Gicumbi'],
+    bcountries:[['','Chagua...'],['uganda','🇺🇬 Uganda'],['tanzania','🇹🇿 Tanzania'],['burundi','🇧🇮 Burundi'],['drc','🇨🇩 DRC Kongo'],['kenya','🇰🇪 Kenya (via Uganda)']],
+    bcities:{uganda:['Kampala','Mbarara','Kabale'],tanzania:['Dar es Salaam','Mwanza','Bukoba','Arusha'],burundi:['Bujumbura','Ngozi','Gitega'],drc:['Goma','Bukavu','Kinshasa'],kenya:['Nairobi','Mombasa']},
+    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Kampuni nyingine']
+  }
+};
 
-let trips = [
-  { type:'urban', icon:'🏍️', name:'Moto — Kimironko → CBD', frw:900, time:'Aujourd\'hui 08:30', status:'confirmed' },
-  { type:'intercity', icon:'🚌', name:'Kigali → Musanze (Bus)', frw:5500, time:'Hier 07:00', status:'confirmed' },
-  { type:'border', icon:'🌍', name:'Kigali → Kampala (aller simple)', frw:22400, time:'18 mai', status:'confirmed' },
-];
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+const S={
+  lang:'fr',mode:'urban',uPM:'km',bPM:'km',ttMult:1,
+  gpsKm:0,gpsBuf:0,isOnline:navigator.onLine,
+  rateIsLive:false,rateTime:null,
+  trips:[
+    {ico:'🏍️',name:'Moto — Kimironko → CBD',frw:900,time:"Aujourd'hui 08:30",st:'confirmed'},
+    {ico:'🚌',name:'Kigali → Musanze (Bus)',frw:5500,time:'Hier 07:00',st:'confirmed'},
+    {ico:'🌍',name:'Kigali → Kampala (Aller)',frw:22400,time:'18 mai',st:'confirmed'}
+  ]
+};
 
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  CONVERSIONS
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+const C={
+  frwToPi:f=>f/(CFG.gcv*CFG.frwPerUsd),
+  frwToUsd:f=>f/CFG.frwPerUsd,
+  fmtPi:p=>parseFloat(p).toFixed(8)+' π',
+  fmtUsd:n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),
+  fmtFrw:n=>Math.round(n).toLocaleString('fr-RW')+' FRw',
+  genTx:()=>'TX#'+Math.random().toString(36).slice(2,10).toUpperCase()
+};
 
-function frwToPi(frw) { return frw / (GCV * FRW_PER_USD); }
-function frwToUsd(frw) { return frw / FRW_PER_USD; }
-function piToFrw(pi)   { return pi * GCV * FRW_PER_USD; }
-
-function fmtPi(pi)  { return parseFloat(pi).toFixed(8) + ' π'; }
-function fmtUsd(n)  { return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function fmtFrw(n)  { return Math.round(n).toLocaleString('fr-RW') + ' FRw'; }
-function genTxId()  { return 'TX#' + Math.random().toString(36).slice(2,10).toUpperCase(); }
-
-// Affiche Pi + USD + FRw
-function setAmountTriple(ids, frwAmount) {
-  const pi  = frwToPi(frwAmount);
-  const usd = frwToUsd(frwAmount);
-  document.getElementById(ids[0]).textContent = fmtPi(pi);
-  document.getElementById(ids[1]).textContent = fmtUsd(usd);
-  document.getElementById(ids[2]).textContent = fmtFrw(frwAmount);
+function setTriple(ids,frw){
+  const pi=C.frwToPi(frw),usd=C.frwToUsd(frw);
+  document.getElementById(ids[0]).textContent=C.fmtPi(pi);
+  document.getElementById(ids[1]).textContent=C.fmtUsd(usd);
+  document.getElementById(ids[2]).textContent=C.fmtFrw(frw);
 }
 
-// ══════════════════════════════════════════════════════════
+function T(k){return I18N[S.lang]?.[k]||I18N.en?.[k]||k;}
+
+// ═══════════════════════════════════════
 //  PI AUTH
-// ══════════════════════════════════════════════════════════
-
-class PiService {
-  constructor(){ this.user=null; this.isInit=false; }
-  async init(){
-    try{
-      await new Promise((res,rej)=>{
-        if(typeof Pi==='undefined'){console.warn('Pi SDK absent — mode sandbox');res();return;}
-        try{Pi.init({version:'2.0',sandbox:true});res();}catch(e){rej(e);}
-      });
-      this.isInit=true;
-    }catch(e){this.isInit=false;}
-  }
-  async login(){
-    try{
-      if(typeof Pi==='undefined') return this._sandbox();
-      if(!this.isInit) await this.init();
-      const auth = await Pi.authenticate(['username'], p=>console.warn('Paiement incomplet:',p?.identifier));
-      this.user = auth.user;
-      return {success:true, user:auth.user};
-    }catch(e){return {success:false, error:e.message};}
-  }
-  _sandbox(){
-    const u = {username:'Theophile923'};
-    this.user = u;
-    return {success:true, user:u};
-  }
-  signOut(){ this.user=null; }
-}
-const piSvc = new PiService();
+// ═══════════════════════════════════════
+const piSvc={user:null,ok:false,
+  async init(){try{if(typeof Pi==='undefined'){this.ok=false;return;}Pi.init({version:'2.0',sandbox:true});this.ok=true;}catch(e){this.ok=false;}},
+  async login(){try{if(typeof Pi==='undefined')return this._sb();if(!this.ok)await this.init();const a=await Pi.authenticate(['username'],p=>console.warn('Incomplet:',p?.identifier));this.user=a.user;return{ok:true,user:a.user};}catch(e){return{ok:false,err:e.message};}},
+  _sb(){const u={username:'Theophile923'};this.user=u;return{ok:true,user:u};},
+  out(){this.user=null;}
+};
 
 async function handleLogin(){
-  const btn = document.getElementById('signInBtn');
-  const st  = document.getElementById('authStatus');
-  btn.disabled = true;
-  st.innerHTML = '<div class="spin"></div> Connexion à Pi Network...';
-  await piSvc.init();
-  st.innerHTML = '<div class="spin"></div> En attente d\'authentification...';
-  const r = await piSvc.login();
-  if(r.success){ st.innerHTML='✅ Authentifié !'; onAuthSuccess(r.user); }
-  else{ st.innerHTML='❌ '+(r.error||'Échec authentification'); btn.disabled=false; }
+  const btn=document.getElementById('signInBtn'),st=document.getElementById('authSt');
+  btn.disabled=true;st.innerHTML='<div class="spin"></div> Connexion Pi Network...';
+  await piSvc.init();st.innerHTML='<div class="spin"></div> Authentification...';
+  const r=await piSvc.login();
+  if(r.ok){st.innerHTML='✅ Authentifié !';onAuth(r.user);}
+  else{st.innerHTML='❌ '+(r.err||'Échec');btn.disabled=false;}
 }
-
-function onAuthSuccess(user){
-  setTimeout(()=>document.getElementById('authScreen').classList.add('hidden'), 600);
-  const n = user.username || 'Pioneer';
-  document.getElementById('userBanner').style.display='flex';
-  document.getElementById('userName').textContent='@'+n;
-  document.getElementById('userAv').textContent=n.charAt(0).toUpperCase();
-  document.getElementById('myPiId').textContent='@'+n;
-  document.getElementById('settingsUserInfo').style.display='block';
-  document.getElementById('settingsSignIn').style.display='none';
-  document.getElementById('settingsUsername').textContent='@'+n;
+function onAuth(user){
+  setTimeout(()=>document.getElementById('authScreen').classList.add('hidden'),600);
+  const n=user.username||'Pioneer';
+  document.getElementById('ubanner').style.display='flex';
+  document.getElementById('uav').textContent=n.charAt(0).toUpperCase();
+  document.getElementById('uname').textContent='@'+n;
+  document.getElementById('mypiid').textContent='@'+n;
+  document.getElementById('profinfo').style.display='block';
+  document.getElementById('profsignin').style.display='none';
+  document.getElementById('profuser').textContent='@'+n;
 }
-function continueAsGuest(){ document.getElementById('authScreen').classList.add('hidden'); }
+function guestMode(){document.getElementById('authScreen').classList.add('hidden');}
 function signOut(){
-  piSvc.signOut();
-  document.getElementById('userBanner').style.display='none';
-  document.getElementById('settingsUserInfo').style.display='none';
-  document.getElementById('settingsSignIn').style.display='block';
+  piSvc.out();
+  ['ubanner'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('profinfo').style.display='none';
+  document.getElementById('profsignin').style.display='block';
   document.getElementById('authScreen').classList.remove('hidden');
-  document.getElementById('authStatus').innerHTML='';
+  document.getElementById('authSt').innerHTML='';
   document.getElementById('signInBtn').disabled=false;
 }
 
-// ══════════════════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+//  ONLINE/OFFLINE
+// ═══════════════════════════════════════
+function setOnline(on){
+  S.isOnline=on;
+  document.getElementById('odot').classList.toggle('off',!on);
+  document.getElementById('offbar').classList.toggle('show',!on);
+  const ow=document.getElementById('offgpswarn');
+  const oi=document.getElementById('uoffline');
+  if(ow)ow.style.display=on?'none':'flex';
+  if(oi)oi.style.display=on?'none':'block';
+}
+window.addEventListener('online',()=>setOnline(true));
+window.addEventListener('offline',()=>setOnline(false));
 
-function showSection(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+// ═══════════════════════════════════════
+//  TAUX DE CHANGE TEMPS RÉEL
+// ═══════════════════════════════════════
+async function fetchRate(){
+  try{
+    const r=await fetch('https://open.er-api.com/v6/latest/USD',{signal:AbortSignal.timeout(5000)});
+    const d=await r.json();
+    const rate=d?.rates?.RWF;
+    if(!rate||rate<100)throw new Error('Taux invalide');
+    CFG.frwPerUsd=Math.round(rate);
+    localStorage.setItem('frwRate',CFG.frwPerUsd);
+    localStorage.setItem('frwRateTime',Date.now());
+    S.rateIsLive=true;S.rateTime=new Date();
+  }catch(e){
+    const c=localStorage.getItem('frwRate'),t=localStorage.getItem('frwRateTime');
+    if(c&&parseInt(c)>100){CFG.frwPerUsd=parseInt(c);S.rateIsLive=false;S.rateTime=t?new Date(parseInt(t)):null;}
+  }
+  updateRateUI();
+}
+
+function updateRateUI(){
+  const tStr=S.rateTime?S.rateTime.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'—';
+  const html=S.rateIsLive
+    ?`<span class="rlive">🟢 Taux en direct (${tStr})</span>`
+    :`<span class="rcache">🟡 Dernier taux connu (${tStr})</span>`;
+  ['balrate','ratestatus'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html;});
+  const fi=document.getElementById('frwinp');if(fi)fi.value=CFG.frwPerUsd;
+  document.getElementById('usdfrwdisp').textContent=CFG.frwPerUsd.toLocaleString()+' FRw';
+  document.getElementById('pifrwdisp').textContent='≈ '+Math.round(CFG.gcv*CFG.frwPerUsd/1e6)+' M FRw';
+  document.getElementById('ratetime').textContent=tStr;
+}
+
+// ═══════════════════════════════════════
+//  TARIFS RULA
+// ═══════════════════════════════════════
+async function loadTarifs(){
+  try{
+    const r=await fetch('tarifs.json',{signal:AbortSignal.timeout(4000)});
+    const d=await r.json();
+    if(d.moto){Object.assign(CFG.tarifs,d);localStorage.setItem('tarifs',JSON.stringify(CFG.tarifs));}
+  }catch(e){
+    const c=localStorage.getItem('tarifs');
+    if(c)try{Object.assign(CFG.tarifs,JSON.parse(c));}catch(e){}
+  }
+  syncTarifUI();
+}
+function syncTarifUI(){
+  [{id:'tMoto',k:'moto'},{id:'tTaxi',k:'taxi'},{id:'tBus',k:'bus'},{id:'tBorder',k:'border'}]
+    .forEach(({id,k})=>{const el=document.getElementById(id);if(el)el.value=CFG.tarifs[k];});
+}
+function updateTarifs(){
+  ['moto','taxi','bus','border'].forEach((k,i)=>{
+    const el=document.getElementById(['tMoto','tTaxi','tBus','tBorder'][i]);
+    if(el)CFG.tarifs[k]=parseFloat(el.value)||CFG.tarifs[k];
+  });
+  localStorage.setItem('tarifs',JSON.stringify(CFG.tarifs));
+  document.getElementById('tarifok').textContent='✅ Sauvegardé le '+new Date().toLocaleString('fr-FR');
+  showModal('✅','Tarifs mis à jour !','Nouveaux tarifs RULA actifs immédiatement.');
+}
+
+// ═══════════════════════════════════════
+//  GPS — OpenStreetMap + OSRM (gratuit)
+// ═══════════════════════════════════════
+async function geocode(txt){
+  const q=encodeURIComponent(txt+', Rwanda');
+  const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
+    {headers:{'Accept-Language':'fr'},signal:AbortSignal.timeout(6000)});
+  const d=await r.json();
+  if(!d.length)throw new Error('Lieu introuvable: '+txt);
+  return{lat:parseFloat(d[0].lat),lon:parseFloat(d[0].lon)};
+}
+async function calcGPS(){
+  const from=document.getElementById('uFrom').value.trim();
+  const to=document.getElementById('uTo').value.trim();
+  if(!from||!to){alert(T('from')+' / '+T('to')+' ?');return;}
+  if(!S.isOnline){document.getElementById('offgpswarn').style.display='flex';document.getElementById('uoffline').style.display='block';return;}
+  const btn=document.getElementById('gpsbtn');
+  btn.innerHTML='<div class="spin"></div> Calcul...';btn.disabled=true;
+  try{
+    const [A,B]=await Promise.all([geocode(from),geocode(to)]);
+    const url=`https://router.project-osrm.org/route/v1/driving/${A.lon},${A.lat};${B.lon},${B.lat}?overview=false`;
+    const rd=await (await fetch(url,{signal:AbortSignal.timeout(8000)})).json();
+    if(rd.code!=='Ok'||!rd.routes?.length)throw new Error('Route introuvable');
+    const km=Math.round(rd.routes[0].distance/100)/10;
+    const dur=Math.round(rd.routes[0].duration/60);
+    const buf=Math.round(km*(1+CFG.buf)*10)/10;
+    S.gpsKm=km;S.gpsBuf=buf;
+    document.getElementById('gpskm').textContent=km+' km';
+    document.getElementById('gpsdur').textContent='Durée estimée: ~'+dur+' min';
+    document.getElementById('gpsbuf').textContent='+'+Math.round(CFG.buf*100)+'% tampon → '+buf+' km facturés';
+    document.getElementById('gpsres').style.display='block';
+    calcUrban();
+  }catch(e){
+    alert('GPS indisponible: '+e.message+'\nEntrez la distance manuellement.');
+    document.getElementById('uoffline').style.display='block';
+  }finally{
+    btn.innerHTML='<span>🛰️</span><span>'+T('calc_dist')+'</span>';btn.disabled=false;
+  }
+}
+function clearGPS(){
+  S.gpsKm=0;S.gpsBuf=0;
+  document.getElementById('gpsres').style.display='none';
+  document.getElementById('uamt').style.display='none';
+  document.getElementById('usplit').style.display='none';
+}
+
+// ═══════════════════════════════════════
+//  URBAN
+// ═══════════════════════════════════════
+function onUType(){
+  const t=document.getElementById('uType').value;
+  document.getElementById('upmwrap').style.display=t&&t!=='bus'?'block':'none';
+  if(t==='bus')setUPM('km');
+  clearGPS();calcUrban();
+}
+function setUPM(m){
+  S.uPM=m;
+  document.getElementById('pm-km').classList.toggle('active',m==='km');
+  document.getElementById('pm-bg').classList.toggle('active',m==='bargain');
+  document.getElementById('ugpsblock').style.display=m==='km'?'block':'none';
+  document.getElementById('ubgblock').style.display=m==='bargain'?'block':'none';
+  document.getElementById('uamt').style.display='none';
+  document.getElementById('usplit').style.display='none';
+}
+function calcUrban(){
+  const type=document.getElementById('uType').value;if(!type)return;
+  let fare=0;
+  if(S.uPM==='km'){
+    const km=S.gpsBuf||parseFloat(document.getElementById('ukmman')?.value)||0;
+    if(km<=0)return;
+    fare=Math.max(km*CFG.tarifs[type],CFG.minFare[type]||500);
+  }else{
+    fare=parseFloat(document.getElementById('ubgfrw').value)||0;
+    if(fare<=0)return;
+    const pi=C.frwToPi(fare);
+    document.getElementById('bpi2').textContent=parseFloat(pi).toFixed(8);
+    document.getElementById('busd2').textContent=C.fmtUsd(C.frwToUsd(fare));
+    document.getElementById('bfrw2').textContent=C.fmtFrw(fare);
+    document.getElementById('ubgconv').style.display='flex';
+  }
+  const fee=CFG.fees.urban;
+  const feeFrw=fare*fee.total,tot=fare+feeFrw;
+  document.getElementById('uamt').style.display='block';
+  setTriple(['ufpi','ufusd','uffrw'],fare);
+  setTriple(['ufepi','ufeusd','ufefrw'],feeFrw);
+  setTriple(['utotpi','utotusd','utotfrw'],tot);
+  document.getElementById('usplit').style.display='block';
+  document.getElementById('udrv').textContent=C.fmtFrw(tot*.85)+' | '+C.fmtPi(C.frwToPi(tot*.85));
+  document.getElementById('uapp').textContent=C.fmtFrw(tot*fee.app);
+  document.getElementById('upromo').textContent=C.fmtFrw(tot*fee.promo);
+  document.getElementById('urula').textContent=(CFG.tarifs[type]||60)+' FRw/km (RULA)';
+}
+function doUrbanPay(){
+  const type=document.getElementById('uType').value;
+  const from=document.getElementById('uFrom').value.trim();
+  const to=document.getElementById('uTo').value.trim();
+  if(!type||!from||!to){alert('Remplissez tous les champs');return;}
+  let fare=0;
+  if(S.uPM==='km'){
+    const km=S.gpsBuf||parseFloat(document.getElementById('ukmman')?.value)||0;
+    if(km<=0){alert('Calculez la distance d\'abord');return;}
+    fare=Math.max(km*CFG.tarifs[type],CFG.minFare[type]||500);
+  }else{fare=parseFloat(document.getElementById('ubgfrw').value)||0;if(fare<=0){alert('Entrez le prix négocié');return;}}
+  const tot=fare*(1+CFG.fees.urban.total);
+  const real=fare*(0.88+Math.random()*.10);
+  const ref=Math.max(0,tot-real*(1+CFG.fees.urban.total));
+  const nm={moto:'Taxi-Moto',taxi:'Taxi-Voiture',bus:'Taxi-Bus'}[type];
+  S.trips.unshift({ico:'🏍️',name:nm+' : '+from+' → '+to,frw:tot,time:"À l'instant",st:'confirmed'});
+  renderTrips();
+  showEscrow('✅','Paiement Escrow !',nm+' : '+from+' → '+to,tot,real*(1+CFG.fees.urban.total),ref);
+}
+
+// ═══════════════════════════════════════
+//  INTERCITY
+// ═══════════════════════════════════════
+function calcInter(){
+  const from=document.getElementById('iFrom').value;
+  const to=document.getElementById('iTo').value;
+  const type=document.getElementById('iType').value;
+  const pax=Math.max(1,parseInt(document.getElementById('iPax').value)||1);
+  if(!from||!to||from===to){document.getElementById('iamt').style.display='none';document.getElementById('isplit').style.display='none';return;}
+  const key=from+'-'+to;
+  const km=INTER_KM[key]||INTER_KM[to+'-'+from]||100;
+  const mult=CFG.tarifs.inter[type]||1;
+  const seat=km*CFG.tarifs.bus*mult;
+  const fee=seat*CFG.fees.intercity.total;
+  const tot=(seat+fee)*pax;
+  document.getElementById('idistlbl').textContent=km+' km · '+Math.round(CFG.tarifs.bus*mult)+' FRw/km';
+  document.getElementById('iamt').style.display='block';
+  setTriple(['ispi','isusd','isfrw'],seat);
+  setTriple(['ifepi','ifeusd','ifefrw'],fee);
+  setTriple(['itotpi','ototusd','ototfrw'],tot);
+  document.getElementById('isplit').style.display='block';
+  const f=CFG.fees.intercity;
+  document.getElementById('idrv').textContent=C.fmtFrw(tot*.85);
+  document.getElementById('iapp').textContent=C.fmtFrw(tot*f.app);
+  document.getElementById('ipromo').textContent=C.fmtFrw(tot*f.promo);
+}
+function doInterBook(){
+  const from=document.getElementById('iFrom').value;
+  const to=document.getElementById('iTo').value;
+  const type=document.getElementById('iType').value;
+  const date=document.getElementById('iDate').value;
+  const pax=Math.max(1,parseInt(document.getElementById('iPax').value)||1);
+  if(!from||!to||!date){alert('Remplissez tous les champs');return;}
+  if(from===to){alert('Départ = Destination !');return;}
+  const km=INTER_KM[from+'-'+to]||INTER_KM[to+'-'+from]||100;
+  const seat=km*CFG.tarifs.bus*(CFG.tarifs.inter[type]||1);
+  const tot=seat*(1+CFG.fees.intercity.total)*pax;
+  const tn={bus:'Bus',taxi:'Taxi partagé',private:'Voiture privée'}[type];
+  S.trips.unshift({ico:'🚌',name:from+' → '+to+' ('+tn+') ×'+pax,frw:tot,time:date.split('T')[0],st:'confirmed'});
+  renderTrips();
+  showModal('🚌','Réservation Confirmée !',from+' → '+to+'<br/>'+pax+' pax · '+tn+'<br/>'+C.fmtFrw(tot)+' | '+C.fmtPi(C.frwToPi(tot)));
+}
+
+// ═══════════════════════════════════════
+//  BORDER
+// ═══════════════════════════════════════
+function setTT(m){
+  S.ttMult=m;[1,2].forEach(n=>document.getElementById('tt-'+n).classList.toggle('active',n===m));
+  calcBorder();
+}
+function setBPM(m){
+  S.bPM=m;
+  document.getElementById('bpm-km').classList.toggle('active',m==='km');
+  document.getElementById('bpm-bg').classList.toggle('active',m==='bargain');
+  document.getElementById('bbgblock').style.display=m==='bargain'?'block':'none';
+  calcBorder();
+}
+function onBCountry(){
+  const c=document.getElementById('bCountry').value;
+  const el=document.getElementById('bCity');
+  el.innerHTML='<option value="">—</option>';
+  (I18N[S.lang].bcities[c]||[]).forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});
+  calcBorder();
+}
+function calcBorder(){
+  const c=document.getElementById('bCountry').value;
+  const pax=Math.max(1,parseInt(document.getElementById('bPax').value)||1);
+  if(!c){document.getElementById('bamt').style.display='none';document.getElementById('bsplit').style.display='none';return;}
+  const km=BORDER_KM[c]||400;
+  let seat=0;
+  if(S.bPM==='km')seat=km*CFG.tarifs.border*S.ttMult;
+  else{seat=(parseFloat(document.getElementById('bbgfrw').value)||0)*S.ttMult;if(seat<=0){document.getElementById('bamt').style.display='none';return;}}
+  const fee=seat*CFG.fees.border.total;
+  const tot=(seat+fee)*pax;
+  const tl={1:'Aller simple',2:'Aller-retour'}[S.ttMult];
+  document.getElementById('blbl').textContent=km+' km · '+tl+(S.bPM==='km'?' · '+CFG.tarifs.border+' FRw/km':'');
+  document.getElementById('bamt').style.display='block';
+  setTriple(['bspi','bsusd','bsfrw'],seat);
+  setTriple(['bfepi','bfeusd','bfefrw'],fee);
+  setTriple(['btotpi','btotusd','btotfrw'],tot);
+  document.getElementById('bsplit').style.display='block';
+  const f=CFG.fees.border;
+  document.getElementById('bdrv').textContent=C.fmtFrw(tot*.85);
+  document.getElementById('bapp').textContent=C.fmtFrw(tot*f.app);
+  document.getElementById('bpromo').textContent=C.fmtFrw(tot*f.promo);
+}
+function doBorderBook(){
+  const dep=document.getElementById('bFrom').value;
+  const c=document.getElementById('bCountry').value;
+  const city=document.getElementById('bCity').value;
+  const agency=document.getElementById('bAgency').value;
+  const date=document.getElementById('bDate').value;
+  const pax=Math.max(1,parseInt(document.getElementById('bPax').value)||1);
+  if(!dep||!c||!city||!agency||!date){alert('Remplissez tous les champs');return;}
+  const km=BORDER_KM[c]||400;
+  const seat=S.bPM==='km'?km*CFG.tarifs.border*S.ttMult:(parseFloat(document.getElementById('bbgfrw').value)||0)*S.ttMult;
+  const tot=seat*(1+CFG.fees.border.total)*pax;
+  const tl={1:'Aller',2:'Aller-Retour'}[S.ttMult];
+  S.trips.unshift({ico:'🌍',name:dep+' → '+city+' ('+tl+') ×'+pax,frw:tot,time:date,st:'confirmed'});
+  renderTrips();
+  showModal('🌍','Voyage Réservé !',dep+' → '+city+'<br/>'+agency+'<br/>'+tl+' × '+pax+' pax<br/>'+C.fmtFrw(tot)+' | '+C.fmtPi(C.frwToPi(tot)));
+}
+
+// ═══════════════════════════════════════
+//  RENDER TRIPS
+// ═══════════════════════════════════════
+function renderTrips(){
+  const html=!S.trips.length
+    ?`<div class="empty">${T('no_trips')}</div>`
+    :S.trips.slice(0,10).map(t=>`
+      <div class="txitem">
+        <div class="txic">${t.ico}</div>
+        <div class="txinfo"><div class="txname">${t.name}</div><div class="txmeta">${t.time}<span class="txbadge">✓ ${t.st}</span></div></div>
+        <div class="txr"><div class="txpi">${C.fmtPi(C.frwToPi(t.frw))}</div><div class="txusd">${C.fmtUsd(C.frwToUsd(t.frw))}</div><div class="txfrw">${C.fmtFrw(t.frw)}</div></div>
+      </div>`).join('');
+  document.getElementById('tripslist').innerHTML=html;
+  document.getElementById('txhome').innerHTML=html;
+}
+
+// ═══════════════════════════════════════
+//  GCV
+// ═══════════════════════════════════════
+function updateGCV(){
+  const g=parseFloat(document.getElementById('gcvinp').value)||0;
+  const f=parseFloat(document.getElementById('frwinp').value)||0;
+  if(g<1||f<100){alert('Valeurs invalides');return;}
+  CFG.gcv=g;CFG.frwPerUsd=f;
+  localStorage.setItem('frwRate',f);
+  document.getElementById('gcvval').textContent=g.toLocaleString();
+  document.getElementById('gcvDisp').textContent=g.toLocaleString();
+  updateRateUI();renderTrips();
+  showModal('🌐','GCV mis à jour !','1 π = $'+g.toLocaleString()+'<br/>1 $ = '+f.toLocaleString()+' FRw');
+}
+
+// ═══════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════
+function showSec(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(n=>n.classList.remove('active'));
   const m={'sec-home':'nav-home','sec-transport':'nav-transport','sec-trips':'nav-trips','sec-profile':'nav-profile'};
-  if(m[id]) document.getElementById(m[id]).classList.add('active');
+  if(m[id])document.getElementById(m[id]).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
-function goTransport(mode){
-  showSection('sec-transport');
-  setMode(mode);
-}
-
+function goT(mode){showSec('sec-transport');setMode(mode);}
 function setMode(mode){
-  currentMode=mode;
+  S.mode=mode;
   ['urban','intercity','border'].forEach(m=>{
-    document.getElementById('mode-'+m).style.display = m===mode?'block':'none';
+    document.getElementById('mode-'+m).style.display=m===mode?'block':'none';
     document.getElementById('tab-'+m).classList.toggle('active',m===mode);
   });
 }
 
-// ══════════════════════════════════════════════════════════
-//  URBAN
-// ══════════════════════════════════════════════════════════
-
-function onUrbanTypeChange(){
-  const t = document.getElementById('urbanType').value;
-  const wrap = document.getElementById('payMethodWrap');
-  // Bus: tarif fixe km uniquement, pas de bargaining
-  if(t === 'bus'){
-    wrap.style.display='none';
-    setPayMethod('km');
-  } else if(t){
-    wrap.style.display='block';
-  } else {
-    wrap.style.display='none';
-  }
-  calcUrban();
+// ═══════════════════════════════════════
+//  I18N — TRADUCTION COMPLÈTE
+// ═══════════════════════════════════════
+function applyLang(lang){
+  S.lang=lang;
+  const labels={fr:'FR',en:'EN',kin:'KIN',sw:'SW'};
+  document.getElementById('lcur').textContent=labels[lang];
+  document.getElementById('ldrop').classList.remove('open');
+  ['fr','en','kin','sw'].forEach(l=>{const el=document.getElementById('lc-'+l);if(el)el.classList.toggle('active',l===lang);});
+  // Textes statiques
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const v=T(el.getAttribute('data-i18n'));if(v)el.innerHTML=v;
+  });
+  // Reconstruire tous les selects
+  rebuildSelects();
 }
 
-function setPayMethod(m){
-  urbanPayMethod=m;
-  document.getElementById('pm-km').classList.toggle('active',m==='km');
-  document.getElementById('pm-bargain').classList.toggle('active',m==='bargain');
-  document.getElementById('urbanKmBlock').style.display      = m==='km'      ?'block':'none';
-  document.getElementById('urbanBargainBlock').style.display = m==='bargain' ?'block':'none';
-  document.getElementById('urbanCalc').style.display='none';
-  if(m==='km') calcUrban();
+function rebuildSelect(id,opts){
+  const el=document.getElementById(id);if(!el)return;
+  const prev=el.value;el.innerHTML='';
+  opts.forEach(o=>{
+    const opt=document.createElement('option');
+    if(Array.isArray(o)){opt.value=o[0];opt.textContent=o[1];}
+    else{opt.value=o;opt.textContent=o;}
+    el.appendChild(opt);
+  });
+  try{if(prev)el.value=prev;}catch(e){}
 }
 
-function calcUrban(){
-  const type = document.getElementById('urbanType').value;
-  if(!type){ document.getElementById('urbanCalc').style.display='none'; return; }
-
-  if(urbanPayMethod==='bargain') return; // géré par calcBargain
-
-  const km = parseFloat(document.getElementById('urbanKm').value)||0;
-  if(km<=0){ document.getElementById('urbanCalc').style.display='none'; return; }
-
-  const rate = URBAN_RATE[type];
-  const rawFrw = km * rate;
-  const fareFrw = Math.max(rawFrw, URBAN_MIN[type]);
-  const feeFrw  = fareFrw * FEES.urban;
-  const totFrw  = fareFrw + feeFrw;
-
-  document.getElementById('urbanCalc').style.display='block';
-  setAmountTriple(['uFarePi','uFareUsd','uFareFrw'], fareFrw);
-  setAmountTriple(['uFeePi','uFeeUsd','uFeeFrw'], feeFrw);
-  setAmountTriple(['uTotalPi','uTotalUsd','uTotalFrw'], totFrw);
+function rebuildSelects(){
+  const L=I18N[S.lang];
+  rebuildSelect('uType',L.vehicles);
+  rebuildSelect('iFrom',L.rwcities.map(c=>[c,c]));
+  rebuildSelect('iTo',L.rwcities.map(c=>[c,c]));
+  rebuildSelect('iType',L.itypes);
+  rebuildSelect('bFrom',L.bfroms.map(c=>[c,c]));
+  rebuildSelect('bCountry',L.bcountries);
+  rebuildSelect('bAgency',L.agencies.map(a=>[a,a]));
 }
 
-function calcBargain(){
-  const frw = parseFloat(document.getElementById('bargainFrw').value)||0;
-  if(frw<=0){ document.getElementById('bargainConv').style.display='none'; document.getElementById('urbanCalc').style.display='none'; return; }
+function toggleLD(){document.getElementById('ldrop').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('#ltog')&&!e.target.closest('#ldrop'))document.getElementById('ldrop').classList.remove('open');});
 
-  const pi  = frwToPi(frw);
-  const usd = frwToUsd(frw);
-  document.getElementById('bargainConv').style.display='flex';
-  document.getElementById('bcPi').textContent  = parseFloat(pi).toFixed(8);
-  document.getElementById('bcUsd').textContent = fmtUsd(usd);
-  document.getElementById('bcFrw').textContent = fmtFrw(frw);
-
-  // Calcul avec frais
-  const feeFrw = frw * FEES.urban;
-  const totFrw = frw + feeFrw;
-  document.getElementById('urbanCalc').style.display='block';
-  setAmountTriple(['uFarePi','uFareUsd','uFareFrw'], frw);
-  setAmountTriple(['uFeePi','uFeeUsd','uFeeFrw'], feeFrw);
-  setAmountTriple(['uTotalPi','uTotalUsd','uTotalFrw'], totFrw);
-}
-
-function doUrbanPay(){
-  const type = document.getElementById('urbanType').value;
-  const from = document.getElementById('urbanFrom').value.trim();
-  const to   = document.getElementById('urbanTo').value.trim();
-  if(!type||!from||!to){ alert('Remplissez tous les champs'); return; }
-
-  let fareFrw=0;
-  if(urbanPayMethod==='km'){
-    const km=parseFloat(document.getElementById('urbanKm').value)||0;
-    if(km<=0){ alert('Entrez la distance en km'); return; }
-    fareFrw = Math.max(km * URBAN_RATE[type], URBAN_MIN[type]);
-  } else {
-    fareFrw = parseFloat(document.getElementById('bargainFrw').value)||0;
-    if(fareFrw<=0){ alert('Entrez le prix négocié'); return; }
-  }
-
-  const feeFrw  = fareFrw * FEES.urban;
-  const totFrw  = fareFrw + feeFrw;
-  // Simulation escrow: montant réel légèrement inférieur (simulation)
-  const realFrw = fareFrw * (0.88 + Math.random()*0.10);
-  const refundFrw = totFrw - (realFrw + realFrw*FEES.urban);
-
-  const typeName = {moto:'Taxi-Moto',taxi:'Taxi-Voiture',bus:'Taxi-Bus'}[type];
-  trips.unshift({type:'urban',icon:'🏍️',name:typeName+' — '+from+' → '+to,frw:totFrw,time:'À l\'instant',status:'confirmed'});
-  renderTrips();
-
-  showModalEscrow('✅','Paiement en Escrow !',
-    typeName+' : '+from+' → '+to+'<br/>Méthode : '+(urbanPayMethod==='km'?'Par km':'Négociée'),
-    totFrw, realFrw + realFrw*FEES.urban, refundFrw);
-}
-
-// ══════════════════════════════════════════════════════════
-//  INTERCITY
-// ══════════════════════════════════════════════════════════
-
-function calcInter(){
-  const from  = document.getElementById('interFrom').value;
-  const to    = document.getElementById('interTo').value;
-  const type  = document.getElementById('interType').value;
-  const pax   = parseInt(document.getElementById('interPax').value)||1;
-  if(!from||!to||from===to){ document.getElementById('interCalc').style.display='none'; return; }
-
-  const distKey = from+'-'+to;
-  const km = INTER_KM[distKey] || INTER_KM[to+'-'+from] || 100;
-  const seatFrw = km * INTER_RATE[type];
-  const feeFrw  = seatFrw * FEES.intercity;
-  const totFrw  = (seatFrw + feeFrw) * pax;
-
-  document.getElementById('interCalc').style.display='block';
-  document.getElementById('interDistLabel').textContent = km+' km · '+INTER_RATE[type]+' FRw/km';
-  setAmountTriple(['iSeatPi','iSeatUsd','iSeatFrw'], seatFrw);
-  setAmountTriple(['iFeePi','iFeeUsd','iFeeFrw'], feeFrw);
-  setAmountTriple(['iTotalPi','iTotalUsd','iTotalFrw'], totFrw);
-}
-
-function doInterBook(){
-  const from  = document.getElementById('interFrom').value;
-  const to    = document.getElementById('interTo').value;
-  const type  = document.getElementById('interType').value;
-  const date  = document.getElementById('interDate').value;
-  const pax   = parseInt(document.getElementById('interPax').value)||1;
-  if(!from||!to||!date){ alert('Remplissez tous les champs'); return; }
-  if(from===to){ alert('Départ et destination identiques'); return; }
-
-  const km = INTER_KM[from+'-'+to] || INTER_KM[to+'-'+from] || 100;
-  const seatFrw = km * INTER_RATE[type];
-  const totFrw  = seatFrw * (1+FEES.intercity) * pax;
-  const typeLabel = {bus:'Bus',taxi:'Taxi partagé',private:'Voiture privée'}[type];
-
-  trips.unshift({type:'intercity',icon:'🚌',name:from+' → '+to+' ('+typeLabel+') ×'+pax,frw:totFrw,time:date.split('T')[0],status:'confirmed'});
-  renderTrips();
-  showModal('🚌','Réservation Confirmée!',from+' → '+to+'<br/>'+pax+' passager(s) · '+typeLabel+'<br/>Total: '+fmtFrw(totFrw)+' | '+fmtPi(frwToPi(totFrw)));
-}
-
-// ══════════════════════════════════════════════════════════
-//  CROSS-BORDER
-// ══════════════════════════════════════════════════════════
-
-function setTripType(t){
-  borderTripType=t;
-  ['oneway','round1','round2'].forEach(k=>document.getElementById('tt-'+k).classList.toggle('active',k===t));
-  calcBorder();
-}
-
-function setBorderPayMethod(m){
-  borderPayMethod=m;
-  document.getElementById('bpm-km').classList.toggle('active',m==='km');
-  document.getElementById('bpm-bargain').classList.toggle('active',m==='bargain');
-  document.getElementById('borderBargainBlock').style.display = m==='bargain'?'block':'none';
-  document.getElementById('borderCalc').style.display='none';
-  calcBorder();
-}
-
-function calcBorder(){
-  const dest = document.getElementById('borderDest').value;
-  const pax  = parseInt(document.getElementById('borderPax').value)||1;
-  if(!dest){ document.getElementById('borderCalc').style.display='none'; return; }
-
-  const km  = BORDER_KM[dest] || 300;
-  const mult = borderTripType==='oneway'?1 : borderTripType==='round1'?2 : 4;
-  const tripLabel = {oneway:'Aller simple',round1:'Aller-retour (×2)',round2:'2 allers-retours (×4)'}[borderTripType];
-
-  let seatFrw = 0;
-  if(borderPayMethod==='km'){
-    seatFrw = km * BORDER_RATE_FRW * mult;
-  } else {
-    const bargFrw = parseFloat(document.getElementById('borderBargainFrw').value)||0;
-    if(bargFrw<=0){ document.getElementById('borderCalc').style.display='none'; return; }
-    seatFrw = bargFrw * mult;
-  }
-
-  const feeFrw  = seatFrw * FEES.border;
-  const totFrw  = (seatFrw + feeFrw) * pax;
-
-  document.getElementById('borderCalc').style.display='block';
-  document.getElementById('borderTripLabel').textContent =
-    km+'km · '+tripLabel+(borderPayMethod==='km'?' · '+BORDER_RATE_FRW+' FRw/km':'');
-  setAmountTriple(['bSeatPi','bSeatUsd','bSeatFrw'], seatFrw);
-  setAmountTriple(['bFeePi','bFeeUsd','bFeeFrw'], feeFrw);
-  setAmountTriple(['bTotalPi','bTotalUsd','bTotalFrw'], totFrw);
-}
-
-function doBorderBook(){
-  const dest   = document.getElementById('borderDest').value;
-  const agency = document.getElementById('borderAgency').value;
-  const date   = document.getElementById('borderDate').value;
-  const pax    = parseInt(document.getElementById('borderPax').value)||1;
-  if(!dest||!agency||!date){ alert('Remplissez tous les champs'); return; }
-
-  const km  = BORDER_KM[dest]||300;
-  const mult = borderTripType==='oneway'?1:borderTripType==='round1'?2:4;
-  let seatFrw = borderPayMethod==='km'
-    ? km * BORDER_RATE_FRW * mult
-    : (parseFloat(document.getElementById('borderBargainFrw').value)||0) * mult;
-  const totFrw = seatFrw * (1+FEES.border) * pax;
-
-  const destText = document.getElementById('borderDest').options[document.getElementById('borderDest').selectedIndex].text;
-  const tripLabel = {oneway:'Aller',round1:'Aller-Retour',round2:'2×A-R'}[borderTripType];
-
-  trips.unshift({type:'border',icon:'🌍',name:'Kigali → '+destText.split('·')[0].trim()+' ('+tripLabel+')',frw:totFrw,time:date,status:'confirmed'});
-  renderTrips();
-  showModal('🌍','Voyage Transfrontalier !',
-    destText.split('·')[0].trim()+'<br/>Agence: '+agency+'<br/>'+tripLabel+' × '+pax+' pax<br/>Total: '+fmtFrw(totFrw)+' | '+fmtPi(frwToPi(totFrw)));
-}
-
-// ══════════════════════════════════════════════════════════
-//  RENDER TRIPS
-// ══════════════════════════════════════════════════════════
-
-function renderTrips(){
-  const html = trips.length===0
-    ? '<div class="empty-state">Aucun voyage</div>'
-    : trips.slice(0,10).map(tr=>`
-      <div class="tx-item">
-        <div class="tx-ico">${tr.icon}</div>
-        <div class="tx-info">
-          <div class="tx-name">${tr.name}</div>
-          <div class="tx-meta">${tr.time} <span class="tx-badge">✓ ${tr.status}</span></div>
-        </div>
-        <div class="tx-right">
-          <div class="tx-pi">${fmtPi(frwToPi(tr.frw))}</div>
-          <div class="tx-usd">${fmtUsd(frwToUsd(tr.frw))}</div>
-          <div class="tx-frw">${fmtFrw(tr.frw)}</div>
-        </div>
-      </div>`).join('');
-  document.getElementById('tripsList').innerHTML=html;
-  document.getElementById('txListHome').innerHTML=html;
-}
-
-// ══════════════════════════════════════════════════════════
-//  GCV UPDATE
-// ══════════════════════════════════════════════════════════
-
-function updateGCV(){
-  const g = parseFloat(document.getElementById('gcvInput').value)||0;
-  const f = parseFloat(document.getElementById('frwInput').value)||0;
-  if(g<1||f<100){ alert('Valeurs invalides'); return; }
-  GCV=g; FRW_PER_USD=f;
-  const piInFrw = g*f;
-  document.getElementById('gcvVal').textContent = g.toLocaleString();
-  document.getElementById('gcvDisplay').textContent = g.toLocaleString();
-  document.getElementById('gcvFrwDisplay').textContent = '≈ '+Math.round(piInFrw/1e6)+' M FRw';
-  updateBalance();
-  renderTrips();
-  showModal('🌐','GCV mis à jour !','1 Pi = $'+g.toLocaleString()+' USD<br/>1 Pi = '+fmtFrw(piInFrw));
-}
-
-function updateBalance(){
-  const pi = 0;
-  document.getElementById('homeBalance').textContent = pi.toFixed(6)+' π';
-  document.getElementById('homeBalUsd').textContent  = '≈ '+fmtUsd(pi*GCV);
-  document.getElementById('homeBalFrw').textContent  = '≈ '+fmtFrw(pi*GCV*FRW_PER_USD);
-}
-
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  MODALS
-// ══════════════════════════════════════════════════════════
-
+// ═══════════════════════════════════════
 function showModal(ico,title,msg){
-  document.getElementById('mIco').innerHTML=ico;
-  document.getElementById('mTitle').textContent=title;
-  document.getElementById('mMsg').innerHTML=msg;
-  document.getElementById('mEscrow').style.display='none';
-  document.getElementById('mTxId').textContent=genTxId();
+  document.getElementById('mico').innerHTML=ico;
+  document.getElementById('mtitle').textContent=title;
+  document.getElementById('mmsg').innerHTML=msg.replace(/\n/g,'<br/>');
+  document.getElementById('mesc').style.display='none';
+  document.getElementById('mtxid').textContent=C.genTx();
   document.getElementById('modal').classList.add('show');
 }
-
-function showModalEscrow(ico,title,msg,initFrw,realFrw,refundFrw){
+function showEscrow(ico,title,msg,init,real,ref){
   showModal(ico,title,msg);
-  document.getElementById('mEscrow').style.display='block';
-  document.getElementById('mEscrowInit').textContent  = fmtFrw(initFrw)+' | '+fmtPi(frwToPi(initFrw));
-  document.getElementById('mEscrowReal').textContent  = fmtFrw(realFrw)+' | '+fmtPi(frwToPi(realFrw));
-  document.getElementById('mEscrowRefund').textContent= '+'+fmtFrw(refundFrw)+' (remboursé)';
+  document.getElementById('mesc').style.display='block';
+  document.getElementById('mei').textContent=C.fmtFrw(init)+' | '+C.fmtPi(C.frwToPi(init));
+  document.getElementById('mer').textContent=C.fmtFrw(real)+' | '+C.fmtPi(C.frwToPi(real));
+  document.getElementById('meref').textContent='+'+C.fmtFrw(Math.max(0,ref))+' remboursé';
 }
+function closeModal(){document.getElementById('modal').classList.remove('show');}
 
-function closeModal(){ document.getElementById('modal').classList.remove('show'); }
-
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  QR CODE
-// ══════════════════════════════════════════════════════════
-
+// ═══════════════════════════════════════
 function drawQR(){
-  const canvas=document.getElementById('qrCanvas');
-  const ctx=canvas.getContext('2d');
-  const s=170,c=21,cell=s/c;
+  const cv=document.getElementById('qrCanvas'),ctx=cv.getContext('2d');
+  const s=155,c=21,cell=s/c;
   ctx.fillStyle='#fff';ctx.fillRect(0,0,s,s);
   function h(str,i){let x=0;for(let j=0;j<str.length;j++)x=(x*31+str.charCodeAt(j))^i;return x;}
-  for(let r=0;r<c;r++){for(let cl=0;cl<c;cl++){
+  for(let r=0;r<c;r++)for(let cl=0;cl<c;cl++){
     const tl=r<7&&cl<7,tr=r<7&&cl>=c-7,bl=r>=c-7&&cl<7;
     if(tl||tr||bl){
       const e=(r===0||r===6)&&cl<7||(cl===0||cl===6)&&r<7||(r===0||r===6)&&cl>=c-7||(cl===c-7||cl===c-1)&&r<7||(r>=c-7&&(cl===0||cl===6));
       const inn=(r>=2&&r<=4&&cl>=2&&cl<=4)||(r>=2&&r<=4&&cl>=c-5&&cl<=c-3)||(r>=c-5&&r<=c-3&&cl>=2&&cl<=4);
       ctx.fillStyle=(e||inn)?'#0A7C4E':'#fff';
-    }else{ctx.fillStyle=h('pihub_rw',r*c+cl)%2===0?'#0A7C4E':'#fff';}
+    }else ctx.fillStyle=h('pihub_rw',r*c+cl)%2===0?'#0A7C4E':'#fff';
     ctx.fillRect(cl*cell,r*cell,cell,cell);
-  }}
-  ctx.fillStyle='rgba(10,124,78,0.95)';ctx.beginPath();ctx.arc(s/2,s/2,14,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='white';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Hub',s/2,s/2+1);
+  }
+  ctx.fillStyle='rgba(10,124,78,.94)';ctx.beginPath();ctx.arc(s/2,s/2,12,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Hub',s/2,s/2+1);
 }
-
 function copyId(){
-  navigator.clipboard?.writeText(document.getElementById('myPiId').textContent).catch(()=>{});
+  navigator.clipboard?.writeText(document.getElementById('mypiid').textContent).catch(()=>{});
   showModal('📋','Copié !','Votre Pi ID a été copié dans le presse-papiers.');
 }
 
-// ══════════════════════════════════════════════════════════
-//  LANGUES
-// ══════════════════════════════════════════════════════════
-
-const i18n = {
-  fr:{
-    mod_badge:'Module 1 : Transport',
-    hero_title:'Rwanda<br/><em>Pi Transport</em>',
-    hero_sub:'Transport urbain, intercity et transfrontalier — payé en Pi.',
-    my_balance:'Mon Solde Pi',book:'Réserver',my_trips:'Voyages',
-    urban:'Urbain',intercity:'Intercity',border:'Frontière',
-    urban_title:'Transport Urbain — Kigali & villes',
-    urban_note:'Paiement direct au chauffeur via système escrow Pi sécurisé.',
-    vehicle_type:'Type de véhicule',
-    pay_method:'Méthode de tarification',
-    by_km:'Par kilomètre',km_desc:'Tarif fixe / km',
-    bargaining:'Négociation',bargain_desc:'Prix librement négocié',
-    from:'Départ (zone)',to:'Arrivée (zone)',
-    dist_km:'Distance estimée (km)',
-    enter_price:'Entrez le prix négocié',price_frw:'Prix en Francs Rwandais (FRw)',
-    fare:'Tarif trajet',total:'Total',
-    escrow_title:'Système Escrow PiHub RW',
-    escrow_desc:'Le paiement est temporairement bloqué. L\'excédent est remboursé après le trajet.',
-    escrow_border_desc:'Paiement sécurisé en escrow. Remboursement automatique à l\'arrivée.',
-    pay_btn:'🔒 Payer en Pi (Escrow)',
-    intercity_title:'Réservation Intercity',
-    dep_city:'Ville départ',dest_city:'Ville arrivée',
-    transport_type:'Type de transport',travel_date:'Date & heure',passengers:'Passagers',
-    price_seat:'Prix / siège',book_pay:'Réserver & Payer en Pi',
-    border_title:'Voyage Transfrontalier',
-    border_note:'Munissez-vous de documents valides. Kenya accessible via Uganda.',
-    trip_type:'Type de voyage',one_way:'Aller simple',round1:'Aller-retour',round2:'2 allers-retours',
-    dest_country:'Pays de destination',agency:'Agence de transport',
-    border_pay_method:'Méthode de tarification',
-    book_border:'Réserver Voyage Transfrontalier',
-    my_trips_hist:'Mes Voyages & Réservations',my_qr:'Mon QR Code',show_code:'Montrez au chauffeur',
-    copy_id:'Copier mon Pi ID',home:'Accueil',transport:'Transport',trips:'Voyages',profile:'Profil',
-    language:'Langue / Language / Ururimi / Lugha',done:'Terminé',sign_out:'Déconnexion',
-    recent:'Voyages récents',disclaimer:"PiHub RW est indépendant — PAS affilié à Pi Core Team."
-  },
-  en:{
-    mod_badge:'Module 1: Transport',
-    hero_title:'Rwanda<br/><em>Pi Transport</em>',
-    hero_sub:'Urban, intercity & cross-border transport — paid in Pi.',
-    my_balance:'My Pi Balance',book:'Book',my_trips:'Trips',
-    urban:'Urban',intercity:'Intercity',border:'Cross-Border',
-    urban_title:'Urban Transport — Kigali & cities',
-    urban_note:'Direct driver payment via secure Pi escrow system.',
-    vehicle_type:'Vehicle type',
-    pay_method:'Pricing method',
-    by_km:'Per kilometre',km_desc:'Fixed rate / km',
-    bargaining:'Bargaining',bargain_desc:'Freely negotiated price',
-    from:'From (zone)',to:'To (zone)',
-    dist_km:'Estimated distance (km)',
-    enter_price:'Enter negotiated price',price_frw:'Price in Rwandan Francs (FRw)',
-    fare:'Trip fare',total:'Total',
-    escrow_title:'PiHub RW Escrow System',
-    escrow_desc:'Payment is temporarily held. Excess refunded automatically after trip.',
-    escrow_border_desc:'Secure escrow payment. Auto-refund upon arrival confirmation.',
-    pay_btn:'🔒 Pay in Pi (Escrow)',
-    intercity_title:'Intercity Booking',
-    dep_city:'Departure city',dest_city:'Destination city',
-    transport_type:'Transport type',travel_date:'Date & time',passengers:'Passengers',
-    price_seat:'Price / seat',book_pay:'Book & Pay in Pi',
-    border_title:'Cross-Border Trip',
-    border_note:'Bring valid travel documents. Kenya accessible via Uganda transit.',
-    trip_type:'Trip type',one_way:'One way',round1:'Round trip',round2:'2 round trips',
-    dest_country:'Destination country',agency:'Transport agency',
-    border_pay_method:'Pricing method',
-    book_border:'Book Cross-Border Trip',
-    my_trips_hist:'My Trips & Bookings',my_qr:'My QR Code',show_code:'Show to driver',
-    copy_id:'Copy my Pi ID',home:'Home',transport:'Transport',trips:'Trips',profile:'Profile',
-    language:'Language / Langue / Ururimi / Lugha',done:'Done',sign_out:'Sign Out',
-    recent:'Recent Trips',disclaimer:"PiHub RW is independent — NOT affiliated with Pi Core Team."
-  },
-  kin:{
-    mod_badge:'Inzira 1: Gutwara',
-    hero_title:'Rwanda<br/><em>Pi Transport</em>',
-    hero_sub:"Gutwara mu murwa, hagati y'imijyi no gutwara amahanga — kwishyura mu Pi.",
-    my_balance:'Amafaranga Yanjye ya Pi',book:'Saba',my_trips:'Ingendo',
-    urban:"Mu Murwa",intercity:"Hagati y'Imijyi",border:'Amahanga',
-    urban_title:"Gutwara mu Murwa — Kigali n'imijyi",
-    urban_note:'Ishyura umushoferi mu Pi binyuze muri escrow yuzuye umutekano.',
-    vehicle_type:"Ubwoko bw'imodoka",
-    pay_method:'Uburyo bwo kwishyura',
-    by_km:'Ku km',km_desc:'Igiciro gikwiye/km',
-    bargaining:'Kuganira igiciro',bargain_desc:'Igiciro cyumvikanwaho',
-    from:'Ahatuwe (zone)',to:'Ahagana (zone)',
-    dist_km:'Intera igereranye (km)',
-    enter_price:'Injiza igiciro cyumvikanwaho',price_frw:'Igiciro mu Francs Rwandais (FRw)',
-    fare:'Igiciro cy\'ingendo',total:'Byose bishyurwa',
-    escrow_title:'Sisitemu ya Escrow ya PiHub RW',
-    escrow_desc:'Amafaranga abitswe mu myanya. Ubunini busubizwa nyuma y\'ingendo.',
-    escrow_border_desc:'Kwishyura mu mutekano. Gusubiza buri ngufu nyuma yo kugera.',
-    pay_btn:'🔒 Ishyura mu Pi (Escrow)',
-    intercity_title:"Booking hagati y'Imijyi",
-    dep_city:"Umujyi wo gutahukira",dest_city:"Umujyi ujya",
-    transport_type:"Ubwoko bw'imodoka",travel_date:"Itariki y'ingendo",passengers:"Inomero y'abantu",
-    price_seat:'Igiciro ku ntebe',book_pay:'Saba no Kwishyura mu Pi',
-    border_title:'Ingendo z\'Amahanga',
-    border_note:"Zana impapuro z'ingendo. Kenya binyuze mu Uganda.",
-    trip_type:"Ubwoko bw'ingendo",one_way:'Aho gusa',round1:'Kujya no kugaruka',round2:'Inshuro 2',
-    dest_country:'Igihugu ujya',agency:"Sosiyete y'imodoka",
-    border_pay_method:'Uburyo bwo kwishyura',
-    book_border:"Saba ingendo z'Amahanga",
-    my_trips_hist:'Ingendo Zanjye & Booking',my_qr:'Kode Yanjye ya QR',show_code:'Erekana umushoferi',
-    copy_id:'Kopi Pi ID yanjye',home:'Ahabanza',transport:'Gutwara',trips:'Ingendo',profile:'Umwirondoro',
-    language:'Ururimi / Language / Langue / Lugha',done:'Birangiye',sign_out:'Sohoka',
-    recent:'Ingendo za Vuba',disclaimer:"PiHub RW ni app yigenga — ntiyunganye na Pi Core Team."
-  },
-  sw:{
-    mod_badge:'Moduli 1: Usafiri',
-    hero_title:'Rwanda<br/><em>Pi Transport</em>',
-    hero_sub:'Usafiri wa mjini, baina ya miji na wa kimataifa — kulipwa kwa Pi.',
-    my_balance:'Salio Langu la Pi',book:'Hifadhi',my_trips:'Safari',
-    urban:'Mjini',intercity:'Baina ya Miji',border:'Mpakani',
-    urban_title:'Usafiri wa Mjini — Kigali & miji',
-    urban_note:'Malipo ya moja kwa moja kwa dereva kupitia mfumo salama wa escrow ya Pi.',
-    vehicle_type:'Aina ya gari',
-    pay_method:'Njia ya bei',
-    by_km:'Kwa kilomita',km_desc:'Bei fasta/km',
-    bargaining:'Kujadiliana bei',bargain_desc:'Bei inayokubaliwa kwa uhuru',
-    from:'Kutoka (eneo)',to:'Kwenda (eneo)',
-    dist_km:'Umbali uliokadiriwa (km)',
-    enter_price:'Ingiza bei iliyokubaliwa',price_frw:'Bei kwa Francs ya Rwanda (FRw)',
-    fare:'Nauli ya safari',total:'Jumla ya kulipa',
-    escrow_title:'Mfumo wa Escrow wa PiHub RW',
-    escrow_desc:'Malipo yanashikiliwa kwa muda. Ziada itarudishwa baada ya safari.',
-    escrow_border_desc:'Malipo salama ya escrow. Kurudisha kiotomatiki baada ya kuwasili.',
-    pay_btn:'🔒 Lipa kwa Pi (Escrow)',
-    intercity_title:'Uhifadhi wa Safari baina ya Miji',
-    dep_city:'Mji wa kuondoka',dest_city:'Mji wa kwenda',
-    transport_type:'Aina ya usafiri',travel_date:'Tarehe & saa',passengers:'Abiria',
-    price_seat:'Bei / kiti',book_pay:'Hifadhi & Lipa kwa Pi',
-    border_title:'Safari ya Mpakani',
-    border_note:'Lete nyaraka sahihi. Kenya inapatikana kupitia Uganda.',
-    trip_type:'Aina ya safari',one_way:'Kwenda tu',round1:'Kwenda na kurudi',round2:'Safari 2 z\'kwenda-kurudi',
-    dest_country:'Nchi ya kwenda',agency:'Kampuni ya usafiri',
-    border_pay_method:'Njia ya bei',
-    book_border:'Hifadhi Safari ya Mpakani',
-    my_trips_hist:'Safari Zangu & Uhifadhi',my_qr:'Msimbo wangu wa QR',show_code:'Onyesha dereva',
-    copy_id:'Nakili Pi ID yangu',home:'Nyumbani',transport:'Usafiri',trips:'Safari',profile:'Wasifu',
-    language:'Lugha / Language / Ururimi / Langue',done:'Imekamilika',sign_out:'Toka',
-    recent:'Safari za Hivi Karibuni',disclaimer:"PiHub RW ni huru — HAINA uhusiano na Pi Core Team."
-  }
-};
-
-function T(k){ return i18n[currentLang]?.[k] || i18n.en?.[k] || k; }
-
-function setLang(lang){
-  currentLang=lang;
-  // Topbar buttons
-  document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.classList.toggle('active', b.textContent===lang.toUpperCase()||(lang==='kin'&&b.textContent==='KIN')||(lang==='sw'&&b.textContent==='SW'));
-  });
-  applyTranslations();
-}
-
-function setLangCard(lang){
-  setLang(lang);
-  ['fr','en','kin','sw'].forEach(l=>document.getElementById('lc-'+l)?.classList.toggle('active',l===lang));
-}
-
-function applyTranslations(){
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const v=T(el.getAttribute('data-i18n'));
-    if(v) el.innerHTML=v;
-  });
-}
-
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  INIT
-// ══════════════════════════════════════════════════════════
-
-function init(){
+// ═══════════════════════════════════════
+async function init(){
+  setOnline(navigator.onLine);
+  await Promise.all([fetchRate(),loadTarifs()]);
+  applyLang('fr');
+  setMode('urban');
+  setUPM('km');
+  setTT(1);
+  setBPM('km');
   renderTrips();
   drawQR();
-  updateBalance();
-  setMode('urban');
-  setPayMethod('km');
-  setLang('fr');
-  // Update GCV display
-  document.getElementById('gcvFrwDisplay').textContent='≈ '+Math.round(GCV*FRW_PER_USD/1e6)+' M FRw';
-  piSvc.init().then(()=>console.log('Pi SDK prêt'));
+  piSvc.init();
 }
 init();
 </script>
