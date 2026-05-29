@@ -8,4 +8,5 @@ Rwanda will serve as the pilot country for the initial deployment of PiHub RW. F
 
 Current Version: 0.1.0
 Name: PiHub RW Team  
-Lead Developer: Theophile Hakizimana
+      Lead Developer: Theophile Hakizimana
+      
