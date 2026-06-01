@@ -409,7 +409,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .btnout:hover{border-color:var(--pi2);color:var(--txt)}
 .btnsm{padding:8px 12px;font-size:.72rem;border-radius:8px;width:auto}
 .btnpurple{background:linear-gradient(135deg,#CE93D8,#9C27B0);color:#fff}
-
+F
 /* ════════════════════════════════════════
    REPUTATION & RATING
 ════════════════════════════════════════ */
@@ -933,7 +933,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <span class="badge pioneer">🌟 Pioneer</span>
       </div>
     </div>
-    <button class="btn btngold" onclick="copyId()" data-i18n="copy_id">📋 Copy Pi ID</button>
+    <button class="btn btngold" onclick="copyId()" data-i18n="copy_id">📋 Copy Pi ID</button><button class="btn btnpi" style="margin-top:8px" onclick="PiQRFlow.openPassengerScanner()">📷 Scanner QR du Bus</button>
+<button class="btn btnout" style="margin-top:8px" onclick="PiQRFlow.openDriverDashboard()">🚌 Dashboard Chauffeur</button>
+     
   </div>
 </div>
 
@@ -2372,11 +2374,11 @@ function showSec(id){
   const sec=el(id);if(sec)sec.classList.add('active');
   document.querySelectorAll('.nbtn').forEach(n=>n.classList.remove('active'));
   const map={'sec-home':'nav-home','sec-transport':'nav-transport','sec-trips':'nav-trips',
-             'sec-qr':'nav-qr','sec-loyalty':'nav-loyalty','sec-profile':'nav-profile'};
+             '':'nav-qr','sec-loyalty':'nav-loyalty','sec-profile':'nav-profile'};
   const nb=el(map[id]);if(nb)nb.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='sec-loyalty')updateLoyaltyDisplay();
-  if(id==='sec-qr')updateReputation();
+  if(id==='')updateReputation();
 }
 function goT(mode){showSec('sec-transport');setMode(mode);}
 function setMode(mode){
@@ -2516,5 +2518,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 <script src="qr.js" defer></script>
+<script src="qr-flow.js" defer></script> 
 </body>
 </html>
