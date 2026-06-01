@@ -1,0 +1,13 @@
+{
+  "moto_base_rwf": 400,
+  "moto_per_km_rwf": 117,
+  "moto_long_distance_rwf": 205,
+  "moto_threshold_km": 40,
+  "bus_urban_per_km_rwf": 59.28,
+  "bus_intercity_per_km_rwf": 41.58,
+  "taxi_base_rwf": 3000,
+  "taxi_per_km_rwf": 1000,
+  "cross_border": "agency_fixed",
+  "bargain_enabled": true,
+  "bargain_min_rwf": 100
+}
