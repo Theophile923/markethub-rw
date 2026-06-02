@@ -582,4 +582,4 @@ const PiQRFlow = {
 };
 
 window.PiQRFlow = PiQRFlow;
-console.log('[PiQRFlow] ✅ v1.1 Multilingual — PiHub RW');
+console.log('[PiQRFlow] ✅ v1.1 Multilingual — PiHub RW'); 
