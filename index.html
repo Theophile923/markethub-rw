@@ -409,7 +409,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .btnout:hover{border-color:var(--pi2);color:var(--txt)}
 .btnsm{padding:8px 12px;font-size:.72rem;border-radius:8px;width:auto}
 .btnpurple{background:linear-gradient(135deg,#CE93D8,#9C27B0);color:#fff}
-F
 /* ════════════════════════════════════════
    REPUTATION & RATING
 ════════════════════════════════════════ */
@@ -562,11 +561,8 @@ F
 <div class="notif-bar" id="notifBar"><span id="notifIco">✅</span><span id="notifTxt"></span></div>
 
 <!-- SOS BUTTON -->
-<button class="sos-btn" id="sosBtn" onclick="triggerSOS()" title="SOS">
-  <span class="sos-ico">🆘</span>
-  <span>SOS</span>
-</button>
-
+<button class="btn btnpi" style="margin-top:8px" onclick="PiQRFlow.openPassengerScanner()">📷 <span data-i18n="scan_bus_qr">Scan Bus QR</span></button>
+<button class="btn btnout" style="margin-top:8px" onclick="PiQRFlow.openDriverDashboard()">🚌 <span data-i18n="driver_dashboard_btn">Driver Dashboard</span></button>
 <!-- AUTH -->
 <div class="auth" id="authScreen">
   <div class="auth-logo">Hub</div>
@@ -1219,7 +1215,7 @@ const I18N = {
     buf_label:'% buffer →',km_billed:' km billed',my_pos:'My GPS position',
     exported:'History exported!',export_msg:'Copied to clipboard.',
     qr_expire:'⏱️ QR expires in ',qr_expired:'❌ QR expired',qr_min:' min',
-    fav_added:'Favorite added!',
+    fav_added:'Favorite added!',scan_bus_qr:'Scan Bus QR',driver_dashboard_btn:'Driver Dashboard',
     vehicles:[['','Choose...'],['moto','🏍️ Moto Taxi'],['taxi','🚕 City Taxi'],['bus','🚌 Urban Bus']],
     rwcities:['','Kigali','Butare / Huye','Musanze','Gisenyi / Rubavu','Cyangugu / Rusizi',
       'Rwamagana','Nyamata','Kibungo / Ngoma','Byumba / Gicumbi','Kibuye / Karongi',
@@ -1325,7 +1321,7 @@ const I18N = {
     buf_label:'% tampon →',km_billed:' km facturés',my_pos:'Ma position GPS',
     exported:'Historique exporté !',export_msg:'Copié dans le presse-papiers.',
     qr_expire:'⏱️ QR expire dans ',qr_expired:'❌ QR expiré',qr_min:' min',
-    fav_added:'Favori ajouté !',
+    fav_added:'Favori ajouté !',scan_bus_qr:'Scanner QR du Bus',driver_dashboard_btn:'Dashboard Chauffeur',
     vehicles:[['','Choisir...'],['moto','🏍️ Taxi-Moto'],['taxi','🚕 Taxi-Voiture'],['bus','🚌 Taxi-Bus']],
     rwcities:['','Kigali','Butare / Huye','Musanze','Gisenyi / Rubavu','Cyangugu / Rusizi',
       'Rwamagana','Nyamata','Kibungo / Ngoma','Byumba / Gicumbi','Kibuye / Karongi',
@@ -1431,7 +1427,7 @@ const I18N = {
     buf_label:'% tampon →',km_billed:' km bishyurwa',my_pos:'Aho ndi hano GPS',
     exported:'Amateka yasohowe!',export_msg:'Yakopwe.',
     qr_expire:'⏱️ QR irangira mu ',qr_expired:'❌ QR yarangiye',qr_min:' min',
-    fav_added:'Ibikunze byongewe!',
+    fav_added:'Ibikunze byongewe!',scan_bus_qr:"Skani QR y'Bisi",driver_dashboard_btn:"Dashboard y'Umushoferi",
     vehicles:[['','Hitamo...'],['moto','🏍️ Taxi-Moto'],['taxi','🚕 Taxi-Modoka'],['bus','🚌 Bisi']],
     rwcities:['','Kigali','Butare / Huye','Musanze','Gisenyi / Rubavu','Cyangugu / Rusizi',
       'Rwamagana','Nyamata','Kibungo / Ngoma','Byumba / Gicumbi','Kibuye / Karongi',
@@ -1537,7 +1533,7 @@ const I18N = {
     buf_label:'% ziada →',km_billed:' km za malipo',my_pos:'Mahali pangu GPS',
     exported:'Historia imehamishwa!',export_msg:'Imenakiliwa kwenye ubao.',
     qr_expire:'⏱️ QR inaisha baada ya ',qr_expired:'❌ QR imeisha',qr_min:' dak',
-    fav_added:'Kipendwa kimeongezwa!',
+    fav_added:'Kipendwa kimeongezwa!',scan_bus_qr:'Skani QR ya Basi',driver_dashboard_btn:'Dashibodi ya Dereva',
     vehicles:[['','Chagua...'],['moto','🏍️ Bodaboda'],['taxi','🚕 Teksi ya Mji'],['bus','🚌 Basi la Mji']],
     rwcities:['','Kigali','Butare / Huye','Musanze','Gisenyi / Rubavu','Cyangugu / Rusizi',
       'Rwamagana','Nyamata','Kibungo / Ngoma','Byumba / Gicumbi','Kibuye / Karongi',
@@ -2374,7 +2370,8 @@ function showSec(id){
   const sec=el(id);if(sec)sec.classList.add('active');
   document.querySelectorAll('.nbtn').forEach(n=>n.classList.remove('active'));
   const map={'sec-home':'nav-home','sec-transport':'nav-transport','sec-trips':'nav-trips',
-             '':'nav-qr','sec-loyalty':'nav-loyalty','sec-profile':'nav-profile'};
+             'sec-qr':'nav-qr'
+,'sec-loyalty':'nav-loyalty','sec-profile':'nav-profile'};
   const nb=el(map[id]);if(nb)nb.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='sec-loyalty')updateLoyaltyDisplay();
