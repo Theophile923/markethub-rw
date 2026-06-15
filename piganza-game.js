@@ -134,7 +134,15 @@ function updateLangUI(){
   t('pw-weekly',L.pw_weekly);t('pw-weekly-desc',L.pw_weekly_desc);
   t('pw-monthly',L.pw_monthly);t('pw-monthly-desc',L.pw_monthly_desc);
   t('pw-note',L.pw_note);t('pw-close-btn',L.pw_close);
-  t('stat-sessions-lbl','Sessions:');t('stat-score-lbl','Score:');
+  t('pw-weekly-badge',L.pw_weekly_badge);
+  t('stat-sessions-lbl',L.stat_sessions);t('stat-score-lbl',L.stat_score);
+  t('accel-lbl',L.accel_lbl);
+  t('quit-btn-lbl',L.quit_btn);
+  t('quit-confirm-txt',L.quit_confirm);t('quit-yes-btn',L.quit_yes);t('quit-no-btn',L.quit_no);
+  t('testBadge',L.test_mode_lbl);
+  const rn=L.route_names||{};
+  t('r1-name',rn.rubavu);t('r2-name',rn.huye);t('r3-name',rn.nyagatare);
+  t('r4-name',rn.gatuna);t('r5-name',rn.ville);
 }
 
 function showLangPicker(){document.getElementById('langOverlay').classList.add('show');}
@@ -299,6 +307,9 @@ function gameTick(){
   const r=ROUTES[gameState.route];
   document.getElementById('hudDist').textContent=
     Math.floor(gameState.distance)+' / '+r.maxDist+' km';
+  const pct=Math.min(100,(gameState.distance/r.maxDist)*100);
+  const pf=document.getElementById('distProgFill');
+  if(pf)pf.style.width=pct+'%';
   gameState.obstacles.forEach(obs=>{
     obs.y+=isTestMode?0.04:0.008;
     if(obs.y>1){obs.active=false;}
@@ -357,9 +368,20 @@ function showIAWarning(warnType){
   },1000);
   if('speechSynthesis' in window){
     try{
-      const u=new SpeechSynthesisUtterance(txt.replace(/[🚧📸🚦🐄👦🚛🚶🌫️🏫⚠️🌧️🤖]/g,''));
-      u.lang=currentLang==='kin'?'rw-RW':currentLang==='sw'?'sw-KE':currentLang==='fr'?'fr-FR':'en-US';
-      u.rate=1.1;window.speechSynthesis.speak(u);
+      const cleanTxt=txt.replace(/[🚧📸🚦🐄👦🚛🚶🌫️🏫⚠️🌧️🤖🚨📱]/g,'').trim();
+      const targetLang=currentLang==='kin'?'rw-RW':currentLang==='sw'?'sw-KE':currentLang==='fr'?'fr-FR':'en-US';
+      const voices=window.speechSynthesis.getVoices();
+      let voice=voices.find(v=>v.lang===targetLang)||voices.find(v=>v.lang.startsWith(targetLang.split('-')[0]));
+      // Kinyarwanda/Swahili often have no installed voice -> avoid letter-by-letter spelling.
+      // Fall back to French (closer phonetics for KIN) or English, but keep visual alert as primary info.
+      if(!voice&&(currentLang==='kin'||currentLang==='sw')){
+        voice=voices.find(v=>v.lang.startsWith('fr'))||voices.find(v=>v.lang.startsWith('en'));
+      }
+      const u=new SpeechSynthesisUtterance(cleanTxt);
+      if(voice){u.voice=voice;u.lang=voice.lang;}else{u.lang=targetLang;}
+      u.rate=1.0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
     }catch(e){}
   }
 }
@@ -367,14 +389,15 @@ function showIAWarning(warnType){
 function checkObstacleReaction(obs){
   const now=Date.now();
   if(now-gameState.lastInfraction<2000)return;
-  const reacted=ctrl.currentAction;
+  const reactedRecently=ctrl.lastAction&&(now-ctrl.lastActionTime<1500);
+  const reaction=reactedRecently?ctrl.lastAction:null;
   let infracted=false;
-  if(obs.action==='brake'&&reacted!=='brake'){
+  if(obs.action==='brake'&&reaction!=='brake'){
     applyInfraction(obs.warn==='red_light'?'redlight':obs.warn==='school'?'speeding':'badstopping');infracted=true;
   }else if(obs.action==='speed'&&gameState.speed>55){
     applyInfraction('speeding');infracted=true;
-  }else if(obs.action==='dodge'&&reacted==='left'||reacted==='right'||reacted==='brake'){
-    infracted=false;
+  }else if(obs.action==='dodge'&&!(reaction==='left'||reaction==='right'||reaction==='brake')){
+    applyInfraction('badstopping');infracted=true;
   }
   if(!infracted&&gameState.iaActive){
     gameState.vigilanceBonus+=5;
@@ -397,7 +420,7 @@ function showAlert(inf){
   const box=document.getElementById('alertBox');
   const flash=document.getElementById('infraFlash');
   document.getElementById('alertIco').textContent='🚨';
-  document.getElementById('alertTitle').textContent='INFRACTION !';
+  document.getElementById('alertTitle').textContent=L.infraction_label;
   document.getElementById('alertDesc').textContent=inf.name+' — '+inf.code;
   document.getElementById('alertPenalty').textContent=inf.pts+' pts';
   box.classList.add('show');flash.classList.add('show');
@@ -420,24 +443,43 @@ function updateSpeedUI(){
 }
 
 // ════════ CONTROLS ════════
-const ctrl={currentAction:null};
+const ctrl={currentAction:null,lastAction:null,lastActionTime:0};
+const SPEED_MIN=10,SPEED_MAX=110;
 function startCtrl(action){
   ctrl.currentAction=action;
+  ctrl.lastAction=action;
+  ctrl.lastActionTime=Date.now();
   if(action==='brake'){
-    gameState.speed=Math.max(20,gameState.speed-30);
+    gameState.speed=Math.max(SPEED_MIN,gameState.speed-10);
+    updateSpeedUI();
+  }else if(action==='accel'){
+    gameState.speed=Math.min(SPEED_MAX,gameState.speed+10);
     updateSpeedUI();
   }else if(action==='left'){
-    gameState.busX=Math.max(0.05,gameState.busX-0.12);
+    gameState.busX=Math.max(0.05,gameState.busX-0.15);
   }else if(action==='right'){
-    gameState.busX=Math.min(0.95,gameState.busX+0.12);
+    gameState.busX=Math.min(0.95,gameState.busX+0.15);
   }
-  setTimeout(()=>{
-    if(action==='brake')gameState.speed=ROUTES[gameState.route].speed;
-    updateSpeedUI();
-    ctrl.currentAction=null;
-  },600);
 }
-function stopCtrl(){}
+function stopCtrl(){ctrl.currentAction=null;}
+
+// ════════ QUIT ════════
+function confirmQuit(){
+  if(!gameState.paused)togglePause();
+  document.getElementById('quitOverlay').classList.add('show');
+}
+function closeQuitConfirm(){
+  document.getElementById('quitOverlay').classList.remove('show');
+  if(gameState.paused)togglePause();
+}
+function doQuit(){
+  gameState.active=false;
+  if(gameState.timer)clearInterval(gameState.timer);
+  if(gameState.iaTimeout)clearInterval(gameState.iaTimeout);
+  if(animFrame)cancelAnimationFrame(animFrame);
+  document.getElementById('quitOverlay').classList.remove('show');
+  showScreen('s-home');
+}
 
 // ════════ PAUSE ════════
 function togglePause(){
@@ -553,6 +595,10 @@ function loadState(){
 }
 
 // ════════ INIT ════════
+if('speechSynthesis' in window){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged=()=>{window.speechSynthesis.getVoices();};
+}
 window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('piganza_state');
   if(saved){
