@@ -553,6 +553,56 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .coming{position:absolute;top:4px;right:4px;font-size:.45rem;font-weight:700;
   background:rgba(255,152,0,.2);border:1px solid rgba(255,152,0,.3);
   color:var(--orange);padding:1px 4px;border-radius:4px}
+.miniapp.pispin-highlight{border-color:var(--gold);background:rgba(245,166,35,.08)}
+.miniapp.pispin-highlight .ma-ico{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+
+/* ════════════════════════════════════════
+   PISPIN FORTUNE — Module 2
+════════════════════════════════════════ */
+.pispin-rankcard{background:linear-gradient(135deg,var(--pi3),var(--pi));padding:14px 16px}
+.pispin-rank-row{display:flex;justify-content:space-between;align-items:baseline}
+.pispin-rank-lbl{font-size:.62rem;color:rgba(255,255,255,.75);font-weight:600}
+.pispin-rank-pts{font-size:.62rem;color:rgba(255,255,255,.75);font-weight:700}
+.pispin-rank-name{font-size:1.05rem;font-weight:800;color:#fff;margin:2px 0 8px}
+.pispin-progress-track{width:100%;height:6px;background:rgba(255,255,255,.18);
+  border-radius:4px;overflow:hidden}
+.pispin-progress-fill{height:100%;background:var(--gold2);border-radius:4px;
+  transition:width .6s ease;width:0%}
+.pispin-next-lbl{font-size:.58rem;color:rgba(255,255,255,.75);margin-top:5px}
+.pispin-wheel-wrap{position:relative;width:240px;height:240px;margin:6px auto 12px}
+#pispinWheel{width:240px;height:240px;transition:transform 4.2s cubic-bezier(.12,.85,.18,1);
+  filter:drop-shadow(0 4px 14px rgba(0,0,0,.4))}
+.pispin-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:48px;height:48px;background:var(--pi2);border:3px solid var(--pi3);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#07120E;font-size:.55rem;font-weight:800;z-index:4}
+.pispin-pointer{position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+  width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;
+  border-top:16px solid var(--gold);z-index:5;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+#pispinFireworks{position:absolute;top:0;left:0;pointer-events:none;display:none;z-index:10}
+.pispin-result{min-height:40px;display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;color:var(--muted);text-align:center;margin-bottom:10px;padding:0 8px}
+.pispin-result.win{color:var(--pi2);font-weight:700}
+#pispinSpinBtn{width:100%;padding:13px;font-size:.82rem;font-weight:700;
+  background:linear-gradient(135deg,var(--pi2),var(--pi));color:#07120E;
+  border:none;border-radius:var(--radius);font-family:var(--fn)}
+#pispinSpinBtn:disabled{opacity:.5}
+.pispin-recharge{text-align:center;font-size:.65rem;color:var(--muted);margin-top:8px}
+.pispin-recharge .clock{font-weight:800;color:var(--gold)}
+.pispin-stats-row{display:flex;justify-content:center;margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--bdr)}
+.pispin-stat{text-align:center}
+.pispin-stat-lbl{font-size:.55rem;color:var(--muted)}
+.pispin-stat-val{font-size:1rem;font-weight:800;color:var(--txt)}
+.pispin-reward-row{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;font-size:.68rem;border-bottom:1px solid var(--bdr)}
+.pispin-reward-row:last-child{border-bottom:none}
+.pispin-reward-row.active{background:rgba(22,201,121,.07);border-radius:8px;
+  padding:7px 8px;margin:0 -8px}
+.pispin-reward-row .rname{color:var(--muted);font-weight:600}
+.pispin-reward-row.active .rname{color:var(--pi2);font-weight:800}
+.pispin-reward-row .rpct{font-weight:800;color:var(--gold);background:rgba(245,166,35,.15);
+  padding:2px 9px;border-radius:8px;font-size:.62rem}
 </style>
 </head>
 <body>
@@ -637,6 +687,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
     <div class="wallet-rate" id="walletRate"></div>
     <div class="wallet-actions">
+      <div class="wact" onclick="showSec('sec-pispin')"><span class="wact-ico">🎡</span><span data-i18n="pispin">PiSpin</span></div>
       <div class="wact" onclick="goT('urban')"><span class="wact-ico">🚕</span><span data-i18n="book">Book</span></div>
       <div class="wact" onclick="showSec('sec-trips')"><span class="wact-ico">📋</span><span data-i18n="history">History</span></div>
       <div class="wact" onclick="showSec('sec-loyalty')"><span class="wact-ico">🏆</span><span data-i18n="loyalty">Loyalty</span></div>
@@ -664,6 +715,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="card">
     <div class="chd"><div class="dot"></div><span data-i18n="explore">Explore PiHub RW</span></div>
     <div class="miniapps">
+      <div class="miniapp pispin-highlight" onclick="showSec('sec-pispin')"><span class="ma-ico">🎡</span><span data-i18n="pispin">PiSpin</span></div>
       <div class="miniapp" onclick="goT('urban')"><span class="ma-ico">🏍️</span><span data-i18n="urban">Urban</span></div>
       <div class="miniapp" onclick="goT('intercity')"><span class="ma-ico">🚌</span><span data-i18n="intercity">Intercity</span></div>
       <div class="miniapp"><span class="ma-ico">🛒</span><span data-i18n="commerce">Commerce</span><span class="coming">Soon</span></div>
@@ -757,6 +809,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="amtrow"><span class="amtlbl" data-i18n="fare">Trip fare</span><div class="amtvals"><div class="api main" id="ufpi">—</div><div class="ausd" id="ufusd">—</div><div class="afrw" id="uffrw">—</div></div></div>
         <div class="amtrow" id="upeakrow" style="display:none"><span class="amtlbl">⚡ <span data-i18n="peak_surcharge">Peak surcharge</span></span><div class="amtvals"><div class="api peak" id="upeakamt">—</div></div></div>
         <div class="amtrow"><span class="amtlbl" data-i18n="svc_fee">PiHub RW fee (8%)</span><div class="amtvals"><div class="api fee" id="ufepi">—</div><div class="ausd" id="ufeusd">—</div><div class="afrw" id="ufefrw">—</div></div></div>
+        <div class="amtrow" id="uDiscountRow" style="display:none"><span class="amtlbl" style="color:var(--pi2)">🎡 <span data-i18n="pispin_discount_applied">Discount applied</span></span><div class="amtvals"><div class="api" id="uDiscountPct" style="color:var(--pi2)">—</div></div></div>
         <div class="amtrow"><strong class="amtlbl" data-i18n="total">Total</strong><div class="amtvals"><div class="api tot" id="utotpi">—</div><div class="ausd" id="utotusd">—</div><div class="afrw" id="utotfrw">—</div></div></div>
       </div>
       <div class="splitbox" id="usplit" style="display:none">
@@ -886,6 +939,53 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ PISPIN FORTUNE (Module 2) ══ -->
+<div class="sec" id="sec-pispin">
+  <div class="hero" style="padding-bottom:8px">
+    <div class="mbadge"><div class="mdot"></div><span data-i18n="pispin_title">PiSpin Fortune</span></div>
+    <h1 style="font-size:1.3rem">🎡 <span data-i18n="pispin_title">PiSpin Fortune</span></h1>
+    <p data-i18n="pispin_sub">10 spins every 2h — win PiHub Points</p>
+  </div>
+
+  <div class="notice info"><span class="nico">ℹ️</span><span id="pispinBanner" data-i18n="pispin_banner">Your points become real discounts on PiHub RW services.</span></div>
+
+  <div class="card pispin-rankcard">
+    <div class="pispin-rank-row">
+      <span class="pispin-rank-lbl" data-i18n="pispin_yourrank">Your PiSpin rank</span>
+      <span class="pispin-rank-pts"><span id="pispinTotalPts">0</span> <span data-i18n="pispin_pts">PiHub Points</span></span>
+    </div>
+    <div class="pispin-rank-name" id="pispinRankName">Umutangizi</div>
+    <div class="pispin-progress-track"><div class="pispin-progress-fill" id="pispinProgressFill"></div></div>
+    <div class="pispin-next-lbl" id="pispinNextLbl"></div>
+  </div>
+
+  <div class="card" style="text-align:center">
+    <div class="pispin-wheel-wrap">
+      <svg id="pispinWheel" viewBox="0 0 280 280"><g id="pispinSegments"></g></svg>
+      <div class="pispin-hub">PiHub</div>
+      <div class="pispin-pointer"></div>
+      <canvas id="pispinFireworks" width="280" height="280"></canvas>
+    </div>
+
+    <div class="pispin-result" id="pispinResult" data-i18n="pispin_tap">Tap to spin the wheel</div>
+
+    <button class="btn" id="pispinSpinBtn" onclick="pispinDoSpin()" data-i18n="pispin_spinbtn">Spin the wheel</button>
+    <div class="pispin-recharge" id="pispinRecharge" style="display:none"></div>
+
+    <div class="pispin-stats-row">
+      <div class="pispin-stat">
+        <div class="pispin-stat-lbl" data-i18n="pispin_spinsleft">Spins left</div>
+        <div class="pispin-stat-val" id="pispinSpinsLeft">10</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="chd"><div class="dot"></div><span data-i18n="pispin_rewards">Rank rewards</span></div>
+    <div id="pispinRewardsList"></div>
   </div>
 </div>
 
@@ -1226,7 +1326,23 @@ const I18N = {
     bfroms:['','Kigali','Gisenyi / Rubavu','Cyangugu / Rusizi','Butare / Huye','Kibungo / Ngoma','Byumba / Gicumbi','Musanze'],
     bcountries:[['','Choose...'],['uganda','🇺🇬 Uganda'],['tanzania','🇹🇿 Tanzania'],['burundi','🇧🇮 Burundi'],['drc','🇨🇩 DR Congo'],['kenya','🇰🇪 Kenya (via Uganda)']],
     bcities:{uganda:['Kampala','Mbarara','Kabale'],tanzania:['Dar es Salaam','Mwanza','Bukoba','Arusha'],burundi:['Bujumbura','Ngozi','Gitega'],drc:['Goma','Bukavu','Kinshasa'],kenya:['Nairobi','Mombasa']},
-    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Other agency']
+    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Other agency'],
+    pispin:'PiSpin',
+    pispin_title:'PiSpin Fortune',
+    pispin_sub:'10 spins every 2h — win PiHub Points',
+    pispin_banner:'Your points become real discounts on PiHub RW services (transport, marketplace, and more).',
+    pispin_spinbtn:'Spin the wheel',
+    pispin_spinning:'Spinning...',
+    pispin_tap:'Tap to spin the wheel',
+    pispin_spinsleft:'Spins left',
+    pispin_pts:'PiHub Points',
+    pispin_won:'you earned',
+    pispin_rechargein:'Next spins in',
+    pispin_rechargeready:'Spins refilled! Tap to play.',
+    pispin_yourrank:'Your PiSpin rank',
+    pispin_rewards:'Rank rewards',
+    pispin_nopts:'pts to',
+    pispin_discount_applied:'Discount applied'
   },
   fr:{
     auth_tagline:'RWANDA PI TRANSPORT',
@@ -1332,7 +1448,23 @@ const I18N = {
     bfroms:['','Kigali','Gisenyi / Rubavu','Cyangugu / Rusizi','Butare / Huye','Kibungo / Ngoma','Byumba / Gicumbi','Musanze'],
     bcountries:[['','Choisir...'],['uganda','🇺🇬 Uganda'],['tanzania','🇹🇿 Tanzania'],['burundi','🇧🇮 Burundi'],['drc','🇨🇩 RD Congo'],['kenya','🇰🇪 Kenya (via Uganda)']],
     bcities:{uganda:['Kampala','Mbarara','Kabale'],tanzania:['Dar es Salaam','Mwanza','Bukoba','Arusha'],burundi:['Bujumbura','Ngozi','Gitega'],drc:['Goma','Bukavu','Kinshasa'],kenya:['Nairobi','Mombasa']},
-    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Autre agence']
+    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Autre agence'],
+    pispin:'PiSpin',
+    pispin_title:'PiSpin Fortune',
+    pispin_sub:'10 tours toutes les 2h — gagne des PiHub Points',
+    pispin_banner:'Tes points se transforment en vraies réductions sur les services PiHub RW (transport, marché, et plus).',
+    pispin_spinbtn:'Tourner la roue',
+    pispin_spinning:'La roue tourne...',
+    pispin_tap:'Appuie pour tourner la roue',
+    pispin_spinsleft:'Tours restants',
+    pispin_pts:'PiHub Points',
+    pispin_won:'tu gagnes',
+    pispin_rechargein:'Prochains tours dans',
+    pispin_rechargeready:'Tours rechargés ! Appuie pour jouer.',
+    pispin_yourrank:'Ton rang PiSpin',
+    pispin_rewards:'Récompenses par rang',
+    pispin_nopts:'pts pour',
+    pispin_discount_applied:'Réduction appliquée'
   },
   kin:{
     auth_tagline:'UBUTUMWA BWA PI MU RWANDA',
@@ -1438,7 +1570,23 @@ const I18N = {
     bfroms:['','Kigali','Gisenyi / Rubavu','Cyangugu / Rusizi','Butare / Huye','Kibungo / Ngoma','Byumba / Gicumbi','Musanze'],
     bcountries:[['','Hitamo...'],['uganda','🇺🇬 Uganda'],['tanzania','🇹🇿 Tanzaniya'],['burundi','🇧🇮 Uburundi'],['drc','🇨🇩 Kongo'],['kenya','🇰🇪 Kenya (binyuze Uganda)']],
     bcities:{uganda:['Kampala','Mbarara','Kabale'],tanzania:['Dar es Salaam','Mwanza','Bukoba','Arusha'],burundi:['Bujumbura','Ngozi','Gitega'],drc:['Goma','Bukavu','Kinshasa'],kenya:['Nairobi','Mombasa']},
-    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Ikindi kigo']
+    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Ikindi kigo'],
+    pispin:'PiSpin',
+    pispin_title:'PiSpin Fortune',
+    pispin_sub:'Ibikina 10 buri masaha 2 — wunguke PiHub Points',
+    pispin_banner:'Amanota yawe ahinduka ibigabanyirizo nyabyo ku serivisi za PiHub RW (gutwara abantu, isoko, n\'ibindi).',
+    pispin_spinbtn:'Zenguruka',
+    pispin_spinning:'Irimo izenguruka...',
+    pispin_tap:'Kanda kugira ngo uzenguruke',
+    pispin_spinsleft:'Ibisigaye',
+    pispin_pts:'PiHub Points',
+    pispin_won:'wabonye',
+    pispin_rechargein:'Ibindi bikina biza mu',
+    pispin_rechargeready:'Ibikina byongeye kuza! Kanda ukine.',
+    pispin_yourrank:'Icyiciro cyawe cya PiSpin',
+    pispin_rewards:'Ibihembo by\'icyiciro',
+    pispin_nopts:'amanota kugira ngo ube',
+    pispin_discount_applied:'Igabanywa ryashyizweho'
   },
   sw:{
     auth_tagline:'USAFIRI WA PI RWANDA',
@@ -1544,7 +1692,23 @@ const I18N = {
     bfroms:['','Kigali','Gisenyi / Rubavu','Cyangugu / Rusizi','Butare / Huye','Kibungo / Ngoma','Byumba / Gicumbi','Musanze'],
     bcountries:[['','Chagua...'],['uganda','🇺🇬 Uganda'],['tanzania','🇹🇿 Tanzania'],['burundi','🇧🇮 Burundi'],['drc','🇨🇩 DRC Kongo'],['kenya','🇰🇪 Kenya (via Uganda)']],
     bcities:{uganda:['Kampala','Mbarara','Kabale'],tanzania:['Dar es Salaam','Mwanza','Bukoba','Arusha'],burundi:['Bujumbura','Ngozi','Gitega'],drc:['Goma','Bukavu','Kinshasa'],kenya:['Nairobi','Mombasa']},
-    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Kampuni nyingine']
+    agencies:['','Volcano Express','Yahoo Car','Trinity Express','Stella Express','Kampuni nyingine'],
+    pispin:'PiSpin',
+    pispin_title:'PiSpin Fortune',
+    pispin_sub:'Mizunguko 10 kila masaa 2 — shinda PiHub Points',
+    pispin_banner:'Pointi zako zinageuka kuwa punguzo halisi kwenye huduma za PiHub RW (usafiri, soko, na zaidi).',
+    pispin_spinbtn:'Zungusha gurudumu',
+    pispin_spinning:'Inazunguka...',
+    pispin_tap:'Bonyeza kuzungusha gurudumu',
+    pispin_spinsleft:'Mizunguko iliyobaki',
+    pispin_pts:'PiHub Points',
+    pispin_won:'umepata',
+    pispin_rechargein:'Mizunguko mipya baada ya',
+    pispin_rechargeready:'Mizunguko imejazwa tena! Bonyeza ucheze.',
+    pispin_yourrank:'Cheo chako cha PiSpin',
+    pispin_rewards:'Zawadi za vyeo',
+    pispin_nopts:'pointi kufikia',
+    pispin_discount_applied:'Punguzo limetumika'
   }
 };
 
@@ -1693,10 +1857,11 @@ function onAuth(user){
   const ps=el('profsignin');if(ps)ps.style.display='none';
   const pu=el('profuser');if(pu)pu.textContent='@'+n;
   updateLoyaltyDisplay();
+  pispinLoad();
   showNotif('Welcome @'+n+' 🎉','success');
 }
 
-function guestMode(){const sc=el('authScreen');if(sc)sc.classList.add('hidden');}
+function guestMode(){const sc=el('authScreen');if(sc)sc.classList.add('hidden');pispinLoad();}
 
 function signOut(){
   piSvc.out();
@@ -1987,7 +2152,8 @@ function calcUrban(){
   const peakSurcharge=base*(peakMult-1);
   const fare=base*peakMult;
   const fee=CFG.fees.urban;
-  const feeFrw=fare*fee.total;
+  const discountPct=getBestDiscount(); // best of PiLoyalty vs PiSpin, 0-100
+  const feeFrw=fare*fee.total*(1-discountPct/100);
   const tot=fare+feeFrw;
   S.uTot=tot;
   const ua=el('uamt');if(ua)ua.style.display='block';
@@ -1997,6 +2163,9 @@ function calcUrban(){
   const pa=el('upeakamt');
   if(pa&&peakMult>1)pa.textContent='+'+C.fmtFrw(peakSurcharge)+' (+'+Math.round((peakMult-1)*100)+'%)';
   setTriple(['ufepi','ufeusd','ufefrw'],feeFrw);
+  const udr=el('uDiscountRow'),udp=el('uDiscountPct');
+  if(discountPct>0){if(udr)udr.style.display='flex';if(udp)udp.textContent='-'+discountPct+'%';}
+  else{if(udr)udr.style.display='none';}
   setTriple(['utotpi','utotusd','utotfrw'],tot);
   const us=el('usplit');if(us)us.style.display='block';
   const ud=el('udrv');if(ud)ud.textContent=C.fmtFrw(tot*.85)+' | '+C.fmtPi(C.frwToPi(tot*.85));
@@ -2059,7 +2228,8 @@ function calcInter(){
   const km=INTER_KM[key]||INTER_KM[to+'-'+from]||100;
   const rate=CFG.tarifs.inter||26;
   const seat=Math.max(km*rate,500);
-  const feeFrw=seat*CFG.fees.intercity.total;
+  const discountPctI=getBestDiscount();
+  const feeFrw=seat*CFG.fees.intercity.total*(1-discountPctI/100);
   const tot=(seat+feeFrw)*pax;
   S.iTot=tot;
   const dl=el('idistlbl');if(dl)dl.textContent=km+' km · '+rate+' FRw/km (RURA)';
@@ -2137,7 +2307,7 @@ function calcBorder(){
   let seat=0;
   if(S.bPM==='km')seat=km*CFG.tarifs.border*S.ttMult;
   else{seat=(parseFloat(el('bbgfrw')?.value)||0)*S.ttMult;if(seat<=0){const ba=el('bamt');if(ba)ba.style.display='none';return;}}
-  const feeFrw=seat*CFG.fees.border.total;
+  const feeFrw=seat*CFG.fees.border.total*(1-getBestDiscount()/100);
   const tot=(seat+feeFrw)*pax;
   S.bTot=tot;
   const tl={1:T('trip_oneway_lbl'),2:T('trip_return_lbl')}[S.ttMult];
@@ -2366,6 +2536,291 @@ function setRating(n){
 // ═══════════════════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  PISPIN FORTUNE — Module 2
+// ═══════════════════════════════════════════════════════════
+const PISPIN_MAX_SPINS = 10;
+const PISPIN_RECHARGE_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+const PISPIN_CITIES = [
+  { name:'Kigali',    amount:1.5, color:'#D85A30', weight:2  },
+  { name:'Rubavu',    amount:1.0, color:'#0F6E56', weight:4  },
+  { name:'Musanze',   amount:1.0, color:'#13836A', weight:4  },
+  { name:'Huye',      amount:0.7, color:'#7F77DD', weight:7  },
+  { name:'Muhanga',   amount:0.7, color:'#9089E8', weight:7  },
+  { name:'Rusizi',    amount:0.7, color:'#7F77DD', weight:7  },
+  { name:'Nyagatare', amount:0.7, color:'#9089E8', weight:7  },
+  { name:'Karongi',   amount:0.4, color:'#A6A59C', weight:12 },
+  { name:'Nyanza',    amount:0.4, color:'#979690', weight:12 },
+  { name:'Rwamagana', amount:0.4, color:'#A6A59C', weight:12 },
+  { name:'Byumba',    amount:0.4, color:'#979690', weight:12 },
+  { name:'Nyamagabe', amount:0.4, color:'#A6A59C', weight:12 },
+  { name:'Kibungo',   amount:0.4, color:'#979690', weight:12 }
+];
+
+// 7 honorific tiers — discount is the % applied on PiHub RW services
+const PISPIN_TITLES = [
+  { threshold:0,    rw:'Umutangizi',    discount:1  },
+  { threshold:30,   rw:'Umujyambere',   discount:2  },
+  { threshold:100,  rw:'Umuhanga',      discount:4  },
+  { threshold:300,  rw:'Kabuhariwe',    discount:5  },
+  { threshold:700,  rw:'Indashyikirwa', discount:8  },
+  { threshold:1300, rw:'Umutware',      discount:10 },
+  { threshold:2200, rw:'Umwami',        discount:15 }
+];
+
+let pispinSpinning = false;
+let pispinRotation = 0;
+let pispinRechargeTimer = null;
+
+function pispinKey(suffix){
+  const uname = (piSvc.user && piSvc.user.username) || 'guest';
+  return 'pispin_'+suffix+'_'+uname;
+}
+function pispinLoad(){
+  S.pispinPts = parseFloat(localStorage.getItem(pispinKey('pts'))||'0');
+  S.pispinSpinsLeft = parseInt(localStorage.getItem(pispinKey('spins'))||String(PISPIN_MAX_SPINS),10);
+  S.pispinRechargeAt = parseInt(localStorage.getItem(pispinKey('recharge'))||'0',10);
+  if(S.pispinRechargeAt>0 && Date.now()>=S.pispinRechargeAt){
+    S.pispinSpinsLeft = PISPIN_MAX_SPINS;
+    S.pispinRechargeAt = 0;
+    localStorage.setItem(pispinKey('spins'),String(S.pispinSpinsLeft));
+    localStorage.setItem(pispinKey('recharge'),'0');
+  }
+}
+function pispinSave(){
+  localStorage.setItem(pispinKey('pts'),String(S.pispinPts));
+  localStorage.setItem(pispinKey('spins'),String(S.pispinSpinsLeft));
+  localStorage.setItem(pispinKey('recharge'),String(S.pispinRechargeAt));
+}
+function pispinCurrentTier(pts){
+  let t=PISPIN_TITLES[0];
+  for(const x of PISPIN_TITLES) if(pts>=x.threshold) t=x;
+  return t;
+}
+function pispinNextTier(pts){
+  for(const x of PISPIN_TITLES) if(pts<x.threshold) return x;
+  return null;
+}
+// Public bridge: other modules (Transport, future Marketplace) call this
+// to get the discount to apply, taking the BEST of PiLoyalty vs PiSpin.
+// PiLoyalty tiers (Bronze/Silver/Gold/Platinum) map to fixed % off PiHub RW fees.
+const PILOYALTY_PCT_MAP = {'Bronze 🥉':0,'Silver 🥈':5,'Gold 🥇':8,'Platinum 💎':100};
+function getBestDiscount(){
+  const loyaltyTier = getCurrentTier(); // existing PiLoyalty system
+  const loyaltyPct = loyaltyTier ? (PILOYALTY_PCT_MAP[loyaltyTier.label]||0) : 0;
+  const pispinTier = pispinCurrentTier(S.pispinPts||0);
+  const pispinPct = pispinTier.discount;
+  return Math.max(loyaltyPct, pispinPct);
+}
+
+function pispinBuildWheel(){
+  const seg = el('pispinSegments');
+  if(!seg || seg.childElementCount) return; // build once
+  const n = PISPIN_CITIES.length, step = 360/n, cx=140, cy=140, r=130;
+  PISPIN_CITIES.forEach((c,i)=>{
+    const a0=i*step-90, a1=a0+step;
+    const x1=cx+r*Math.cos(a0*Math.PI/180), y1=cy+r*Math.sin(a0*Math.PI/180);
+    const x2=cx+r*Math.cos(a1*Math.PI/180), y2=cy+r*Math.sin(a1*Math.PI/180);
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${cx},${cy} L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z`);
+    path.setAttribute('fill',c.color);path.setAttribute('stroke','#07120E');path.setAttribute('stroke-width','1');
+    seg.appendChild(path);
+    const mid=a0+step/2, nr=r*0.66, ar=r*0.42;
+    const ntx=cx+nr*Math.cos(mid*Math.PI/180), nty=cy+nr*Math.sin(mid*Math.PI/180);
+    const atx=cx+ar*Math.cos(mid*Math.PI/180), aty=cy+ar*Math.sin(mid*Math.PI/180);
+    const nt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    nt.setAttribute('x',ntx);nt.setAttribute('y',nty);nt.setAttribute('text-anchor','middle');
+    nt.setAttribute('font-size','9');nt.setAttribute('font-weight','700');nt.setAttribute('fill','#fff');
+    nt.setAttribute('transform',`rotate(${mid+90}, ${ntx}, ${nty})`);nt.textContent=c.name;
+    seg.appendChild(nt);
+    const at=document.createElementNS('http://www.w3.org/2000/svg','text');
+    at.setAttribute('x',atx);at.setAttribute('y',aty);at.setAttribute('text-anchor','middle');
+    at.setAttribute('font-size','7');at.setAttribute('fill','#fff');at.setAttribute('opacity','.85');
+    at.setAttribute('transform',`rotate(${mid+90}, ${atx}, ${aty})`);at.textContent=c.amount;
+    seg.appendChild(at);
+  });
+}
+
+function pispinFmtCountdown(ms){
+  const s=Math.max(0,Math.ceil(ms/1000));
+  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
+  const p=x=>String(x).padStart(2,'0');
+  return h>0?`${p(h)}:${p(m)}:${p(sec)}`:`${p(m)}:${p(sec)}`;
+}
+
+function pispinStartRechargeCountdown(){
+  if(pispinRechargeTimer) clearInterval(pispinRechargeTimer);
+  const box=el('pispinRecharge'); if(!box) return;
+  box.style.display='block';
+  pispinRechargeTimer=setInterval(()=>{
+    const remain=S.pispinRechargeAt-Date.now();
+    if(remain<=0){
+      clearInterval(pispinRechargeTimer);pispinRechargeTimer=null;
+      S.pispinSpinsLeft=PISPIN_MAX_SPINS;S.pispinRechargeAt=0;pispinSave();
+      const sl=el('pispinSpinsLeft');if(sl)sl.textContent=S.pispinSpinsLeft;
+      const btn=el('pispinSpinBtn');if(btn){btn.disabled=false;btn.textContent=T('pispin_spinbtn');}
+      box.innerHTML=T('pispin_rechargeready');
+      setTimeout(()=>{box.style.display='none';},2500);
+    }else{
+      box.innerHTML=`${T('pispin_rechargein')} <span class="clock">${pispinFmtCountdown(remain)}</span>`;
+    }
+  },1000);
+}
+
+function pispinRenderRewards(){
+  const list=el('pispinRewardsList'); if(!list) return;
+  const cur=pispinCurrentTier(S.pispinPts||0);
+  list.innerHTML=PISPIN_TITLES.map(t=>{
+    const active=t.threshold===cur.threshold;
+    return `<div class="pispin-reward-row${active?' active':''}"><span class="rname">${t.rw}</span><span class="rpct">-${t.discount}%</span></div>`;
+  }).join('');
+}
+
+function pispinRefreshView(){
+  pispinLoad();
+  pispinBuildWheel();
+  const pts=Math.round((S.pispinPts||0)*10)/10;
+  const cur=pispinCurrentTier(pts), nxt=pispinNextTier(pts);
+  const tp=el('pispinTotalPts');if(tp)tp.textContent=pts;
+  const rn=el('pispinRankName');if(rn)rn.textContent=cur.rw;
+  const pf=el('pispinProgressFill');
+  const nl=el('pispinNextLbl');
+  if(nxt){
+    const span=nxt.threshold-cur.threshold, prog=pts-cur.threshold;
+    const pct=Math.min(100,Math.max(0,(prog/span)*100));
+    if(pf)pf.style.width=pct+'%';
+    const remain=Math.max(0,Math.round((nxt.threshold-pts)*10)/10);
+    if(nl)nl.textContent=`${remain} ${T('pispin_nopts')} ${nxt.rw}`;
+  }else{
+    if(pf)pf.style.width='100%';
+    if(nl)nl.textContent='';
+  }
+  const sl=el('pispinSpinsLeft');if(sl)sl.textContent=S.pispinSpinsLeft;
+  const btn=el('pispinSpinBtn');
+  const box=el('pispinRecharge');
+  if(S.pispinSpinsLeft<=0 && S.pispinRechargeAt>0){
+    if(btn){btn.disabled=true;btn.textContent=T('pispin_rechargeready')===''?T('pispin_spinbtn'):T('pispin_spinbtn');}
+    pispinStartRechargeCountdown();
+  }else{
+    if(btn){btn.disabled=false;btn.textContent=T('pispin_spinbtn');}
+    if(box)box.style.display='none';
+  }
+  pispinRenderRewards();
+}
+
+function pispinPickIndex(){
+  const total=PISPIN_CITIES.reduce((s,c)=>s+c.weight,0);
+  let r=Math.random()*total;
+  for(let i=0;i<PISPIN_CITIES.length;i++){
+    if(r<PISPIN_CITIES[i].weight) return i;
+    r-=PISPIN_CITIES[i].weight;
+  }
+  return PISPIN_CITIES.length-1;
+}
+
+function pispinPlayFanfare(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const now=ctx.currentTime;
+    const notes=[{f:523.25,s:0,d:.16},{f:659.25,s:.14,d:.16},{f:783.99,s:.28,d:.16},{f:1046.5,s:.42,d:.32}];
+    notes.forEach(n=>{
+      const osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.type='triangle';osc.frequency.value=n.f;osc.connect(gain);gain.connect(ctx.destination);
+      const t0=now+n.s;
+      gain.gain.setValueAtTime(0,t0);gain.gain.linearRampToValueAtTime(.28,t0+.02);
+      gain.gain.exponentialRampToValueAtTime(.001,t0+n.d);
+      osc.start(t0);osc.stop(t0+n.d+.02);
+    });
+  }catch(e){}
+}
+
+function pispinLaunchFireworks(){
+  const canvas=el('pispinFireworks'); if(!canvas) return;
+  canvas.style.display='block';
+  const ctx=canvas.getContext('2d');
+  const colors=['#D85A30','#FAC775','#1D9E75','#7F77DD','#D4537E','#2563A8'];
+  let particles=[];
+  for(let b=0;b<4;b++){
+    setTimeout(()=>{
+      const ox=50+Math.random()*180, oy=50+Math.random()*120;
+      for(let i=0;i<26;i++){
+        const ang=(Math.PI*2*i)/26, sp=1.6+Math.random()*2.2;
+        particles.push({x:ox,y:oy,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,life:45,color:colors[Math.floor(Math.random()*colors.length)]});
+      }
+    },b*200);
+  }
+  let frame=0;
+  function animate(){
+    frame++;
+    ctx.clearRect(0,0,280,280);
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.035;p.life-=1;
+      if(p.life>0){
+        ctx.globalAlpha=Math.max(p.life/45,0);ctx.fillStyle=p.color;
+        ctx.beginPath();ctx.arc(p.x,p.y,2.6,0,Math.PI*2);ctx.fill();
+      }
+    });
+    particles=particles.filter(p=>p.life>0);
+    ctx.globalAlpha=1;
+    if(frame<130) requestAnimationFrame(animate);
+    else{canvas.style.display='none';ctx.clearRect(0,0,280,280);}
+  }
+  animate();
+}
+
+function pispinDoSpin(){
+  if(pispinSpinning || S.pispinSpinsLeft<=0) return;
+  if(!rateLimit('pispinSpin',1000)) return;
+  pispinSpinning=true;
+  const btn=el('pispinSpinBtn'), result=el('pispinResult'), wheel=el('pispinWheel');
+  if(btn){btn.disabled=true;btn.textContent=T('pispin_spinning');}
+  if(result){result.classList.remove('win');result.textContent=T('pispin_spinning');}
+
+  const step=360/PISPIN_CITIES.length;
+  const targetIndex=pispinPickIndex();
+  const targetMid=targetIndex*step+step/2;
+  const fullSpins=9*360;
+  const curMod=((pispinRotation%360)+360)%360;
+  const extra=(360-targetMid)-curMod;
+  const normExtra=((extra%360)+360)%360;
+  pispinRotation+=fullSpins+normExtra;
+  if(wheel) wheel.style.transform=`rotate(${pispinRotation}deg)`;
+
+  setTimeout(()=>{
+    pispinSpinning=false;
+    S.pispinSpinsLeft-=1;
+    const city=PISPIN_CITIES[targetIndex];
+    const tierBefore=pispinCurrentTier(Math.round((S.pispinPts||0)*10)/10);
+    S.pispinPts=(S.pispinPts||0)+city.amount;
+    const rounded=Math.round(S.pispinPts*10)/10;
+    const tierAfter=pispinCurrentTier(rounded);
+    pispinSave();
+
+    const sl=el('pispinSpinsLeft');if(sl)sl.textContent=S.pispinSpinsLeft;
+    if(result){
+      result.classList.add('win');
+      if(tierAfter.threshold>tierBefore.threshold){
+        result.textContent=`${city.name}! +${city.amount} ${T('pispin_pts')} — ${tierAfter.rw}!`;
+      }else{
+        result.textContent=`${city.name}! ${T('pispin_won')} ${city.amount} ${T('pispin_pts')}`;
+      }
+    }
+    pispinRefreshView();
+
+    if(S.pispinSpinsLeft<=0){
+      pispinPlayFanfare();
+      pispinLaunchFireworks();
+      S.pispinRechargeAt=Date.now()+PISPIN_RECHARGE_MS;
+      pispinSave();
+      if(btn){btn.disabled=true;btn.textContent=T('pispin_spinbtn');}
+      pispinStartRechargeCountdown();
+    }else{
+      if(btn){btn.disabled=false;btn.textContent=T('pispin_spinbtn');}
+    }
+  },4300);
+}
+
 function showSec(id){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
   const sec=el(id);if(sec)sec.classList.add('active');
@@ -2376,6 +2831,7 @@ function showSec(id){
   const nb=el(map[id]);if(nb)nb.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='sec-loyalty')updateLoyaltyDisplay();
+  if(id==='sec-pispin')pispinRefreshView();
   if(id==='')updateReputation();
 }
 function goT(mode){showSec('sec-transport');setMode(mode);}
