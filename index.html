@@ -603,6 +603,61 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .pispin-reward-row.active .rname{color:var(--pi2);font-weight:800}
 .pispin-reward-row .rpct{font-weight:800;color:var(--gold);background:rgba(245,166,35,.15);
   padding:2px 9px;border-radius:8px;font-size:.62rem}
+
+.miniapp.mkt-highlight{border-color:var(--pi2);background:rgba(22,201,121,.08)}
+.miniapp.mkt-highlight .ma-ico{filter:drop-shadow(0 0 6px rgba(22,201,121,.4))}
+.mkt-tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--card);border-radius:var(--radius);padding:4px;border:1px solid var(--bdr)}
+.mkt-tab{flex:1;padding:8px 4px;text-align:center;font-size:.62rem;font-weight:700;color:var(--muted);border-radius:10px;cursor:pointer;font-family:var(--fn)}
+.mkt-tab.active{background:var(--pi);color:#07120E}
+.mkt-sectors{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+.mkt-sector{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;background:var(--card);border:1px solid var(--bdr);cursor:pointer;transition:all .18s}
+.mkt-sector:hover,.mkt-sector.active{border-color:var(--pi2);background:rgba(22,201,121,.08)}
+.mkt-sector-ico{font-size:1.4rem}.mkt-sector-lbl{font-size:.5rem;font-weight:700;color:var(--muted);text-align:center}
+.mkt-shop-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer}
+.mkt-shop-card:hover{border-color:var(--pi2)}
+.mkt-shop-header{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.mkt-shop-photo{width:48px;height:48px;border-radius:10px;background:var(--bdr);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.mkt-shop-name{font-size:.78rem;font-weight:700;color:var(--txt)}
+.mkt-shop-meta{font-size:.6rem;color:var(--muted);margin-top:2px}
+.mkt-shop-dist{font-size:.6rem;color:var(--pi2);font-weight:700}
+.mkt-product-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)}
+.mkt-product-row:last-child{border-bottom:none}
+.mkt-product-name{font-size:.72rem;font-weight:600;color:var(--txt)}
+.mkt-product-desc{font-size:.58rem;color:var(--muted)}
+.mkt-product-price{font-size:.72rem;font-weight:700;color:var(--pi2)}
+.mkt-product-unit{font-size:.55rem;color:var(--muted)}
+.mkt-add-btn{background:var(--pi);color:#07120E;border:none;border-radius:8px;padding:5px 10px;font-size:.62rem;font-weight:700;font-family:var(--fn);cursor:pointer}
+.mkt-summary-box{background:rgba(22,201,121,.05);border:1px solid rgba(22,201,121,.2);border-radius:12px;padding:12px 14px;margin:10px 0}
+.mkt-sum-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:.7rem;border-bottom:1px solid var(--bdr)}
+.mkt-sum-row:last-child{border-bottom:none;font-weight:800;font-size:.78rem;color:var(--pi2)}
+.mkt-sum-lbl{color:var(--muted)}.mkt-sum-val{font-weight:700;color:var(--txt)}
+.mkt-discount-sum .mkt-sum-lbl,.mkt-discount-sum .mkt-sum-val{color:var(--pi2)}
+#mktPayBtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--pi2),var(--pi));color:#07120E;font-size:.85rem;font-weight:800;border:none;border-radius:var(--radius);font-family:var(--fn);margin-top:10px}
+#mktPayBtn:disabled{opacity:.5}
+.mkt-form-section{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--bdr)}
+.mkt-form-section:last-child{border-bottom:none}
+.mkt-gps-box{background:rgba(33,150,243,.05);border:1px solid rgba(33,150,243,.18);border-radius:10px;padding:10px 12px;margin-top:6px}
+.mkt-gps-status{font-size:.62rem;margin-top:6px}.mkt-gps-ok{color:var(--pi2)}
+.mkt-gps-skip{color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.6rem}
+.mkt-product-form{background:rgba(255,255,255,.02);border:1px solid var(--bdr);border-radius:10px;padding:10px;margin-bottom:8px}
+.mkt-saved-product{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bdr)}
+.mkt-saved-product:last-child{border-bottom:none}
+.mkt-del-btn{background:rgba(244,67,54,.1);border:1px solid rgba(244,67,54,.2);color:#EF5350;border-radius:6px;padding:3px 8px;font-size:.58rem;cursor:pointer;font-family:var(--fn)}
+.mkt-receipt-box{text-align:center;padding:16px}
+.mkt-receipt-icon{font-size:2.5rem;margin-bottom:8px}
+.mkt-receipt-title{font-size:.9rem;font-weight:800;color:var(--pi2);margin-bottom:12px}
+.mkt-receipt-row{display:flex;justify-content:space-between;font-size:.68rem;padding:4px 0;border-bottom:1px solid var(--bdr)}
+.mkt-receipt-row:last-child{border-bottom:none}
+.mkt-free-section{background:rgba(255,255,255,.02);border:1px dashed var(--bdr);border-radius:10px;padding:10px;margin-top:10px}
+.mkt-free-title{font-size:.65rem;color:var(--muted);font-weight:700;margin-bottom:8px}
+.mkt-scan-btn{width:100%;padding:14px;background:rgba(22,201,121,.1);border:1.5px dashed var(--pi2);border-radius:var(--radius);color:var(--pi2);font-size:.82rem;font-weight:700;font-family:var(--fn);margin-bottom:10px;cursor:pointer}
+.mkt-inv-line{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bdr);font-size:.68rem}
+.mkt-inv-line:last-child{border-bottom:none}
+.uqr-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.uqr-box{width:100%;max-width:340px;text-align:center}
+.uqr-view{position:relative;width:100%;aspect-ratio:1;border-radius:16px;overflow:hidden;border:2px solid var(--pi2);background:#000}
+.uqr-view video{width:100%;height:100%;object-fit:cover}
+.uqr-cross{position:absolute;inset:0;border:40px solid rgba(0,0,0,.4);box-sizing:border-box;pointer-events:none}
 </style>
 </head>
 <body>
@@ -687,6 +742,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
     <div class="wallet-rate" id="walletRate"></div>
     <div class="wallet-actions">
+      <div class="wact" onclick="showSec('sec-market')"><span class="wact-ico">🛒</span><span data-i18n="mkt_nav">Market</span></div>
       <div class="wact" onclick="showSec('sec-pispin')"><span class="wact-ico">🎡</span><span data-i18n="pispin">PiSpin</span></div>
       <div class="wact" onclick="goT('urban')"><span class="wact-ico">🚕</span><span data-i18n="book">Book</span></div>
       <div class="wact" onclick="showSec('sec-trips')"><span class="wact-ico">📋</span><span data-i18n="history">History</span></div>
@@ -715,6 +771,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="card">
     <div class="chd"><div class="dot"></div><span data-i18n="explore">Explore PiHub RW</span></div>
     <div class="miniapps">
+      <div class="miniapp mkt-highlight" onclick="showSec('sec-market')"><span class="ma-ico">🛒</span><span data-i18n="mkt_nav">Market</span></div>
       <div class="miniapp pispin-highlight" onclick="showSec('sec-pispin')"><span class="ma-ico">🎡</span><span data-i18n="pispin">PiSpin</span></div>
       <div class="miniapp" onclick="goT('urban')"><span class="ma-ico">🏍️</span><span data-i18n="urban">Urban</span></div>
       <div class="miniapp" onclick="goT('intercity')"><span class="ma-ico">🚌</span><span data-i18n="intercity">Intercity</span></div>
@@ -989,6 +1046,125 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
 </div>
 
+<!-- ══ PILOCALMARKET (Module 3) ══ -->
+<div class="sec" id="sec-market">
+  <div class="hero" style="padding-bottom:8px">
+    <div class="mbadge"><div class="mdot"></div><span>Module 3 · PiLocalMarket</span></div>
+    <h1 style="font-size:1.3rem">🛒 <span data-i18n="mkt_title">PiLocalMarket</span></h1>
+    <p data-i18n="mkt_sub">Buy &amp; sell locally with Pi</p>
+  </div>
+  <div class="mkt-tabs">
+    <div class="mkt-tab active" id="mktTab0" onclick="mktShowTab(0)" data-i18n="mkt_tab_browse">Browse</div>
+    <div class="mkt-tab" id="mktTab1" onclick="mktShowTab(1)" data-i18n="mkt_tab_shop">My Shop</div>
+    <div class="mkt-tab" id="mktTab2" onclick="mktShowTab(2)" data-i18n="mkt_tab_orders">Orders</div>
+  </div>
+  <!-- BROWSE -->
+  <div id="mktPanelBrowse">
+    <button class="mkt-scan-btn" onclick="mktScanQR()">📷 <span data-i18n="mkt_scan_btn">Scan seller QR</span></button>
+    <div class="fgroup" style="margin-bottom:10px"><input class="finput" type="text" id="mktSearch" placeholder="🔍" oninput="mktFilterShops()"></div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="chd"><div class="dot"></div><span data-i18n="mkt_sectors_title">Browse by sector</span></div>
+      <div class="mkt-sectors" id="mktSectorsGrid"></div>
+    </div>
+    <div class="card" id="mktShopsCard">
+      <div class="chd"><div class="dot"></div><span id="mktShopsTitle" data-i18n="mkt_nearby">Nearby shops</span></div>
+      <div id="mktShopsList"></div>
+    </div>
+    <div class="card" id="mktShopDetail" style="display:none">
+      <button class="btn" style="margin-bottom:12px;background:transparent;border:1px solid var(--bdr);color:var(--muted);padding:8px 14px;font-size:.72rem" onclick="mktCloseDetail()" data-i18n="mkt_back">Back</button>
+      <div id="mktShopDetailContent"></div>
+      <div class="card" id="mktInvoiceCard" style="display:none;margin-top:10px">
+        <div class="chd" style="margin-bottom:8px"><div class="dot"></div><span data-i18n="mkt_invoice">Order details</span></div>
+        <div id="mktInvoiceLines"></div>
+      </div>
+      <div class="mkt-free-section">
+        <div class="mkt-free-title" data-i18n="mkt_free_amount">Custom amount (FRw)</div>
+        <div class="fgroup"><input class="finput" type="number" id="mktFreeAmount" placeholder="0" min="0" step="100" oninput="mktUpdateCart()"></div>
+        <div class="fgroup"><input class="finput" type="text" id="mktFreeDesc" placeholder="Description..."></div>
+      </div>
+      <div class="notice info" style="margin:10px 0"><span class="nico">🔒</span><span style="font-size:.65rem">Secure escrow. 5% fee added on top — seller always receives their full price.</span></div>
+      <div class="mkt-summary-box" id="mktCartSummary" style="display:none">
+        <div class="mkt-sum-row"><span class="mkt-sum-lbl" data-i18n="mkt_subtotal">Seller price</span><span class="mkt-sum-val" id="mktCartSubtotal">—</span></div>
+        <div class="mkt-sum-row"><span class="mkt-sum-lbl" data-i18n="mkt_fee">+5% fee</span><span class="mkt-sum-val" id="mktCartFee">—</span></div>
+        <div class="mkt-sum-row mkt-discount-sum" id="mktCartDiscRow" style="display:none"><span class="mkt-sum-lbl">🎡 <span data-i18n="mkt_discount">Discount</span></span><span class="mkt-sum-val" id="mktCartDiscPct">—</span></div>
+        <div class="mkt-sum-row"><span class="mkt-sum-lbl" data-i18n="mkt_seller_gets">Seller receives</span><span class="mkt-sum-val" id="mktCartSellerGets">—</span></div>
+        <div class="mkt-sum-row"><span class="mkt-sum-lbl" data-i18n="mkt_total">YOU PAY</span><span class="mkt-sum-val" id="mktCartTotal">—</span></div>
+      </div>
+      <button class="btn" id="mktPayBtn" onclick="mktPay()" disabled data-i18n="mkt_pay">Pay with Pi</button>
+    </div>
+    <div class="card mkt-receipt-box" id="mktReceiptBox" style="display:none">
+      <div class="mkt-receipt-icon">✅</div>
+      <div class="mkt-receipt-title" data-i18n="mkt_receipt">Receipt</div>
+      <div class="mkt-receipt-row"><span data-i18n="mkt_receipt_seller">Seller</span><span id="rcptSeller">—</span></div>
+      <div class="mkt-receipt-row"><span data-i18n="mkt_receipt_buyer">Buyer</span><span id="rcptBuyer">—</span></div>
+      <div class="mkt-receipt-row"><span data-i18n="mkt_total">Total paid</span><span id="rcptTotal">—</span></div>
+      <div class="mkt-receipt-row"><span data-i18n="mkt_seller_gets">Seller receives</span><span id="rcptSellerGets">—</span></div>
+      <div class="mkt-receipt-row" id="rcptDiscRow" style="display:none"><span data-i18n="mkt_discount">Discount</span><span id="rcptDisc">—</span></div>
+      <div style="margin-top:10px;padding:8px;background:rgba(22,201,121,.1);border-radius:8px;font-size:.7rem;font-weight:800;color:var(--pi2);text-align:center">✅ PAID</div>
+    </div>
+  </div>
+  <!-- MY SHOP -->
+  <div id="mktPanelShop" style="display:none">
+    <div class="card">
+      <div class="chd"><div class="dot"></div><span data-i18n="mkt_tab_shop">My Shop</span></div>
+      <div class="mkt-form-section">
+        <div class="fgroup"><label class="flbl" data-i18n="mkt_shop_name">Shop name</label><input class="finput" type="text" id="mktShopName" placeholder="e.g. Gaju Bar"></div>
+        <div class="fgroup"><label class="flbl" data-i18n="mkt_shop_sector">Sector</label><select class="finput" id="mktShopSector"></select></div>
+        <div class="fgroup">
+          <label class="flbl" data-i18n="mkt_shop_gps">Location (GPS)</label>
+          <div class="mkt-gps-box">
+            <button class="btn" id="mktGpsBtn" onclick="mktGetGPS()" data-i18n="mkt_gps_btn">Get my location</button>
+            <div class="mkt-gps-status" id="mktGpsStatus"></div>
+            <div class="mkt-gps-skip" onclick="mktSkipGPS()" data-i18n="mkt_gps_skip">Skip</div>
+          </div>
+        </div>
+      </div>
+      <div class="mkt-form-section">
+        <div class="chd" style="margin-bottom:10px"><div class="dot"></div><span data-i18n="mkt_my_products">My products</span></div>
+        <div id="mktMyProductsList"></div>
+        <div class="mkt-product-form">
+          <div class="fgroup"><label class="flbl" data-i18n="mkt_product_name">Product name</label><input class="finput" type="text" id="mktProdName" placeholder="e.g. Mutzig 600ml"></div>
+          <div style="display:flex;gap:8px">
+            <div class="fgroup" style="flex:1"><label class="flbl" data-i18n="mkt_product_price">Price (FRw)</label><input class="finput" type="number" id="mktProdPrice" placeholder="800" min="0"></div>
+            <div class="fgroup" style="flex:1"><label class="flbl" data-i18n="mkt_product_unit">Unit</label><select class="finput" id="mktProdUnit"></select></div>
+          </div>
+          <div class="fgroup"><label class="flbl" data-i18n="mkt_product_desc">Description</label><input class="finput" type="text" id="mktProdDesc" placeholder="Optional..."></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btngreen" style="flex:1" onclick="mktAddProduct()" data-i18n="mkt_add_product">+ Add</button>
+            <button class="btn" style="flex:0 0 auto;background:transparent;border:1px solid var(--bdr);color:var(--muted);padding:10px 14px;font-size:.72rem" onclick="mktClearProductForm()">✕ Clear</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btngreen" style="flex:1" onclick="mktSaveShop()" data-i18n="mkt_save_shop">Save shop</button>
+        <button class="btn" style="background:rgba(244,67,54,.1);border:1px solid rgba(244,67,54,.2);color:#EF5350;padding:12px 14px;font-size:.75rem" onclick="mktResetShop()">🔄 Reset</button>
+      </div>
+    </div>
+    <div class="card" id="mktQrCard" style="display:none">
+      <div class="chd"><div class="dot"></div><span>📱 My Pi QR Code</span></div>
+      <div class="notice info" style="margin-bottom:12px"><span class="nico">ℹ️</span><span style="font-size:.65rem">Print and display this QR. Clients scan it with Pi Wallet to pay you directly (no commission on direct payments).</span></div>
+      <div style="text-align:center;padding:12px">
+        <div id="mktQrDisplay" style="background:#fff;padding:12px;border-radius:12px;display:inline-block;margin-bottom:10px"></div>
+        <div id="mktQrUsername" style="font-size:.7rem;color:var(--muted);margin-bottom:10px"></div>
+        <button class="btn" onclick="window.print()" style="width:100%;padding:10px;font-size:.75rem">🖨️ Print QR Code</button>
+      </div>
+    </div>
+  </div>
+  <!-- ORDERS -->
+  <div id="mktPanelOrders" style="display:none">
+    <div class="card"><div class="chd"><div class="dot"></div><span data-i18n="mkt_tab_orders">Orders</span></div><div id="mktOrdersList"></div></div>
+  </div>
+</div>
+<!-- UQR MODAL -->
+<div id="uqrModal" class="uqr-modal">
+  <div class="uqr-box">
+    <h3 id="uqrTitle" style="color:#fff;font-size:1rem;margin-bottom:6px">📷 Scan QR Code</h3>
+    <p id="uqrDesc" style="color:rgba(255,255,255,.6);font-size:.7rem;margin-bottom:14px">Point camera at the QR code</p>
+    <div class="uqr-view"><video id="uqrVideo" playsinline></video><canvas id="uqrCanvas" style="display:none"></canvas><div class="uqr-cross"></div></div>
+    <p id="uqrStatus" style="color:var(--pi2);font-size:.65rem;margin-top:12px">Initializing...</p>
+    <button class="btn" style="margin-top:14px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff" onclick="UQR.close()">✕ Cancel</button>
+  </div>
+</div>
 <!-- ══ TRIPS ══ -->
 <div class="sec" id="sec-trips">
   <div class="card">
@@ -1342,7 +1518,30 @@ const I18N = {
     pispin_yourrank:'Your PiSpin rank',
     pispin_rewards:'Rank rewards',
     pispin_nopts:'pts to',
-    pispin_discount_applied:'Discount applied'
+    pispin_discount_applied:'Discount applied',
+    mkt_nav:'Market',mkt_title:'PiLocalMarket',mkt_sub:'Buy & sell locally with Pi',
+    mkt_tab_browse:'Browse',mkt_tab_shop:'My Shop',mkt_tab_orders:'Orders',
+    mkt_sectors_title:'Browse by sector',mkt_nearby:'Nearby shops',
+    mkt_no_shops:'No shops here yet. Be the first!',mkt_search:'Search...',
+    mkt_add_to_cart:'Add',mkt_pay:'Pay with Pi',mkt_processing:'Processing...',
+    mkt_success:'Payment sent!',mkt_subtotal:'Seller price',mkt_fee:'PiHub RW fee (5% added)',
+    mkt_discount:'PiSpin discount',mkt_seller_gets:'Seller receives',mkt_total:'YOU PAY',
+    mkt_free_amount:'Custom amount (FRw)',mkt_free_desc:'Description',
+    mkt_shop_name:'Shop name',mkt_shop_sector:'Sector',mkt_shop_gps:'Location',
+    mkt_gps_btn:'Get my location',mkt_gps_ok:'Location captured',mkt_gps_skip:'Skip',
+    mkt_product_name:'Product/Service name',mkt_product_price:'Price (FRw)',
+    mkt_product_unit:'Unit',mkt_product_desc:'Description (optional)',
+    mkt_add_product:'+ Add product',mkt_save_shop:'Save shop',mkt_shop_saved:'Shop saved!',
+    mkt_my_products:'My products',mkt_no_products:'No products yet.',
+    mkt_delete:'Delete',mkt_units:['piece','kg','g','litre','ml','portion','glass','plate','metre','lot','service'],
+    mkt_receipt:'Receipt',mkt_invoice:'Order details',mkt_today:'Today ',
+    mkt_receipt_seller:'Seller',mkt_receipt_buyer:'Buyer',mkt_back:'Back',
+    mkt_no_price:'Price pending',mkt_no_shops_sector:'No shops in this sector',
+    mkt_pending_transfers:'Pending transfers to sellers',mkt_no_pending:'No pending transfers',
+    mkt_mark_paid:'Mark PAID',mkt_no_orders:'No orders yet',
+    mkt_scan_btn:'Scan seller QR code',mkt_scan_notfound:'Shop not found for this QR',
+    uqr_init:'Initializing camera...',uqr_active:'Camera active — point at QR',
+    uqr_no_camera:'Camera not supported',uqr_cam_error:'Camera error',uqr_cancel:'Cancel'
   },
   fr:{
     auth_tagline:'RWANDA PI TRANSPORT',
@@ -1464,7 +1663,30 @@ const I18N = {
     pispin_yourrank:'Ton rang PiSpin',
     pispin_rewards:'Récompenses par rang',
     pispin_nopts:'pts pour',
-    pispin_discount_applied:'Réduction appliquée'
+    pispin_discount_applied:'Réduction appliquée',
+    mkt_nav:'Marché',mkt_title:'PiLocalMarket',mkt_sub:'Achetez et vendez localement avec Pi',
+    mkt_tab_browse:'Explorer',mkt_tab_shop:'Ma Boutique',mkt_tab_orders:'Commandes',
+    mkt_sectors_title:'Parcourir par secteur',mkt_nearby:'Boutiques proches',
+    mkt_no_shops:'Aucune boutique ici. Soyez le premier!',mkt_search:'Rechercher...',
+    mkt_add_to_cart:'Ajouter',mkt_pay:'Payer avec Pi',mkt_processing:'Traitement...',
+    mkt_success:'Paiement envoyé!',mkt_subtotal:'Prix vendeur',mkt_fee:'Frais PiHub RW (5% ajoutés)',
+    mkt_discount:'Réduction PiSpin',mkt_seller_gets:'Le vendeur reçoit',mkt_total:'VOUS PAYEZ',
+    mkt_free_amount:'Montant libre (FRw)',mkt_free_desc:'Description',
+    mkt_shop_name:'Nom de la boutique',mkt_shop_sector:'Secteur',mkt_shop_gps:'Localisation',
+    mkt_gps_btn:'Me localiser',mkt_gps_ok:'Localisation capturée',mkt_gps_skip:'Ignorer',
+    mkt_product_name:'Nom du produit/service',mkt_product_price:'Prix (FRw)',
+    mkt_product_unit:'Unité',mkt_product_desc:'Description (optionnel)',
+    mkt_add_product:'+ Ajouter',mkt_save_shop:'Enregistrer',mkt_shop_saved:'Boutique enregistrée!',
+    mkt_my_products:'Mes produits',mkt_no_products:'Aucun produit encore.',
+    mkt_delete:'Supprimer',mkt_units:['pièce','kg','g','litre','ml','portion','verre','assiette','mètre','lot','service'],
+    mkt_receipt:'Reçu',mkt_invoice:'Détail commande',mkt_today:"Aujourd'hui ",
+    mkt_receipt_seller:'Vendeur',mkt_receipt_buyer:'Acheteur',mkt_back:'Retour',
+    mkt_no_price:'Prix en attente',mkt_no_shops_sector:'Aucune boutique dans ce secteur',
+    mkt_pending_transfers:'Transferts en attente',mkt_no_pending:'Aucun transfert en attente',
+    mkt_mark_paid:'Marquer PAYÉ',mkt_no_orders:'Aucune commande',
+    mkt_scan_btn:'Scanner le QR du vendeur',mkt_scan_notfound:'Boutique introuvable',
+    uqr_init:'Initialisation caméra...',uqr_active:'Caméra active — pointez vers le QR',
+    uqr_no_camera:'Caméra non supportée',uqr_cam_error:'Erreur caméra',uqr_cancel:'Annuler'
   },
   kin:{
     auth_tagline:'UBUTUMWA BWA PI MU RWANDA',
@@ -1586,7 +1808,30 @@ const I18N = {
     pispin_yourrank:'Icyiciro cyawe cya PiSpin',
     pispin_rewards:'Ibihembo by\'icyiciro',
     pispin_nopts:'amanota kugira ngo ube',
-    pispin_discount_applied:'Igabanywa ryashyizweho'
+    pispin_discount_applied:"Igabanywa ryashyizweho",
+    mkt_nav:"Isoko",mkt_title:"PiLocalMarket",mkt_sub:"Gura no kugurisha ukoresha Pi",
+    mkt_tab_browse:"Shakisha",mkt_tab_shop:"Iduka ryanjye",mkt_tab_orders:"Ibibazwa",
+    mkt_sectors_title:"Shakisha mu nzego",mkt_nearby:"Amaduka ari hafi",
+    mkt_no_shops:"Nta duka. Banza!",mkt_search:"Shakisha...",
+    mkt_add_to_cart:"Ongeraho",mkt_pay:"Ishyura na Pi",mkt_processing:"Gutunganya...",
+    mkt_success:"Ubwishyu bwoherejwe!",mkt_subtotal:"Igiciro cy'ugurisha",mkt_fee:"Amafaranga ya PiHub (5% yongerwaho)",
+    mkt_discount:"Igabanywa rya PiSpin",mkt_seller_gets:"Ugurisha ahabwa",mkt_total:"WISHYURA",
+    mkt_free_amount:"Ingano yihariye (FRw)",mkt_free_desc:"Ibisobanuro",
+    mkt_shop_name:"Izina ry'iduka",mkt_shop_sector:"Icyiciro",mkt_shop_gps:"Aho riherereye",
+    mkt_gps_btn:"Menya aho ndi",mkt_gps_ok:"Ahantu hafashwe",mkt_gps_skip:"Reka",
+    mkt_product_name:"Izina ry'igicuruzwa",mkt_product_price:"Igiciro (FRw)",
+    mkt_product_unit:"Ingano",mkt_product_desc:"Ibisobanuro (ntabwo ari ngombwa)",
+    mkt_add_product:"+ Ongeraho",mkt_save_shop:"Bika",mkt_shop_saved:"Iduka ribitswe!",
+    mkt_my_products:"Ibicuruzwa byanjye",mkt_no_products:"Nta bicuruzwa.",
+    mkt_delete:"Siba",mkt_units:['igice','kg','g','litiro','ml','ingabo','inzoga','isahane','metero','lot','serivisi'],
+    mkt_receipt:"Resiti",mkt_invoice:"Ibisobanuro by'ibyo waguze",mkt_today:"Uyu munsi ",
+    mkt_receipt_seller:"Ugurisha",mkt_receipt_buyer:"Uguzi",mkt_back:"Subira",
+    mkt_no_price:"Igiciro kitarashyirwaho",mkt_no_shops_sector:"Nta duka muri uyu murongo",
+    mkt_pending_transfers:"Amafaranga ategereje",mkt_no_pending:"Nta mafaranga ategereje",
+    mkt_mark_paid:"Shyira nk'iyishyuwe",mkt_no_orders:"Nta mainzira",
+    mkt_scan_btn:"Skani QR y'ugurisha",mkt_scan_notfound:"Nta duka ryabonetse",
+    uqr_init:"Gutangira kamera...",uqr_active:"Kamera iri gukorela",
+    uqr_no_camera:"Nta kamera",uqr_cam_error:"Ikosa kuri kamera",uqr_cancel:"Hagarika"
   },
   sw:{
     auth_tagline:'USAFIRI WA PI RWANDA',
@@ -1708,7 +1953,30 @@ const I18N = {
     pispin_yourrank:'Cheo chako cha PiSpin',
     pispin_rewards:'Zawadi za vyeo',
     pispin_nopts:'pointi kufikia',
-    pispin_discount_applied:'Punguzo limetumika'
+    pispin_discount_applied:'Punguzo limetumika',
+    mkt_nav:'Soko',mkt_title:'PiLocalMarket',mkt_sub:'Nunua na uuze kwa Pi',
+    mkt_tab_browse:'Vinjari',mkt_tab_shop:'Duka Langu',mkt_tab_orders:'Maagizo',
+    mkt_sectors_title:'Vinjari kwa sekta',mkt_nearby:'Maduka karibu',
+    mkt_no_shops:'Hakuna maduka. Kuwa wa kwanza!',mkt_search:'Tafuta...',
+    mkt_add_to_cart:'Ongeza',mkt_pay:'Lipa kwa Pi',mkt_processing:'Inachakatwa...',
+    mkt_success:'Malipo yametumwa!',mkt_subtotal:'Bei ya muuzaji',mkt_fee:'Ada PiHub (5% imeongezwa)',
+    mkt_discount:'Punguzo PiSpin',mkt_seller_gets:'Muuzaji anapokea',mkt_total:'UNALIPA',
+    mkt_free_amount:'Kiasi maalum (FRw)',mkt_free_desc:'Maelezo',
+    mkt_shop_name:'Jina la duka',mkt_shop_sector:'Sekta',mkt_shop_gps:'Mahali',
+    mkt_gps_btn:'Pata mahali pangu',mkt_gps_ok:'Mahali pamenaswa',mkt_gps_skip:'Ruka',
+    mkt_product_name:'Jina la bidhaa',mkt_product_price:'Bei (FRw)',
+    mkt_product_unit:'Kipimo',mkt_product_desc:'Maelezo (si lazima)',
+    mkt_add_product:'+ Ongeza',mkt_save_shop:'Hifadhi',mkt_shop_saved:'Duka limehifadhiwa!',
+    mkt_my_products:'Bidhaa zangu',mkt_no_products:'Hakuna bidhaa.',
+    mkt_delete:'Futa',mkt_units:['kipande','kg','g','lita','ml','sehemu','glasi','sahani','mita','lot','huduma'],
+    mkt_receipt:'Risiti',mkt_invoice:'Maelezo ya agizo',mkt_today:'Leo ',
+    mkt_receipt_seller:'Muuzaji',mkt_receipt_buyer:'Mnunuzi',mkt_back:'Rudi',
+    mkt_no_price:'Bei bado',mkt_no_shops_sector:'Hakuna maduka katika sekta hii',
+    mkt_pending_transfers:'Malipo yanayosubiri',mkt_no_pending:'Hakuna malipo yanayosubiri',
+    mkt_mark_paid:'Weka IMELIPWA',mkt_no_orders:'Hakuna maagizo',
+    mkt_scan_btn:'Skani QR ya muuzaji',mkt_scan_notfound:'Duka halipatikani',
+    uqr_init:'Kuanzisha kamera...',uqr_active:'Kamera iko hai',
+    uqr_no_camera:'Kamera haipatikani',uqr_cam_error:'Hitilafu ya kamera',uqr_cancel:'Ghairi'
   }
 };
 
@@ -1858,10 +2126,11 @@ function onAuth(user){
   const pu=el('profuser');if(pu)pu.textContent='@'+n;
   updateLoyaltyDisplay();
   pispinLoad();
+  mktLoadShops();
   showNotif('Welcome @'+n+' 🎉','success');
 }
 
-function guestMode(){const sc=el('authScreen');if(sc)sc.classList.add('hidden');pispinLoad();}
+function guestMode(){const sc=el('authScreen');if(sc)sc.classList.add('hidden');pispinLoad();mktLoadShops();}
 
 function signOut(){
   piSvc.out();
@@ -2536,6 +2805,543 @@ function setRating(n){
 // ═══════════════════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════════════════
+
+// ═══ UNIVERSAL QR SCANNER ═══════════════════════════════════
+const UQR=(function(){
+  let stream=null,rafId=null,cb=null;
+  function open(callback,opts){
+    cb=callback;
+    const modal=el('uqrModal');if(!modal)return;
+    if(opts&&opts.title){const t=el('uqrTitle');if(t)t.textContent=opts.title;}
+    modal.style.display='flex';
+    const status=el('uqrStatus');
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      if(status)status.textContent=T('uqr_no_camera')||'Camera not supported';return;
+    }
+    if(status)status.textContent=T('uqr_init')||'Initializing...';
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})
+      .then(function(s){
+        stream=s;var v=el('uqrVideo');v.srcObject=stream;v.setAttribute('playsinline',true);v.play();
+        if(status)status.textContent=T('uqr_active')||'Camera active';
+        rafId=requestAnimationFrame(tick);
+      }).catch(function(err){if(status)status.textContent=(T('uqr_cam_error')||'Error')+': '+err.message;});
+  }
+  function tick(){
+    var v=el('uqrVideo'),c=el('uqrCanvas');
+    if(!v||!c){rafId=requestAnimationFrame(tick);return;}
+    if(v.readyState===v.HAVE_ENOUGH_DATA){
+      c.width=v.videoWidth;c.height=v.videoHeight;
+      var ctx=c.getContext('2d');ctx.drawImage(v,0,0,c.width,c.height);
+      var img=ctx.getImageData(0,0,c.width,c.height);
+      if(typeof jsQR!=='undefined'){
+        var code=jsQR(img.data,img.width,img.height);
+        if(code&&code.data){close();if(cb)cb(code.data);return;}
+      }
+    }
+    rafId=requestAnimationFrame(tick);
+  }
+  function close(){
+    if(rafId)cancelAnimationFrame(rafId);rafId=null;
+    if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
+    var m=el('uqrModal');if(m)m.style.display='none';
+  }
+  return{open:open,close:close};
+})();
+
+// ═══ PILOCALMARKET — Module 3 ════════════════════════════════
+var MKT_FEE=0.05;
+var MKT_STORE_KEY='pihub_mkt_shops_v1';
+var MKT_ORDERS_KEY='pihub_mkt_orders_v1';
+var MKT_SECTORS=[
+  {id:'food',ico:'🥬',en:'Food market',fr:'Alimentation',kin:'Ibiribwa',sw:'Chakula'},
+  {id:'grocery',ico:'🛒',en:'Grocery',fr:'Épicerie',kin:'Iduka rusange',sw:'Duka kuu'},
+  {id:'butcher',ico:'🥩',en:'Butcher',fr:'Boucherie',kin:'Inyama',sw:'Nyama'},
+  {id:'bar',ico:'🍺',en:'Bar',fr:'Bar',kin:'Baari',sw:'Baa'},
+  {id:'bbq',ico:'🍖',en:'BBQ & Grill',fr:'Barbecue',kin:'Inyama zotse',sw:'Nyama choma'},
+  {id:'restaurant',ico:'🍽️',en:'Restaurant',fr:'Restaurant',kin:'Resitora',sw:'Mkahawa'},
+  {id:'cafe',ico:'☕',en:'Café',fr:'Café',kin:'Ikawa',sw:'Kahawa'},
+  {id:'fashion',ico:'👔',en:'Fashion',fr:'Habillement',kin:'Imyenda',sw:'Mavazi'},
+  {id:'craft',ico:'🧺',en:'Crafts',fr:'Artisanat',kin:'Ubukorikori',sw:'Ufundi'},
+  {id:'furniture',ico:'🪑',en:'Furniture',fr:'Mobilier',kin:'Ibikoresho',sw:'Samani'},
+  {id:'hardware',ico:'🔨',en:'Hardware',fr:'Quincaillerie',kin:'Ibikoresho bwubatsi',sw:'Vifaa ujenzi'},
+  {id:'beauty',ico:'💇',en:'Beauty',fr:'Beauté',kin:'Ubwiza',sw:'Urembo'},
+  {id:'sewing',ico:'🧵',en:'Tailoring',fr:'Couture',kin:'Umudozi',sw:'Ushonaji'},
+  {id:'repair',ico:'🔧',en:'Repairs',fr:'Réparations',kin:'Gusana',sw:'Matengenezo'},
+  {id:'garage',ico:'🚗',en:'Garage',fr:'Garage',kin:'Garaje',sw:'Karakana'},
+  {id:'health',ico:'🏥',en:'Health',fr:'Santé',kin:'Ubuzima',sw:'Afya'},
+  {id:'education',ico:'📚',en:'Education',fr:'Éducation',kin:'Uburezi',sw:'Elimu'},
+  {id:'farming',ico:'🌾',en:'Agriculture',fr:'Agriculture',kin:'Ubuhinzi',sw:'Kilimo'},
+  {id:'tech',ico:'📱',en:'Technology',fr:'Technologie',kin:'Ikoranabuhanga',sw:'Teknolojia'},
+  {id:'realestate',ico:'🏠',en:'Real estate',fr:'Immobilier',kin:'Imitungo',sw:'Mali isiyohamishika'}
+];
+function mktSecLabel(s){var l=(S.lang==='kin'||S.lang==='sw')?S.lang:(S.lang==='fr'?'fr':'en');return s[l]||s.en;}
+var mktShops=[],mktCart=[],mktCurrentShopId=null,mktMyShop=null,mktGpsCoords=null;
+var mktActiveSector=null,mktMyProducts=[],mktInitialized=false;
+function mktLoadShops(){try{mktShops=JSON.parse(localStorage.getItem(MKT_STORE_KEY)||'[]');}catch(e){mktShops=[];}}
+function mktSaveShops(){localStorage.setItem(MKT_STORE_KEY,JSON.stringify(mktShops));}
+function mktLoadOrders(){try{return JSON.parse(localStorage.getItem(MKT_ORDERS_KEY)||'[]');}catch(e){return[];}}
+function mktSaveOrder(o){var orders=mktLoadOrders();orders.unshift(o);localStorage.setItem(MKT_ORDERS_KEY,JSON.stringify(orders.slice(0,100)));}
+function mktMarkPaid(orderId){
+  var orders=mktLoadOrders();
+  var o=orders.find(function(x){return x.id===orderId;});
+  if(o){o.payoutStatus='paid';localStorage.setItem(MKT_ORDERS_KEY,JSON.stringify(orders));}
+  mktRenderOrders();showNotif('✅ Marked as PAID','success');
+}
+function mktDistance(la1,lo1,la2,lo2){
+  var R=6371,dLa=(la2-la1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180;
+  var a=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLo/2)*Math.sin(dLo/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function mktFrwToPi(frw){return frw/314159;}
+function mktFmtPi(pi){return pi.toFixed(6)+' π';}
+function mktFmtFrw(frw){return Math.round(frw).toLocaleString()+' FRw';}
+function mktFmtDate(iso){
+  if(!iso)return '';
+  var d=new Date(iso),now=new Date();
+  if(d.toDateString()===now.toDateString())return(T('mkt_today')||'Today ')+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  return d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+function mktInit(){
+  mktLoadShops();
+  mktBuildSectorGrid();mktPopulateSelects();mktInitialized=true;
+  mktRenderShopsList(mktShops);mktLoadMyShop();mktRenderMyProducts();mktRenderOrders();
+}
+function mktBuildSectorGrid(){
+  var grid=el('mktSectorsGrid');if(!grid)return;
+  var html='';
+  MKT_SECTORS.forEach(function(s){
+    var active=mktActiveSector===s.id?' active':'';
+    html+='<div class="mkt-sector'+active+'" data-sid="'+s.id+'" onclick="mktSelectSector(&quot;'+s.id+'&quot;)">'
+      +'<div class="mkt-sector-ico">'+s.ico+'</div>'
+      +'<div class="mkt-sector-lbl">'+mktSecLabel(s)+'</div></div>';
+  });
+  grid.innerHTML=html;
+}
+function mktPopulateSelects(){
+  var ss=el('mktShopSector');
+  if(ss){
+    var pv=ss.value;
+    var html='<option value="">-- Select --</option>';
+    MKT_SECTORS.forEach(function(s){html+='<option value="'+s.id+'">'+s.ico+' '+mktSecLabel(s)+'</option>';});
+    ss.innerHTML=html;
+    if(pv)ss.value=pv;
+  }
+  var us=el('mktProdUnit');
+  if(us){
+    var units=T('mkt_units')||['piece','kg','g','litre','ml','portion','glass','plate','metre','lot','service'];
+    var uhtml='';
+    units.forEach(function(u){uhtml+='<option value="'+u+'">'+u+'</option>';});
+    us.innerHTML=uhtml;
+  }
+}
+function mktSelectSector(sid){
+  mktActiveSector=mktActiveSector===sid?null:sid;
+  document.querySelectorAll('.mkt-sector').forEach(function(s){s.classList.toggle('active',s.dataset.sid===mktActiveSector);});
+  var filtered=mktActiveSector?mktShops.filter(function(s){return s.sector===mktActiveSector;}):mktShops;
+  var sec=MKT_SECTORS.find(function(s){return s.id===mktActiveSector;});
+  var title=el('mktShopsTitle');
+  if(title)title.textContent=mktActiveSector&&sec?sec.ico+' '+mktSecLabel(sec):(T('mkt_nearby')||'Nearby shops');
+  mktRenderShopsList(filtered);
+}
+function mktFilterShops(){
+  var q=(el('mktSearch')?el('mktSearch').value:'').toLowerCase().trim();
+  var base=mktActiveSector?mktShops.filter(function(s){return s.sector===mktActiveSector;}):mktShops;
+  var filtered=q?base.filter(function(s){
+    return s.name.toLowerCase().indexOf(q)>=0||s.products.some(function(p){return p.name.toLowerCase().indexOf(q)>=0;});
+  }):base;
+  mktRenderShopsList(filtered);
+}
+function mktScanQR(){
+  UQR.open(function(txt){
+    var uname=txt.replace('@','').trim().toLowerCase();
+    var shop=mktShops.find(function(s){return s.owner.toLowerCase()===uname;});
+    if(shop){mktSelectSector(null);mktOpenShop(shop.id);showNotif('✓ '+shop.name,'success');}
+    else showNotif(T('mkt_scan_notfound')||'Shop not found','warning');
+  },{title:T('mkt_scan_btn')||'Scan QR'});
+}
+function mktGetSec(id){return MKT_SECTORS.find(function(x){return x.id===id;})||{ico:'🏪',en:id,fr:id,kin:id,sw:id};}
+function mktRenderShopsList(shops){
+  var list=el('mktShopsList');if(!list)return;
+  if(!shops.length){list.innerHTML='<p style="text-align:center;color:var(--muted);font-size:.7rem;padding:16px">'+(T('mkt_no_shops')||'No shops yet')+'</p>';return;}
+  var html='';
+  shops.forEach(function(s){
+    var sec=mktGetSec(s.sector);
+    var dist=s.lat&&mktGpsCoords?mktDistance(mktGpsCoords.lat,mktGpsCoords.lng,s.lat,s.lng).toFixed(1)+' km':'';
+    html+='<div class="mkt-shop-card" onclick="mktOpenShop(&quot;'+s.id+'&quot;)">'
+      +'<div class="mkt-shop-header"><div class="mkt-shop-photo">'+sec.ico+'</div>'
+      +'<div><div class="mkt-shop-name">'+s.name+'</div>'
+      +'<div class="mkt-shop-meta">'+mktSecLabel(sec)+' · @'+s.owner+'</div>'
+      +(dist?'<div class="mkt-shop-dist">📍 '+dist+'</div>':'')+'</div></div>'
+      +'<div style="font-size:.62rem;color:var(--muted)">'+s.products.length+' product(s)</div></div>';
+  });
+  list.innerHTML=html;
+}
+function mktOpenShop(shopId){
+  var shop=mktShops.find(function(s){return s.id===shopId;});if(!shop)return;
+  mktCurrentShopId=shopId;mktCart=[];
+  el('mktShopsCard').style.display='none';
+  el('mktShopDetail').style.display='block';
+  el('mktReceiptBox').style.display='none';
+  var cs=el('mktCartSummary');if(cs)cs.style.display='none';
+  var ic=el('mktInvoiceCard');if(ic)ic.style.display='none';
+  var fa=el('mktFreeAmount');if(fa)fa.value='';
+  var pb=el('mktPayBtn');if(pb)pb.disabled=true;
+  var sec=mktGetSec(shop.sector);
+  var c=el('mktShopDetailContent');if(!c)return;
+  var html='<div class="mkt-shop-header" style="margin-bottom:14px">'
+    +'<div class="mkt-shop-photo" style="width:60px;height:60px;font-size:2rem">'+sec.ico+'</div>'
+    +'<div><div class="mkt-shop-name" style="font-size:.9rem">'+shop.name+'</div>'
+    +'<div class="mkt-shop-meta">@'+shop.owner+' · '+mktSecLabel(sec)+'</div></div></div>'
+    +'<div class="chd" style="margin-bottom:8px"><div class="dot"></div><span>Products</span></div>';
+  shop.products.forEach(function(p,i){
+    html+='<div class="mkt-product-row"><div>';
+    html+='<div class="mkt-product-name">'+p.name+'</div>';
+    if(p.desc)html+='<div class="mkt-product-desc">'+p.desc+'</div>';
+    html+='<div class="mkt-product-unit">'+p.unit+'</div>';
+    html+='</div><div style="display:flex;align-items:center;gap:8px">';
+    if(p.price>0){
+      html+='<div><div class="mkt-product-price">'+mktFmtFrw(p.price)+'</div>'
+        +'<div style="font-size:.58rem;color:var(--muted)">'+mktFmtPi(mktFrwToPi(p.price))+'</div></div>'
+        +'<button class="mkt-add-btn" onclick="mktAddToCart('+i+')">'+(T('mkt_add_to_cart')||'Add')+'</button>';
+    }else{
+      html+='<span style="font-size:.6rem;color:#FF9800">'+(T('mkt_no_price')||'Price pending')+'</span>';
+    }
+    html+='</div></div>';
+  });
+  if(!shop.products.length)html+='<p style="color:var(--muted);font-size:.7rem;text-align:center;padding:12px">'+(T('mkt_no_products')||'No products')+'</p>';
+  c.innerHTML=html;
+}
+function mktCloseDetail(){
+  mktCurrentShopId=null;mktCart=[];
+  el('mktShopsCard').style.display='block';
+  el('mktShopDetail').style.display='none';
+  el('mktReceiptBox').style.display='none';
+  var ic=el('mktInvoiceCard');if(ic){ic.style.display='none';}
+  var il=el('mktInvoiceLines');if(il)il.innerHTML='';
+  var cs=el('mktCartSummary');if(cs)cs.style.display='none';
+  var fa=el('mktFreeAmount');if(fa)fa.value='';
+}
+function mktAddToCart(i){
+  var shop=mktShops.find(function(s){return s.id===mktCurrentShopId;});if(!shop)return;
+  var p=shop.products[i];if(!p)return;
+  if(!p.price||p.price<=0){showNotif('Price not set for this product','warning');return;}
+  var ex=mktCart.find(function(c){return c.index===i;});
+  if(ex)ex.qty++;else mktCart.push({index:i,name:p.name,price:p.price,unit:p.unit,qty:1});
+  mktUpdateCart();showNotif('✓ '+p.name,'success',1500);
+}
+function mktChangeQty(idx,delta){
+  if(!mktCart[idx])return;
+  mktCart[idx].qty+=delta;
+  if(mktCart[idx].qty<=0)mktCart.splice(idx,1);
+  mktUpdateCart();
+}
+function mktRenderInvoice(){
+  var card=el('mktInvoiceCard'),lines=el('mktInvoiceLines');if(!card||!lines)return;
+  if(!mktCart.length){card.style.display='none';return;}
+  card.style.display='block';
+  var html='';
+  mktCart.forEach(function(c,idx){
+    html+='<div class="mkt-inv-line">'
+      +'<div><div class="mkt-product-name">'+c.name+'</div>'
+      +'<div class="mkt-product-unit">'+mktFmtFrw(c.price)+' × '+c.qty+' '+c.unit+'</div></div>'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +'<div style="display:flex;align-items:center;gap:4px">'
+      +'<button class="mkt-del-btn" style="padding:2px 7px" onclick="mktChangeQty('+idx+',-1)">−</button>'
+      +'<span style="font-size:.7rem;font-weight:700;min-width:16px;text-align:center">'+c.qty+'</span>'
+      +'<button class="mkt-del-btn" style="padding:2px 7px;background:rgba(22,201,121,.1);border-color:rgba(22,201,121,.2);color:var(--pi2)" onclick="mktChangeQty('+idx+',1)">+</button>'
+      +'</div>'
+      +'<div class="mkt-product-price">'+mktFmtFrw(c.price*c.qty)+'</div>'
+      +'</div></div>';
+  });
+  lines.innerHTML=html;
+}
+function mktUpdateCart(){
+  var freeAmt=parseFloat(el('mktFreeAmount')?el('mktFreeAmount').value:0)||0;
+  var sellerPrice=mktCart.reduce(function(s,c){return s+c.price*c.qty;},0)+freeAmt;
+  var summary=el('mktCartSummary'),pb=el('mktPayBtn');
+  mktRenderInvoice();
+  if(sellerPrice<=0){if(summary)summary.style.display='none';if(pb)pb.disabled=true;return;}
+  var disc=getBestDiscount();
+  var fee=sellerPrice*MKT_FEE*(1-disc/100);
+  var total=sellerPrice+fee;
+  if(el('mktCartSubtotal'))el('mktCartSubtotal').textContent=mktFmtFrw(sellerPrice)+' ('+mktFmtPi(mktFrwToPi(sellerPrice))+')';
+  if(el('mktCartFee'))el('mktCartFee').textContent='+'+mktFmtFrw(fee);
+  if(el('mktCartSellerGets'))el('mktCartSellerGets').textContent=mktFmtFrw(sellerPrice);
+  if(el('mktCartTotal'))el('mktCartTotal').textContent=mktFmtFrw(total)+' ('+mktFmtPi(mktFrwToPi(total))+')';
+  var dr=el('mktCartDiscRow'),dp=el('mktCartDiscPct');
+  if(disc>0){if(dr)dr.style.display='flex';if(dp)dp.textContent='-'+disc+'%';}
+  else{if(dr)dr.style.display='none';}
+  if(summary)summary.style.display='block';if(pb)pb.disabled=false;
+}
+function mktPay(){
+  if(!rateLimit('mktPay',3000))return;
+  var shop=mktShops.find(function(s){return s.id===mktCurrentShopId;});if(!shop)return;
+  var freeAmt=parseFloat(el('mktFreeAmount')?el('mktFreeAmount').value:0)||0;
+  var sellerPrice=mktCart.reduce(function(s,c){return s+c.price*c.qty;},0)+freeAmt;
+  if(sellerPrice<=0)return;
+  var disc=getBestDiscount();
+  var fee=sellerPrice*MKT_FEE*(1-disc/100);
+  var total=sellerPrice+fee;
+  var totalPi=mktFrwToPi(total);
+  var buyer=(piSvc.user&&piSvc.user.username)||'guest';
+  var pb=el('mktPayBtn');
+  if(pb){pb.disabled=true;pb.textContent=T('mkt_processing')||'Processing...';}
+  var cartCopy=[].concat(mktCart);
+  function doSuccess(){
+    var order={id:'MKT'+Date.now(),shop:shop.name,seller:shop.owner,buyer:buyer,
+      sellerPrice:sellerPrice,fee:fee,total:total,totalPi:totalPi,disc:disc,
+      items:cartCopy,freeAmt:freeAmt,date:new Date().toISOString(),payoutStatus:'pending'};
+    mktSaveOrder(order);
+    if(el('rcptSeller'))el('rcptSeller').textContent='@'+shop.owner+' ('+shop.name+')';
+    if(el('rcptBuyer'))el('rcptBuyer').textContent='@'+buyer;
+    if(el('rcptTotal'))el('rcptTotal').textContent=mktFmtFrw(total)+' ('+mktFmtPi(totalPi)+')';
+    if(el('rcptSellerGets'))el('rcptSellerGets').textContent=mktFmtFrw(sellerPrice)+' (to transfer)';
+    var rdr=el('rcptDiscRow'),rdp=el('rcptDisc');
+    if(disc>0){if(rdr)rdr.style.display='flex';if(rdp)rdp.textContent='-'+disc+'%';}
+    var rb=el('mktReceiptBox');if(rb){rb.style.display='block';rb.scrollIntoView({behavior:'smooth'});}
+    var cs=el('mktCartSummary');if(cs)cs.style.display='none';
+    var ic=el('mktInvoiceCard');if(ic)ic.style.display='none';
+    mktCart=[];var fa=el('mktFreeAmount');if(fa)fa.value='';
+    showNotif(T('mkt_success')||'Payment sent!','success');
+    if(pb){pb.disabled=false;pb.textContent=T('mkt_pay')||'Pay with Pi';}
+  }
+  if(typeof Pi!=='undefined'&&piSvc.ok){
+    Pi.createPayment({
+      amount:totalPi,
+      memo:'PiLocalMarket: '+shop.name,
+      metadata:{module:'PiLocalMarket',shopId:shop.id,seller:shop.owner,buyer:buyer,sellerPrice:sellerPrice,fee:fee,disc:disc}
+    },{
+      onReadyForServerApproval:function(pid){console.log('MKT approval:',pid);},
+      onReadyForServerCompletion:function(pid,txid){console.log('MKT done:',txid);doSuccess();},
+      onCancel:function(){if(pb){pb.disabled=false;pb.textContent=T('mkt_pay');}showNotif('Cancelled','error');},
+      onError:function(e){if(pb){pb.disabled=false;pb.textContent=T('mkt_pay');}showNotif('Error: '+e.message,'error');}
+    });
+  }else{setTimeout(doSuccess,1500);}
+}
+// SELLER
+function mktLoadMyShop(){
+  var uname=(piSvc.user&&piSvc.user.username)||'guest';
+  mktMyShop=mktShops.find(function(s){return s.owner===uname;})||null;
+  mktMyProducts=mktMyShop?[].concat(mktMyShop.products):[];
+  if(mktMyShop){
+    var sn=el('mktShopName');if(sn)sn.value=mktMyShop.name;
+    var ss=el('mktShopSector');if(ss)ss.value=mktMyShop.sector;
+    if(mktMyShop.lat){
+      mktGpsCoords={lat:mktMyShop.lat,lng:mktMyShop.lng};
+      var gs=el('mktGpsStatus');
+      if(gs)gs.innerHTML='<span class="mkt-gps-ok">✅ '+mktGpsCoords.lat.toFixed(4)+', '+mktGpsCoords.lng.toFixed(4)+'</span>';
+    }
+  }
+}
+function mktGetGPS(){
+  var btn=el('mktGpsBtn');
+  if(!navigator.geolocation){showNotif('GPS not available','warning');return;}
+  if(btn){btn.disabled=true;btn.textContent='⏳ Locating...';}
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      mktGpsCoords={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      var gs=el('mktGpsStatus');
+      if(gs)gs.innerHTML='<span class="mkt-gps-ok">✅ '+mktGpsCoords.lat.toFixed(4)+', '+mktGpsCoords.lng.toFixed(4)+'</span>';
+      if(btn){btn.disabled=false;btn.textContent=T('mkt_gps_btn')||'Get location';}
+      showNotif(T('mkt_gps_ok')||'Location captured','success');
+    },
+    function(err){
+      if(btn){btn.disabled=false;btn.textContent=T('mkt_gps_btn')||'Get location';}
+      showNotif('GPS error: '+err.message,'warning');
+    },
+    {timeout:10000,enableHighAccuracy:true}
+  );
+}
+function mktSkipGPS(){
+  mktGpsCoords=null;
+  var gs=el('mktGpsStatus');if(gs)gs.innerHTML='<span style="color:var(--muted)">'+(T('mkt_gps_skip')||'Skipped')+'</span>';
+}
+function mktClearProductForm(){
+  var ids=['mktProdName','mktProdPrice','mktProdDesc'];
+  ids.forEach(function(id){var e=el(id);if(e)e.value='';});
+  var us=el('mktProdUnit');if(us)us.selectedIndex=0;
+}
+function mktAddProduct(){
+  var name=(el('mktProdName')?el('mktProdName').value:'').trim();
+  var price=parseFloat(el('mktProdPrice')?el('mktProdPrice').value:0);
+  var unit=(el('mktProdUnit')?el('mktProdUnit').value:'piece')||'piece';
+  var desc=(el('mktProdDesc')?el('mktProdDesc').value:'').trim();
+  if(!name||price<=0){showNotif(T('fill_fields')||'Fill all fields','warning');return;}
+  mktMyProducts.push({name:name,price:price,unit:unit,desc:desc,updatedAt:new Date().toISOString()});
+  mktClearProductForm();
+  mktRenderMyProducts();showNotif('✓ '+name+' added','success');
+}
+function mktDeleteProduct(i){
+  if(!confirm('Delete "'+mktMyProducts[i].name+'"?'))return;
+  mktMyProducts.splice(i,1);mktRenderMyProducts();
+}
+function mktEditProduct(i){
+  var f=el('mktEditForm_'+i);
+  if(f)f.style.display=f.style.display==='none'?'block':'none';
+}
+function mktCancelEdit(i){var f=el('mktEditForm_'+i);if(f)f.style.display='none';}
+function mktResetProduct(i){
+  mktMyProducts[i]=Object.assign({},mktMyProducts[i],{price:0,updatedAt:new Date().toISOString()});
+  mktRenderMyProducts();mktEditProduct(i);showNotif('🔄 Price reset — enter new price','info');
+}
+function mktSaveProductEdit(i){
+  var p=parseFloat(el('mktEditPrice_'+i)?el('mktEditPrice_'+i).value:0);
+  var n=(el('mktEditName_'+i)?el('mktEditName_'+i).value:'').trim();
+  var d=(el('mktEditDesc_'+i)?el('mktEditDesc_'+i).value:'').trim();
+  if(!n||p<=0){showNotif('Fill all fields','warning');return;}
+  mktMyProducts[i]=Object.assign({},mktMyProducts[i],{name:n,price:p,desc:d,updatedAt:new Date().toISOString()});
+  mktRenderMyProducts();showNotif('✅ Updated','success');
+}
+function mktRenderMyProducts(){
+  var list=el('mktMyProductsList');if(!list)return;
+  if(!mktMyProducts.length){
+    list.innerHTML='<p style="color:var(--muted);font-size:.7rem;text-align:center;padding:8px">'+(T('mkt_no_products')||'No products yet')+'</p>';return;
+  }
+  var html='';
+  mktMyProducts.forEach(function(p,i){
+    var priceOk=p.price>0;
+    var priceStr=priceOk?mktFmtFrw(p.price)+' / '+p.unit:'⚠️ Price not set';
+    var priceColor=priceOk?'var(--muted)':'#FF9800';
+    html+='<div style="border-bottom:1px solid var(--bdr);padding:8px 0">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">';
+    html+='<div style="flex:1">';
+    html+='<div style="font-weight:700;font-size:.72rem">'+p.name+'</div>';
+    html+='<div style="font-size:.6rem;color:'+priceColor+'">'+priceStr+'</div>';
+    if(p.desc)html+='<div style="font-size:.58rem;color:var(--muted)">'+p.desc+'</div>';
+    html+='<div style="font-size:.55rem;color:var(--pi2)">🕒 '+mktFmtDate(p.updatedAt)+'</div>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:3px;flex-shrink:0">';
+    html+='<button class="mkt-del-btn" style="background:rgba(33,150,243,.1);border-color:rgba(33,150,243,.2);color:#2196F3;padding:3px 7px;font-size:.6rem" onclick="mktEditProduct('+i+')">✏️ Modify</button>';
+    html+='<button class="mkt-del-btn" style="background:rgba(255,152,0,.1);border-color:rgba(255,152,0,.2);color:#FF9800;padding:3px 7px;font-size:.6rem" onclick="mktResetProduct('+i+')">🔄</button>';
+    html+='<button class="mkt-del-btn" style="padding:3px 7px;font-size:.6rem" onclick="mktDeleteProduct('+i+')">🗑 Del</button>';
+    html+='</div></div>';
+    html+='<div id="mktEditForm_'+i+'" style="display:none;background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:10px;padding:10px;margin-top:6px">';
+    html+='<div class="fgroup"><label class="flbl">New price (FRw)</label><input class="finput" type="number" id="mktEditPrice_'+i+'" value="'+(p.price||'')+'" min="0" placeholder="Today price"></div>';
+    html+='<div class="fgroup"><label class="flbl">Name</label><input class="finput" type="text" id="mktEditName_'+i+'" value="'+(p.name||'')+'"></div>';
+    html+='<div class="fgroup"><label class="flbl">Description</label><input class="finput" type="text" id="mktEditDesc_'+i+'" value="'+(p.desc||'')+'"></div>';
+    html+='<div style="display:flex;gap:6px;margin-top:6px">';
+    html+='<button class="btn btngreen" style="flex:1;padding:8px;font-size:.7rem" onclick="mktSaveProductEdit('+i+')">✅ Save</button>';
+    html+='<button class="btn" style="flex:1;padding:8px;font-size:.7rem;background:transparent;border:1px solid var(--bdr);color:var(--muted)" onclick="mktCancelEdit('+i+')">Cancel</button>';
+    html+='</div></div>';
+    html+='</div>';
+  });
+  list.innerHTML=html;
+}
+function mktResetShop(){
+  if(!confirm('Reset your shop? All products will be cleared.'))return;
+  var uname=(piSvc.user&&piSvc.user.username)||'guest';
+  mktShops=mktShops.filter(function(s){return s.owner!==uname;});
+  mktSaveShops();mktMyShop=null;mktMyProducts=[];mktGpsCoords=null;
+  var sn=el('mktShopName');if(sn)sn.value='';
+  var ss=el('mktShopSector');if(ss)ss.value='';
+  var gs=el('mktGpsStatus');if(gs)gs.innerHTML='';
+  var qc=el('mktQrCard');if(qc)qc.style.display='none';
+  mktRenderMyProducts();showNotif('🔄 Shop reset','info');
+}
+function mktSaveShop(){
+  var name=(el('mktShopName')?el('mktShopName').value:'').trim();
+  var sector=(el('mktShopSector')?el('mktShopSector').value:'')||'';
+  if(!name||!sector){showNotif(T('fill_fields')||'Fill name and sector','warning');return;}
+  var uname=(piSvc.user&&piSvc.user.username)||'guest';
+  var shopId=mktMyShop?mktMyShop.id:'shop_'+uname+'_'+Date.now();
+  var shop={id:shopId,name:name,sector:sector,owner:uname,
+    products:[].concat(mktMyProducts),
+    lat:mktGpsCoords?mktGpsCoords.lat:null,
+    lng:mktGpsCoords?mktGpsCoords.lng:null,
+    createdAt:new Date().toISOString()};
+  var idx=mktShops.findIndex(function(s){return s.id===shopId;});
+  if(idx>=0)mktShops[idx]=shop;else mktShops.push(shop);
+  mktMyShop=shop;mktSaveShops();showNotif(T('mkt_shop_saved')||'Saved!','success');
+  var qc=el('mktQrCard');if(qc)qc.style.display='block';
+  var qu=el('mktQrUsername');if(qu)qu.textContent='@'+uname+' · '+name;
+  var qd=el('mktQrDisplay');
+  if(qd){
+    qd.innerHTML='';
+    var canvas=document.createElement('canvas');canvas.width=160;canvas.height=160;qd.appendChild(canvas);
+    try{
+      if(typeof window.drawQR==='function')window.drawQR(canvas,'@'+uname);
+      else if(typeof QRCode!=='undefined')new QRCode(qd,{text:'@'+uname,width:160,height:160});
+      else qd.innerHTML='<div style="padding:20px;font-size:.9rem;color:#333;text-align:center"><strong>@'+uname+'</strong></div>';
+    }catch(e){qd.innerHTML='<div style="padding:20px;font-size:.9rem;color:#333;text-align:center">@'+uname+'</div>';}
+  }
+  if(qc)qc.scrollIntoView({behavior:'smooth'});
+}
+function mktShowTab(i){
+  var panels=['mktPanelBrowse','mktPanelShop','mktPanelOrders'];
+  for(var j=0;j<3;j++){
+    var t=el('mktTab'+j);if(t)t.classList.toggle('active',j===i);
+    var p=el(panels[j]);if(p)p.style.display=j===i?'block':'none';
+  }
+  if(i===2)mktRenderOrders();
+}
+function mktRenderOrders(){
+  var list=el('mktOrdersList');if(!list)return;
+  var orders=mktLoadOrders();
+  var uname=(piSvc.user&&piSvc.user.username)||'guest';
+  if(!orders.length){
+    list.innerHTML='<p style="text-align:center;color:var(--muted);font-size:.7rem;padding:16px">'+(T('mkt_no_orders')||'No orders yet')+'</p>';
+    return;
+  }
+  var pending=orders.filter(function(o){return o.payoutStatus==='pending';});
+  var html='';
+  if(pending.length){
+    var totalPending=pending.reduce(function(s,o){return s+(o.sellerPrice||0);},0);
+    html+='<div style="background:rgba(244,67,54,.06);border:1px solid rgba(244,67,54,.15);border-radius:12px;padding:12px;margin-bottom:14px">';
+    html+='<div style="font-weight:700;font-size:.75rem;color:#EF5350;margin-bottom:8px">⏳ '+(T('mkt_pending_transfers')||'Pending transfers')+' — Total: '+mktFmtFrw(totalPending)+'</div>';
+    pending.forEach(function(o){
+      html+='<div style="padding:7px 0;border-bottom:1px solid rgba(244,67,54,.1)">';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center">';
+      html+='<div><div style="font-size:.7rem;font-weight:700">@'+o.seller+' — '+o.shop+'</div>';
+      html+='<div style="font-size:.6rem;color:var(--muted)">'+mktFmtDate(o.date)+'</div>';
+      html+='<div style="font-size:.65rem;font-weight:700;color:#EF5350">'+mktFmtFrw(o.sellerPrice||0)+' to send</div></div>';
+      html+='<button class="mkt-del-btn" style="background:rgba(22,201,121,.15);border-color:rgba(22,201,121,.3);color:var(--pi2);font-size:.65rem;padding:5px 10px" onclick="mktMarkPaid(&quot;'+o.id+'&quot;)">✅ PAID</button>';
+      html+='</div></div>';
+    });
+    html+='</div>';
+  }else{
+    html+='<div style="font-size:.65rem;color:var(--pi2);text-align:center;padding:6px;margin-bottom:10px">✅ '+(T('mkt_no_pending')||'No pending transfers')+'</div>';
+  }
+  orders.forEach(function(o){
+    var isPaid=o.payoutStatus==='paid';
+    var isMine=o.buyer===uname;
+    var items=o.items||[];
+    html+='<div style="background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px;margin-bottom:8px">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html+='<div><div style="font-size:.75rem;font-weight:700">'+o.shop+' '+(isMine?'🛒':'💰')+'</div>';
+    html+='<div style="font-size:.6rem;color:var(--muted)">'+mktFmtDate(o.date)+'</div></div>';
+    html+='<div style="text-align:right"><div style="font-size:.8rem;font-weight:800;color:var(--pi2)">'+mktFmtFrw(o.total||0)+'</div>';
+    var statusBg=isPaid?'rgba(22,201,121,.15)':'rgba(255,152,0,.15)';
+    var statusColor=isPaid?'var(--pi2)':'#FF9800';
+    var statusLabel=isPaid?'✅ PAID':'⏳ Pending';
+    html+='<div style="font-size:.6rem;padding:2px 6px;border-radius:6px;font-weight:700;background:'+statusBg+';color:'+statusColor+'">'+statusLabel+'</div>';
+    html+='</div></div>';
+    if(items.length){
+      html+='<div style="border-top:1px solid var(--bdr);padding-top:8px">';
+      items.forEach(function(it){
+        html+='<div style="display:flex;justify-content:space-between;font-size:.65rem;padding:3px 0">';
+        html+='<span style="color:var(--muted)">'+it.name+' × '+it.qty+' '+it.unit+'</span>';
+        html+='<span style="font-weight:700">'+mktFmtFrw(it.price*it.qty)+'</span></div>';
+      });
+      if(o.freeAmt>0){
+        html+='<div style="display:flex;justify-content:space-between;font-size:.65rem;padding:3px 0">';
+        html+='<span style="color:var(--muted)">Custom</span><span>'+mktFmtFrw(o.freeAmt)+'</span></div>';
+      }
+      html+='<div style="display:flex;justify-content:space-between;font-size:.65rem;padding:4px 0;border-top:1px dashed var(--bdr);margin-top:4px">';
+      html+='<span style="color:var(--muted)">Seller price</span><span>'+mktFmtFrw(o.sellerPrice||0)+'</span></div>';
+      html+='<div style="display:flex;justify-content:space-between;font-size:.65rem;padding:3px 0">';
+      html+='<span style="color:var(--muted)">PiHub RW fee</span><span>+'+mktFmtFrw(o.fee||0)+'</span></div>';
+      if((o.disc||0)>0){
+        html+='<div style="display:flex;justify-content:space-between;font-size:.65rem;padding:3px 0">';
+        html+='<span style="color:var(--pi2)">🎡 PiSpin -'+o.disc+'%</span><span style="color:var(--pi2)">saved</span></div>';
+      }
+      html+='<div style="display:flex;justify-content:space-between;font-size:.72rem;font-weight:800;padding:4px 0;border-top:1px solid var(--bdr);margin-top:4px;color:var(--pi2)">';
+      html+='<span>TOTAL PAID</span><span>'+mktFmtFrw(o.total||0)+'</span></div>';
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  list.innerHTML=html;
+}
 // ═══════════════════════════════════════════════════════════
 //  PISPIN FORTUNE — Module 2
 // ═══════════════════════════════════════════════════════════
@@ -2826,12 +3632,13 @@ function showSec(id){
   const sec=el(id);if(sec)sec.classList.add('active');
   document.querySelectorAll('.nbtn').forEach(n=>n.classList.remove('active'));
   const map={'sec-home':'nav-home','sec-transport':'nav-transport','sec-trips':'nav-trips',
-             'sec-qr':'nav-qr'
-,'sec-loyalty':'nav-loyalty','sec-profile':'nav-profile'};
+             'sec-qr':'nav-qr','sec-market':'nav-market',
+'sec-loyalty':'nav-loyalty','sec-profile':'nav-profile'};
   const nb=el(map[id]);if(nb)nb.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='sec-loyalty')updateLoyaltyDisplay();
   if(id==='sec-pispin')pispinRefreshView();
+  if(id==='sec-market')mktInit();
   if(id==='')updateReputation();
 }
 function goT(mode){showSec('sec-transport');setMode(mode);}
@@ -2863,6 +3670,9 @@ function applyLang(lang){
   updateRateUI();
   updateLoyaltyDisplay();
   renderFavorites();
+  if(typeof mktBuildSectorGrid==='function'){const g=el('mktSectorsGrid');if(g)g.innerHTML='';mktBuildSectorGrid();}
+  if(typeof mktPopulateSelects==='function')mktPopulateSelects();
+  if(typeof mktRenderMyProducts==='function')mktRenderMyProducts();
 }
 function rebuildSel(id,opts){
   const e=el(id);if(!e)return;
@@ -2971,6 +3781,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   try{init();}catch(e){console.error('DOMContentLoaded error:',e);}
 });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
 <script src="qr.js" defer></script>
 <script src="qr-flow.js" defer></script> 
 </body>
