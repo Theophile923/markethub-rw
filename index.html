@@ -660,108 +660,30 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .uqr-cross{position:absolute;inset:0;border:40px solid rgba(0,0,0,.4);box-sizing:border-box;pointer-events:none}
 </style>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getFirestore, collection, doc, setDoc, getDocs, getDoc, updateDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
-      authDomain: "pihub-rw.firebaseapp.com",
-      projectId: "pihub-rw",
-      storageBucket: "pihub-rw.firebasestorage.app",
-      messagingSenderId: "1015312593058",
-      appId: "1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // ── Expose Firebase functions globally so main script can use them ──
-    window.MKT_DB = {
-      // Save or update a shop
-      async saveShop(shop) {
-        try {
-          await setDoc(doc(db, "shops", shop.id), shop);
-          return true;
-        } catch(e) { console.error("saveShop error:", e); return false; }
-      },
-      // Load all shops
-      async loadShops() {
-        try {
-          const snap = await getDocs(collection(db, "shops"));
-          return snap.docs.map(d => d.data());
-        } catch(e) { console.error("loadShops error:", e); return []; }
-      },
-      // Delete a shop
-      async deleteShop(shopId) {
-        try {
-          await setDoc(doc(db, "shops", shopId), {deleted: true}, {merge: true});
-          return true;
-        } catch(e) { console.error("deleteShop error:", e); return false; }
-      },
-      // Save an order
-      async saveOrder(order) {
-        try {
-          await setDoc(doc(db, "orders", order.id), order);
-          return true;
-        } catch(e) { console.error("saveOrder error:", e); return false; }
-      },
-      // Load orders for a user (buyer or seller)
-      async loadOrders(username) {
-        try {
-          const snap = await getDocs(collection(db, "orders"));
-          return snap.docs.map(d => d.data())
-            .filter(o => o.buyer === username || o.seller === username)
-            .sort((a,b) => new Date(b.date) - new Date(a.date));
-        } catch(e) { console.error("loadOrders error:", e); return []; }
-      },
-      // Mark order as paid
-      async markOrderPaid(orderId) {
-        try {
-          await updateDoc(doc(db, "orders", orderId), {payoutStatus: "paid"});
-          return true;
-        } catch(e) { console.error("markOrderPaid error:", e); return false; }
-      }
-    };
-
-    window.MKT_DB_READY = true;
-    console.log("Firebase ready ✅");
-    // Notify main script that Firebase is ready
-    window.dispatchEvent(new Event("firebaseReady"));
-  </script>
-
-  <!-- Firebase SDK -->
+  <!-- ══ FIREBASE SDK (single init) ══ -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
-      authDomain: "pihub-rw.firebaseapp.com",
-      projectId: "pihub-rw",
-      storageBucket: "pihub-rw.firebasestorage.app",
-      messagingSenderId: "1015312593058",
-      appId: "1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
+  (function(){
+    if(firebase.apps.length){return;}
+    firebase.initializeApp({
+      apiKey:"AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
+      authDomain:"pihub-rw.firebaseapp.com",
+      projectId:"pihub-rw",
+      storageBucket:"pihub-rw.firebasestorage.app",
+      messagingSenderId:"1015312593058",
+      appId:"1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
+    });
+    var _db=firebase.firestore();
+    window.db=_db;
+    window.MKT_DB={
+      loadShops:function(){return _db.collection('shops').get().then(function(s){var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;});},
+      saveShop:function(shop){return _db.collection('shops').doc(shop.id).set(shop);},
+      saveOrder:function(o){return _db.collection('orders').doc(o.id).set(o);},
+      markOrderPaid:function(id){return _db.collection('orders').doc(id).update({payoutStatus:'paid'});}
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
-      authDomain: "pihub-rw.firebaseapp.com",
-      projectId: "pihub-rw",
-      storageBucket: "pihub-rw.firebasestorage.app",
-      messagingSenderId: "1015312593058",
-      appId: "1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
-    };
-    firebase.initializeApp(firebaseConfig);
-    var db = firebase.firestore();
-    console.log("Firebase connected");
+    console.log('PiHub RW: Firebase ready ✅');
+  })();
   </script>
 </head>
 <body>
