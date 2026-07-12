@@ -659,6 +659,110 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .uqr-view video{width:100%;height:100%;object-fit:cover}
 .uqr-cross{position:absolute;inset:0;border:40px solid rgba(0,0,0,.4);box-sizing:border-box;pointer-events:none}
 </style>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, getDocs, getDoc, updateDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
+      authDomain: "pihub-rw.firebaseapp.com",
+      projectId: "pihub-rw",
+      storageBucket: "pihub-rw.firebasestorage.app",
+      messagingSenderId: "1015312593058",
+      appId: "1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ── Expose Firebase functions globally so main script can use them ──
+    window.MKT_DB = {
+      // Save or update a shop
+      async saveShop(shop) {
+        try {
+          await setDoc(doc(db, "shops", shop.id), shop);
+          return true;
+        } catch(e) { console.error("saveShop error:", e); return false; }
+      },
+      // Load all shops
+      async loadShops() {
+        try {
+          const snap = await getDocs(collection(db, "shops"));
+          return snap.docs.map(d => d.data());
+        } catch(e) { console.error("loadShops error:", e); return []; }
+      },
+      // Delete a shop
+      async deleteShop(shopId) {
+        try {
+          await setDoc(doc(db, "shops", shopId), {deleted: true}, {merge: true});
+          return true;
+        } catch(e) { console.error("deleteShop error:", e); return false; }
+      },
+      // Save an order
+      async saveOrder(order) {
+        try {
+          await setDoc(doc(db, "orders", order.id), order);
+          return true;
+        } catch(e) { console.error("saveOrder error:", e); return false; }
+      },
+      // Load orders for a user (buyer or seller)
+      async loadOrders(username) {
+        try {
+          const snap = await getDocs(collection(db, "orders"));
+          return snap.docs.map(d => d.data())
+            .filter(o => o.buyer === username || o.seller === username)
+            .sort((a,b) => new Date(b.date) - new Date(a.date));
+        } catch(e) { console.error("loadOrders error:", e); return []; }
+      },
+      // Mark order as paid
+      async markOrderPaid(orderId) {
+        try {
+          await updateDoc(doc(db, "orders", orderId), {payoutStatus: "paid"});
+          return true;
+        } catch(e) { console.error("markOrderPaid error:", e); return false; }
+      }
+    };
+
+    window.MKT_DB_READY = true;
+    console.log("Firebase ready ✅");
+    // Notify main script that Firebase is ready
+    window.dispatchEvent(new Event("firebaseReady"));
+  </script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
+      authDomain: "pihub-rw.firebaseapp.com",
+      projectId: "pihub-rw",
+      storageBucket: "pihub-rw.firebasestorage.app",
+      messagingSenderId: "1015312593058",
+      appId: "1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
+      authDomain: "pihub-rw.firebaseapp.com",
+      projectId: "pihub-rw",
+      storageBucket: "pihub-rw.firebasestorage.app",
+      messagingSenderId: "1015312593058",
+      appId: "1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
+    };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    console.log("Firebase connected");
+  </script>
 </head>
 <body>
 
@@ -1050,6 +1154,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 <div class="sec" id="sec-market">
   <div class="hero" style="padding-bottom:8px">
     <div class="mbadge"><div class="mdot"></div><span>Module 3 · PiLocalMarket</span></div>
+    <div class="mbadge" id="mktFirebaseBadge" style="background:rgba(22,201,121,.15);border-color:rgba(22,201,121,.3);display:none"><div class="mdot" style="background:var(--pi2)"></div><span style="color:var(--pi2)">🔥 Firebase Live</span></div>
     <h1 style="font-size:1.3rem">🛒 <span data-i18n="mkt_title">PiLocalMarket</span></h1>
     <p data-i18n="mkt_sub">Buy &amp; sell locally with Pi</p>
   </div>
@@ -1060,6 +1165,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
   <!-- BROWSE -->
   <div id="mktPanelBrowse">
+    <div class="notice" style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);margin-bottom:10px">
+      <span class="nico">⚠️</span>
+      <span style="font-size:.62rem;color:#FF9800">Shops are stored on Firebase and visible to ALL Pi Pioneers in real time. 🌍</span>
+    </div>
     <button class="mkt-scan-btn" onclick="mktScanQR()">📷 <span data-i18n="mkt_scan_btn">Scan seller QR</span></button>
     <div class="fgroup" style="margin-bottom:10px"><input class="finput" type="text" id="mktSearch" placeholder="🔍" oninput="mktFilterShops()"></div>
     <div class="card" style="margin-bottom:10px">
@@ -1108,7 +1217,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="card">
       <div class="chd"><div class="dot"></div><span data-i18n="mkt_tab_shop">My Shop</span></div>
       <div class="mkt-form-section">
-        <div class="fgroup"><label class="flbl" data-i18n="mkt_shop_name">Shop name</label><input class="finput" type="text" id="mktShopName" placeholder="e.g. Gaju Bar"></div>
+        <div class="fgroup"><label class="flbl" data-i18n="mkt_shop_name">Shop name</label><input class="finput" type="text" id="mktShopName" placeholder="e.g. My Shop / Mon Commerce"></div>
         <div class="fgroup"><label class="flbl" data-i18n="mkt_shop_sector">Sector</label><select class="finput" id="mktShopSector"></select></div>
         <div class="fgroup">
           <label class="flbl" data-i18n="mkt_shop_gps">Location (GPS)</label>
@@ -1117,6 +1226,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             <div class="mkt-gps-status" id="mktGpsStatus"></div>
             <div class="mkt-gps-skip" onclick="mktSkipGPS()" data-i18n="mkt_gps_skip">Skip</div>
           </div>
+        </div>
+        <div class="fgroup">
+          <label class="flbl" data-i18n="mkt_shop_address">Physical address (if GPS unavailable)</label>
+          <input class="finput" type="text" id="mktShopAddress" placeholder="e.g. Kimironko, near the market">
+        </div>
+        <div class="fgroup">
+          <label class="flbl" data-i18n="mkt_shop_phone">Phone number</label>
+          <input class="finput" type="tel" id="mktShopPhone" placeholder="e.g. +250 788 000 000">
         </div>
       </div>
       <div class="mkt-form-section">
@@ -1528,12 +1645,12 @@ const I18N = {
     mkt_discount:'PiSpin discount',mkt_seller_gets:'Seller receives',mkt_total:'YOU PAY',
     mkt_free_amount:'Custom amount (FRw)',mkt_free_desc:'Description',
     mkt_shop_name:'Shop name',mkt_shop_sector:'Sector',mkt_shop_gps:'Location',
-    mkt_gps_btn:'Get my location',mkt_gps_ok:'Location captured',mkt_gps_skip:'Skip',
+    mkt_gps_btn:'Get my location',mkt_gps_ok:'Location captured',mkt_gps_skip:'Skip',mkt_shop_address:'Physical address',mkt_shop_phone:'Phone number',
     mkt_product_name:'Product/Service name',mkt_product_price:'Price (FRw)',
     mkt_product_unit:'Unit',mkt_product_desc:'Description (optional)',
     mkt_add_product:'+ Add product',mkt_save_shop:'Save shop',mkt_shop_saved:'Shop saved!',
     mkt_my_products:'My products',mkt_no_products:'No products yet.',
-    mkt_delete:'Delete',mkt_units:['piece','kg','g','litre','ml','portion','glass','plate','metre','lot','service'],
+    mkt_delete:'Delete',mkt_units:['piece','kg','g','litre','ml','bottle','portion','glass','plate','metre','lot','service'],
     mkt_receipt:'Receipt',mkt_invoice:'Order details',mkt_today:'Today ',
     mkt_receipt_seller:'Seller',mkt_receipt_buyer:'Buyer',mkt_back:'Back',
     mkt_no_price:'Price pending',mkt_no_shops_sector:'No shops in this sector',
@@ -1673,12 +1790,12 @@ const I18N = {
     mkt_discount:'Réduction PiSpin',mkt_seller_gets:'Le vendeur reçoit',mkt_total:'VOUS PAYEZ',
     mkt_free_amount:'Montant libre (FRw)',mkt_free_desc:'Description',
     mkt_shop_name:'Nom de la boutique',mkt_shop_sector:'Secteur',mkt_shop_gps:'Localisation',
-    mkt_gps_btn:'Me localiser',mkt_gps_ok:'Localisation capturée',mkt_gps_skip:'Ignorer',
+    mkt_gps_btn:'Me localiser',mkt_gps_ok:'Localisation capturée',mkt_gps_skip:'Ignorer',mkt_shop_address:'Adresse physique',mkt_shop_phone:'Numéro de téléphone',
     mkt_product_name:'Nom du produit/service',mkt_product_price:'Prix (FRw)',
     mkt_product_unit:'Unité',mkt_product_desc:'Description (optionnel)',
     mkt_add_product:'+ Ajouter',mkt_save_shop:'Enregistrer',mkt_shop_saved:'Boutique enregistrée!',
     mkt_my_products:'Mes produits',mkt_no_products:'Aucun produit encore.',
-    mkt_delete:'Supprimer',mkt_units:['pièce','kg','g','litre','ml','portion','verre','assiette','mètre','lot','service'],
+    mkt_delete:'Supprimer',mkt_units:['pièce','kg','g','litre','ml','bouteille','portion','verre','assiette','mètre','lot','service'],
     mkt_receipt:'Reçu',mkt_invoice:'Détail commande',mkt_today:"Aujourd'hui ",
     mkt_receipt_seller:'Vendeur',mkt_receipt_buyer:'Acheteur',mkt_back:'Retour',
     mkt_no_price:'Prix en attente',mkt_no_shops_sector:'Aucune boutique dans ce secteur',
@@ -1818,12 +1935,12 @@ const I18N = {
     mkt_discount:"Igabanywa rya PiSpin",mkt_seller_gets:"Ugurisha ahabwa",mkt_total:"WISHYURA",
     mkt_free_amount:"Ingano yihariye (FRw)",mkt_free_desc:"Ibisobanuro",
     mkt_shop_name:"Izina ry'iduka",mkt_shop_sector:"Icyiciro",mkt_shop_gps:"Aho riherereye",
-    mkt_gps_btn:"Menya aho ndi",mkt_gps_ok:"Ahantu hafashwe",mkt_gps_skip:"Reka",
+    mkt_gps_btn:"Menya aho ndi",mkt_gps_ok:"Ahantu hafashwe",mkt_gps_skip:"Reka",mkt_shop_address:"Aderesi",mkt_shop_phone:"Nimero ya telefone",
     mkt_product_name:"Izina ry'igicuruzwa",mkt_product_price:"Igiciro (FRw)",
     mkt_product_unit:"Ingano",mkt_product_desc:"Ibisobanuro (ntabwo ari ngombwa)",
     mkt_add_product:"+ Ongeraho",mkt_save_shop:"Bika",mkt_shop_saved:"Iduka ribitswe!",
     mkt_my_products:"Ibicuruzwa byanjye",mkt_no_products:"Nta bicuruzwa.",
-    mkt_delete:"Siba",mkt_units:['igice','kg','g','litiro','ml','ingabo','inzoga','isahane','metero','lot','serivisi'],
+    mkt_delete:"Siba",mkt_units:['igice','kg','g','litiro','ml','icupa','ingabo','inzoga','isahane','metero','lot','serivisi'],
     mkt_receipt:"Resiti",mkt_invoice:"Ibisobanuro by'ibyo waguze",mkt_today:"Uyu munsi ",
     mkt_receipt_seller:"Ugurisha",mkt_receipt_buyer:"Uguzi",mkt_back:"Subira",
     mkt_no_price:"Igiciro kitarashyirwaho",mkt_no_shops_sector:"Nta duka muri uyu murongo",
@@ -1963,12 +2080,12 @@ const I18N = {
     mkt_discount:'Punguzo PiSpin',mkt_seller_gets:'Muuzaji anapokea',mkt_total:'UNALIPA',
     mkt_free_amount:'Kiasi maalum (FRw)',mkt_free_desc:'Maelezo',
     mkt_shop_name:'Jina la duka',mkt_shop_sector:'Sekta',mkt_shop_gps:'Mahali',
-    mkt_gps_btn:'Pata mahali pangu',mkt_gps_ok:'Mahali pamenaswa',mkt_gps_skip:'Ruka',
+    mkt_gps_btn:'Pata mahali pangu',mkt_gps_ok:'Mahali pamenaswa',mkt_gps_skip:'Ruka',mkt_shop_address:'Anwani ya kimwili',mkt_shop_phone:'Nambari ya simu',
     mkt_product_name:'Jina la bidhaa',mkt_product_price:'Bei (FRw)',
     mkt_product_unit:'Kipimo',mkt_product_desc:'Maelezo (si lazima)',
     mkt_add_product:'+ Ongeza',mkt_save_shop:'Hifadhi',mkt_shop_saved:'Duka limehifadhiwa!',
     mkt_my_products:'Bidhaa zangu',mkt_no_products:'Hakuna bidhaa.',
-    mkt_delete:'Futa',mkt_units:['kipande','kg','g','lita','ml','sehemu','glasi','sahani','mita','lot','huduma'],
+    mkt_delete:'Futa',mkt_units:['kipande','kg','g','lita','ml','chupa','sehemu','glasi','sahani','mita','lot','huduma'],
     mkt_receipt:'Risiti',mkt_invoice:'Maelezo ya agizo',mkt_today:'Leo ',
     mkt_receipt_seller:'Muuzaji',mkt_receipt_buyer:'Mnunuzi',mkt_back:'Rudi',
     mkt_no_price:'Bei bado',mkt_no_shops_sector:'Hakuna maduka katika sekta hii',
@@ -2087,7 +2204,7 @@ function triggerSOS(){
 const piSvc = {
   user:null, ok:false,
   async init(){
-    try{if(typeof Pi==='undefined'){this.ok=false;return;}Pi.init({version:'2.0',sandbox:true});this.ok=true;}catch(e){this.ok=false;}
+    try{if(typeof Pi==='undefined'){this.ok=false;return;}Pi.init({version:'2.0',sandbox:false});this.ok=true;}catch(e){this.ok=false;}
   },
   async login(){
     try{
@@ -2877,14 +2994,39 @@ var MKT_SECTORS=[
 function mktSecLabel(s){var l=(S.lang==='kin'||S.lang==='sw')?S.lang:(S.lang==='fr'?'fr':'en');return s[l]||s.en;}
 var mktShops=[],mktCart=[],mktCurrentShopId=null,mktMyShop=null,mktGpsCoords=null;
 var mktActiveSector=null,mktMyProducts=[],mktInitialized=false;
-function mktLoadShops(){try{mktShops=JSON.parse(localStorage.getItem(MKT_STORE_KEY)||'[]');}catch(e){mktShops=[];}}
-function mktSaveShops(){localStorage.setItem(MKT_STORE_KEY,JSON.stringify(mktShops));}
+function mktLoadShops(){
+  // Try Firebase first, fallback to localStorage
+  if(window.MKT_DB){
+    window.MKT_DB.loadShops().then(function(shops){
+      mktShops=shops.filter(function(s){return !s.deleted;});
+      mktRenderShopsList(mktShops);
+      console.log("Shops loaded from Firebase:", mktShops.length);
+    }).catch(function(e){
+      console.warn("Firebase load failed, using localStorage:", e);
+      try{mktShops=JSON.parse(localStorage.getItem(MKT_STORE_KEY)||'[]');}catch(err){mktShops=[];}
+    });
+  } else {
+    try{mktShops=JSON.parse(localStorage.getItem(MKT_STORE_KEY)||'[]');}catch(e){mktShops=[];}
+  }
+}
+function mktSaveShops(){
+  // Save to localStorage as backup
+  localStorage.setItem(MKT_STORE_KEY,JSON.stringify(mktShops));
+}
 function mktLoadOrders(){try{return JSON.parse(localStorage.getItem(MKT_ORDERS_KEY)||'[]');}catch(e){return[];}}
-function mktSaveOrder(o){var orders=mktLoadOrders();orders.unshift(o);localStorage.setItem(MKT_ORDERS_KEY,JSON.stringify(orders.slice(0,100)));}
+function mktSaveOrder(o){
+  // Save to localStorage
+  var orders=mktLoadOrders();orders.unshift(o);
+  localStorage.setItem(MKT_ORDERS_KEY,JSON.stringify(orders.slice(0,100)));
+  // Save to Firebase
+  if(window.MKT_DB){window.MKT_DB.saveOrder(o).catch(function(e){console.warn("Firebase order save failed:",e);});}
+}
 function mktMarkPaid(orderId){
   var orders=mktLoadOrders();
   var o=orders.find(function(x){return x.id===orderId;});
   if(o){o.payoutStatus='paid';localStorage.setItem(MKT_ORDERS_KEY,JSON.stringify(orders));}
+  // Update Firebase
+  if(window.MKT_DB){window.MKT_DB.markOrderPaid(orderId).catch(function(e){console.warn("Firebase markPaid failed:",e);});}
   mktRenderOrders();showNotif('✅ Marked as PAID','success');
 }
 function mktDistance(la1,lo1,la2,lo2){
@@ -2902,9 +3044,13 @@ function mktFmtDate(iso){
   return d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 function mktInit(){
+  // Show Firebase status
+  if(typeof db!=='undefined'){
+    var badge=el('mktFirebaseBadge');if(badge)badge.style.display='inline-flex';
+  }
   mktLoadShops();
   mktBuildSectorGrid();mktPopulateSelects();mktInitialized=true;
-  mktRenderShopsList(mktShops);mktLoadMyShop();mktRenderMyProducts();mktRenderOrders();
+  mktRenderMyProducts();mktRenderOrders();
 }
 function mktBuildSectorGrid(){
   var grid=el('mktSectorsGrid');if(!grid)return;
@@ -2928,7 +3074,7 @@ function mktPopulateSelects(){
   }
   var us=el('mktProdUnit');
   if(us){
-    var units=T('mkt_units')||['piece','kg','g','litre','ml','portion','glass','plate','metre','lot','service'];
+    var units=T('mkt_units')||['piece','kg','g','litre','ml','bottle','portion','glass','plate','metre','lot','service'];
     var uhtml='';
     units.forEach(function(u){uhtml+='<option value="'+u+'">'+u+'</option>';});
     us.innerHTML=uhtml;
@@ -2972,10 +3118,13 @@ function mktRenderShopsList(shops){
       +'<div><div class="mkt-shop-name">'+s.name+'</div>'
       +'<div class="mkt-shop-meta">'+mktSecLabel(sec)+' · @'+s.owner+'</div>'
       +(dist?'<div class="mkt-shop-dist">📍 '+dist+'</div>':'')+'</div></div>'
-      +'<div style="font-size:.62rem;color:var(--muted)">'+s.products.length+' product(s)</div></div>';
+      +(s.address?'<div style="font-size:.6rem;color:var(--muted)">📍 '+s.address+'</div>':'')
+    +(s.phone?'<div style="font-size:.6rem;color:var(--pi2)">📞 '+s.phone+'</div>':'')
+    +'<div style="font-size:.62rem;color:var(--muted)">'+s.products.length+' product(s)</div></div>';
   });
   list.innerHTML=html;
 }
+function mktIsOwner(shop){var uname=(piSvc.user&&piSvc.user.username)||'guest';return shop.owner===uname;}
 function mktOpenShop(shopId){
   var shop=mktShops.find(function(s){return s.id===shopId;});if(!shop)return;
   mktCurrentShopId=shopId;mktCart=[];
@@ -2991,7 +3140,10 @@ function mktOpenShop(shopId){
   var html='<div class="mkt-shop-header" style="margin-bottom:14px">'
     +'<div class="mkt-shop-photo" style="width:60px;height:60px;font-size:2rem">'+sec.ico+'</div>'
     +'<div><div class="mkt-shop-name" style="font-size:.9rem">'+shop.name+'</div>'
-    +'<div class="mkt-shop-meta">@'+shop.owner+' · '+mktSecLabel(sec)+'</div></div></div>'
+    +'<div class="mkt-shop-meta">@'+shop.owner+' · '+mktSecLabel(sec)+'</div>'
+    +(shop.address?'<div style="font-size:.6rem;color:var(--muted)">📍 '+shop.address+'</div>':'')
+    +(shop.phone?'<div style="font-size:.6rem;color:var(--pi2)">📞 '+shop.phone+'</div>':'')
+    +'</div></div>'
     +'<div class="chd" style="margin-bottom:8px"><div class="dot"></div><span>Products</span></div>';
   shop.products.forEach(function(p,i){
     html+='<div class="mkt-product-row"><div>';
@@ -3126,6 +3278,8 @@ function mktLoadMyShop(){
   if(mktMyShop){
     var sn=el('mktShopName');if(sn)sn.value=mktMyShop.name;
     var ss=el('mktShopSector');if(ss)ss.value=mktMyShop.sector;
+    var sa=el('mktShopAddress');if(sa)sa.value=mktMyShop.address||'';
+    var sp=el('mktShopPhone');if(sp)sp.value=mktMyShop.phone||'';
     if(mktMyShop.lat){
       mktGpsCoords={lat:mktMyShop.lat,lng:mktMyShop.lng};
       var gs=el('mktGpsStatus');
@@ -3230,8 +3384,16 @@ function mktRenderMyProducts(){
 function mktResetShop(){
   if(!confirm('Reset your shop? All products will be cleared.'))return;
   var uname=(piSvc.user&&piSvc.user.username)||'guest';
+  var myShop=mktShops.find(function(s){return s.owner===uname;});
+  if(myShop&&typeof db!=='undefined'){
+    db.collection('shops').doc(myShop.id).delete().catch(function(e){console.error('Delete error:',e);});
+  }
+  var toDelete=mktShops.filter(function(s){return s.owner===uname;});
   mktShops=mktShops.filter(function(s){return s.owner!==uname;});
   mktSaveShops();mktMyShop=null;mktMyProducts=[];mktGpsCoords=null;
+  if(typeof db!=='undefined'){
+    toDelete.forEach(function(s){db.collection('shops').doc(s.id).delete().catch(function(e){console.error(e);});});
+  }
   var sn=el('mktShopName');if(sn)sn.value='';
   var ss=el('mktShopSector');if(ss)ss.value='';
   var gs=el('mktGpsStatus');if(gs)gs.innerHTML='';
@@ -3244,14 +3406,28 @@ function mktSaveShop(){
   if(!name||!sector){showNotif(T('fill_fields')||'Fill name and sector','warning');return;}
   var uname=(piSvc.user&&piSvc.user.username)||'guest';
   var shopId=mktMyShop?mktMyShop.id:'shop_'+uname+'_'+Date.now();
+  var address=(el('mktShopAddress')?el('mktShopAddress').value:'').trim();
+  var phone=(el('mktShopPhone')?el('mktShopPhone').value:'').trim();
   var shop={id:shopId,name:name,sector:sector,owner:uname,
     products:[].concat(mktMyProducts),
     lat:mktGpsCoords?mktGpsCoords.lat:null,
     lng:mktGpsCoords?mktGpsCoords.lng:null,
+    address:address,phone:phone,
     createdAt:new Date().toISOString()};
   var idx=mktShops.findIndex(function(s){return s.id===shopId;});
   if(idx>=0)mktShops[idx]=shop;else mktShops.push(shop);
-  mktMyShop=shop;mktSaveShops();showNotif(T('mkt_shop_saved')||'Saved!','success');
+  mktMyShop=shop;
+  // Save to localStorage as backup
+  localStorage.setItem(MKT_STORE_KEY,JSON.stringify(mktShops));
+  // Save to Firebase so ALL Pioneers can see it
+  if(window.MKT_DB){
+    window.MKT_DB.saveShop(shop).then(function(ok){
+      if(ok){showNotif(T('mkt_shop_saved')||'Shop saved! Visible to all Pioneers ✅','success');}
+      else{showNotif('Saved locally only (Firebase error)','warning');}
+    });
+  } else {
+    showNotif(T('mkt_shop_saved')||'Saved!','success');
+  }
   var qc=el('mktQrCard');if(qc)qc.style.display='block';
   var qu=el('mktQrUsername');if(qu)qu.textContent='@'+uname+' · '+name;
   var qd=el('mktQrDisplay');
