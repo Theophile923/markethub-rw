@@ -1,5 +1,5 @@
 // ================================================================
-// PiHub RW — QR Flow Module v1.1 (Multilingual)
+// MarketHub RW — QR Flow Module v1.1 (Multilingual)
 // Passenger scanner + Driver dashboard + Web3 ready
 // ================================================================
 'use strict';
@@ -344,7 +344,7 @@ const PiQRFlow = {
 
     // Web3-ready metadata
     const metadata = {
-      app: 'pihub_rw', version: '1.0.0',
+      app: 'markethub_rw', version: '1.0.0',
       module: 'transport',
       type: isDep ? 'escrow_deposit' : 'escrow_release',
       contractReady: true,
@@ -582,4 +582,4 @@ const PiQRFlow = {
 };
 
 window.PiQRFlow = PiQRFlow;
-console.log('[PiQRFlow] ✅ v1.1 Multilingual — PiHub RW'); 
+console.log('[PiQRFlow] ✅ v1.1 Multilingual — MarketHub RW');
