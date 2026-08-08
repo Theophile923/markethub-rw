@@ -1,5 +1,5 @@
 // ============================================================
-// PiHub RW — QR Code Module (Génération + Scanner + Offline)
+// MarketHub RW — QR Code Module (Génération + Scanner + Offline)
 // Compatible tous modules: transport, livraison, market...
 // ============================================================
 
@@ -35,7 +35,7 @@ const PiQR = {
 
     // Données encodées dans le QR
     const payload = JSON.stringify({
-      app: "PiHub RW",
+      app: "MarketHub RW",
       module,
       type,       // "departure" ou "arrival"
       tripId,
@@ -237,7 +237,7 @@ const PiQR = {
   onQRDetected(rawData, onScanSuccess) {
     try {
       const data = JSON.parse(rawData);
-      if (data.app !== "PiHub RW") throw new Error("QR invalide");
+      if (data.app !== "MarketHub RW") throw new Error("QR invalide");
 
       // Sauvegarder en localStorage
       localStorage.setItem(`scan_${data.tripId}_${data.type}`, rawData);
@@ -312,4 +312,4 @@ const PiQR = {
 
 // ── Exposer globalement ───────────────────────────────────
 window.PiQR = PiQR;
-console.log("[PiQR] ✅ Module QR chargé — PiHub RW");
+console.log("[PiQR] ✅ Module QR chargé — MarketHub RW");
