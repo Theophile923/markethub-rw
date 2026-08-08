@@ -116,7 +116,7 @@ function updateLangUI(){
   t('g2-desc',L.g2_desc);t('g2-tag',L.g2_tag);
   t('g3-desc',L.g3_desc);t('g3-tag',L.g3_tag);
   t('prize-title-lbl',L.prize_title);
-  t('leaderboard-btn-lbl',L.leaderboard_btn);t('pihub-btn-lbl',L.pihub_btn);
+  t('leaderboard-btn-lbl',L.leaderboard_btn);t('markethub-btn-lbl',L.markethub_btn);
   t('sess-left-lbl',L.sess_left);t('sess-today-lbl',L.sess_today);
   t('choose-route-lbl',L.choose_route);
   t('r1-desc',L.r1_desc);t('r2-desc',L.r2_desc);t('r3-desc',L.r3_desc);
@@ -574,7 +574,7 @@ function buySession(days){
 
 // ════════ MISC ════════
 function showComingSoon(name){showToast(L.coming_soon+' '+name,'');}
-function goToPiHub(){window.location.href='index.html';}
+function goToMarketHub(){window.location.href='index.html';}
 let toastTimeout=null;
 function showToast(msg,type){
   const t=document.getElementById('toast');
