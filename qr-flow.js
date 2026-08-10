@@ -1,5 +1,5 @@
 // ================================================================
-// MarketHub RW — QR Flow Module v1.1 (Multilingual)
+// MarketHub RW Plus — QR Flow Module v1.1 (Multilingual)
 // Passenger scanner + Driver dashboard + Web3 ready
 // ================================================================
 'use strict';
@@ -111,7 +111,7 @@ function t2(key) {
 }
 
 // ================================================================
-const PiQRFlow = {
+const HubQRFlow = {
 
   QR_LIB: 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
   JSQR_LIB: 'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js',
@@ -242,7 +242,7 @@ const PiQRFlow = {
         <p id="flowScanStatus" style="color:#16C979;margin:10px 0;font-size:.72rem">
           ${t2('initializing')}
         </p>
-        <button onclick="PiQRFlow.closeScanner()"
+        <button onclick="HubQRFlow.closeScanner()"
           style="background:rgba(255,82,82,.15);color:#FF5252;
                  border:1px solid rgba(255,82,82,.3);padding:11px;
                  border-radius:8px;font-size:.8rem;cursor:pointer;width:100%">
@@ -355,7 +355,7 @@ const PiQRFlow = {
       route: tripData.route,
       passengerNo: tripData.passengerNo
     };
-    console.log('[PiQRFlow] Web3 metadata:', JSON.stringify(metadata));
+    console.log('[HubQRFlow] Web3 metadata:', JSON.stringify(metadata));
 
     const modal = document.createElement('div');
     modal.id = 'piConfirmModal';
@@ -555,7 +555,7 @@ const PiQRFlow = {
           style="width:100%;padding:9px;border-radius:8px;
                  border:1px solid rgba(22,201,121,.3);background:#0D1F18;
                  color:#E8F8F0;font-size:.8rem;margin-bottom:6px">
-        <button onclick="PiQRFlow._validateManual()"
+        <button onclick="HubQRFlow._validateManual()"
           style="background:rgba(22,201,121,.15);color:#16C979;
                  border:1px solid rgba(22,201,121,.3);padding:9px;
                  border-radius:8px;width:100%;cursor:pointer;font-size:.78rem">
@@ -581,5 +581,5 @@ const PiQRFlow = {
   }
 };
 
-window.PiQRFlow = PiQRFlow;
-console.log('[PiQRFlow] ✅ v1.1 Multilingual — MarketHub RW');
+window.HubQRFlow = HubQRFlow;
+console.log('[HubQRFlow] ✅ v1.1 Multilingual — MarketHub RW Plus');
