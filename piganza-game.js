@@ -52,7 +52,7 @@ async function handleLogin(){
   await piSvc.init();
   const r=await piSvc.login();
   if(r.ok){
-    G.username='@'+(r.user.username||'PiPlayer_RW');
+    G.username='@'+(r.user.username||'HubPlayer_RW');
     G.plate=generatePlate(r.user.username||'PLAYER');
     st.innerHTML='✅ '+G.username+' — '+G.plate;
     setTimeout(startApp,800);
