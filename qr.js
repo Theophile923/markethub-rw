@@ -1,9 +1,9 @@
 // ============================================================
-// MarketHub RW — QR Code Module (Génération + Scanner + Offline)
+// MarketHub RW Plus — QR Code Module (Génération + Scanner + Offline)
 // Compatible tous modules: transport, livraison, market...
 // ============================================================
 
-const PiQR = {
+const HubQR = {
 
   // ── Bibliothèques externes ────────────────────────────────
   QR_LIB: "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
@@ -30,12 +30,12 @@ const PiQR = {
     try {
       await this.loadScript(this.QR_LIB);
     } catch {
-      console.warn("[PiQR] Offline — QR généré en mode dégradé");
+      console.warn("[HubQR] Offline — QR généré en mode dégradé");
     }
 
     // Données encodées dans le QR
     const payload = JSON.stringify({
-      app: "MarketHub RW",
+      app: "MarketHub RW Plus",
       module,
       type,       // "departure" ou "arrival"
       tripId,
@@ -128,7 +128,7 @@ const PiQR = {
     try {
       await this.loadScript(this.JSQR_LIB);
     } catch {
-      console.warn("[PiQR] jsQR non disponible — mode offline");
+      console.warn("[HubQR] jsQR non disponible — mode offline");
     }
 
     // Créer la fenêtre scanner
@@ -165,7 +165,7 @@ const PiQR = {
         <p id="piScanStatus" style="color:#4a90d9; margin:12px 0; font-size:13px">
           ⏳ Initialisation caméra...
         </p>
-        <button onclick="PiQR.closeScanner()"
+        <button onclick="HubQR.closeScanner()"
           style="background:#e74c3c; color:white; border:none;
                  padding:12px 32px; border-radius:8px; font-size:14px;
                  cursor:pointer; width:100%">
@@ -196,7 +196,7 @@ const PiQR = {
       });
 
     } catch (err) {
-      console.error("[PiQR] Caméra inaccessible:", err);
+      console.error("[HubQR] Caméra inaccessible:", err);
       if (status) status.innerHTML = `
         ❌ Caméra inaccessible<br>
         <span style="font-size:11px; color:#aaa">
@@ -237,7 +237,7 @@ const PiQR = {
   onQRDetected(rawData, onScanSuccess) {
     try {
       const data = JSON.parse(rawData);
-      if (data.app !== "MarketHub RW") throw new Error("QR invalide");
+      if (data.app !== "MarketHub RW Plus") throw new Error("QR invalide");
 
       // Sauvegarder en localStorage
       localStorage.setItem(`scan_${data.tripId}_${data.type}`, rawData);
@@ -280,7 +280,7 @@ const PiQR = {
           placeholder="Code du trajet (ex: TRP-001)"
           style="width:100%; padding:10px; border-radius:8px; border:1px solid #4a90d9;
                  background:#0d1117; color:white; font-size:14px; box-sizing:border-box">
-        <button onclick="PiQR.validateManual(window._scanCallback)"
+        <button onclick="HubQR.validateManual(window._scanCallback)"
           style="margin-top:8px; background:#4a90d9; color:white; border:none;
                  padding:12px; border-radius:8px; width:100%; cursor:pointer">
           ✅ Valider
@@ -311,5 +311,5 @@ const PiQR = {
 };
 
 // ── Exposer globalement ───────────────────────────────────
-window.PiQR = PiQR;
-console.log("[PiQR] ✅ Module QR chargé — MarketHub RW");
+window.HubQR = HubQR;
+console.log("[HubQR] ✅ Module QR chargé — MarketHub RW Plus");
