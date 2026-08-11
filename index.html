@@ -542,8 +542,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .export-btn:hover{background:rgba(156,39,176,.12)}
 
 /* MINI-APPS TEASER */
-.miniapps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:11px}
-.miniapp{display:flex;flex-direction:column;align-items:center;gap:4px;
+.miniapps{display:flex;overflow-x:auto;gap:7px;margin-bottom:11px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.miniapps::-webkit-scrollbar{display:none}
+.miniapp{display:flex;flex:0 0 76px;flex-direction:column;align-items:center;gap:4px;
   padding:12px 6px;border-radius:12px;background:var(--card);
   border:1px solid var(--bdr);cursor:pointer;transition:all .18s;
   font-size:.58rem;color:var(--muted);font-family:var(--fn);font-weight:600;
@@ -553,8 +554,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .coming{position:absolute;top:4px;right:4px;font-size:.45rem;font-weight:700;
   background:rgba(255,152,0,.2);border:1px solid rgba(255,152,0,.3);
   color:var(--orange);padding:1px 4px;border-radius:4px}
-.miniapp.pispin-highlight{border-color:var(--gold);background:rgba(245,166,35,.08)}
-.miniapp.pispin-highlight .ma-ico{filter:drop-shadow(0 0 6px rgba(245,166,35,.5))}
+.miniapp.pispin-highlight{
+  border-radius:50%;flex:0 0 84px;height:84px;justify-content:center;
+  border-color:var(--gold);background:radial-gradient(circle at 35% 30%,#ffcf6b,var(--gold) 70%);
+  box-shadow:0 0 0 3px rgba(245,166,35,.25),0 6px 14px rgba(245,166,35,.35);
+  animation:pispinPulse 2.2s ease-in-out infinite}
+.miniapp.pispin-highlight span{color:#3a2500}
+.miniapp.pispin-highlight .ma-ico{font-size:1.6rem;filter:none}
+@keyframes pispinPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
 
 /* ════════════════════════════════════════
    PISPIN FORTUNE — Module 2
@@ -797,10 +804,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="card">
     <div class="chd"><div class="dot"></div><span data-i18n="explore">Explore MarketHub RW Plus</span></div>
     <div class="miniapps">
-      <div class="miniapp mkt-highlight" onclick="showSec('sec-market')"><span class="ma-ico">🛒</span><span data-i18n="mkt_nav">Market</span></div>
       <div class="miniapp pispin-highlight" onclick="showSec('sec-pispin')"><span class="ma-ico">🎡</span><span data-i18n="pispin">HubSpin</span></div>
-      <div class="miniapp" onclick="goT('urban')"><span class="ma-ico">🏍️</span><span data-i18n="urban">Urban</span></div>
-      <div class="miniapp" onclick="goT('intercity')"><span class="ma-ico">🚌</span><span data-i18n="intercity">Intercity</span></div>
+      <div class="miniapp mkt-highlight" onclick="showSec('sec-market')"><span class="ma-ico">🛒</span><span data-i18n="mkt_nav">Market</span></div>
+      <div class="miniapp" onclick="showSec('sec-transport')"><span class="ma-ico">🚕</span><span data-i18n="transport">Transport</span></div>
       <div class="miniapp"><span class="ma-ico">🛒</span><span data-i18n="commerce">Commerce</span><span class="coming">Soon</span></div>
       <div class="miniapp"><span class="ma-ico">📦</span><span data-i18n="delivery">Delivery</span><span class="coming">Soon</span></div>
       <div class="miniapp"><span class="ma-ico">🏨</span><span data-i18n="tourism">Tourism</span><span class="coming">Soon</span></div>
