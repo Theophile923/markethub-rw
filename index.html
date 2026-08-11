@@ -2126,12 +2126,18 @@ function triggerSOS(){
 const piSvc = {
   user:null, ok:false,
   async init(){
-    try{if(typeof Pi==='undefined'){this.ok=false;return;}Pi.init({version:'2.0',sandbox:false});this.ok=true;}catch(e){this.ok=false;}
+    try{
+      if(typeof Pi==='undefined'){this.ok=false;return false;}
+      // Pi.init() is treated as a Promise and fully awaited before any authenticate() call
+      await Promise.resolve(Pi.init({version:'2.0',sandbox:false}));
+      this.ok=true;
+      return true;
+    }catch(e){this.ok=false;return false;}
   },
   async login(){
     try{
       if(typeof Pi==='undefined') return this._sb();
-      if(!this.ok) await this.init();
+      if(!this.ok){const ready=await this.init();if(!ready)return{ok:false,err:'Pi SDK not available.'};}
       const a=await Pi.authenticate(['username'],p=>console.warn('Incomplete payment:',p?.identifier));
       this.user=a.user;return{ok:true,user:a.user};
     }catch(e){return{ok:false,err:e.message};}
@@ -3869,7 +3875,8 @@ async function init(){
     updateReputation();
     updatePeakUI();
     setInterval(updatePeakUI,60000);
-    piSvc.init();
+    await piSvc.init();
+    handleLogin(); // auto-trigger Pi authentication on load; the manual "Sign In" button still works too
   }catch(e){
     console.error('MarketHub RW Plus v6 init error:',e);
   }
