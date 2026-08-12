@@ -149,7 +149,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 /* ════════════════════════════════════════
    LAYOUT
 ════════════════════════════════════════ */
-.app{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:13px 12px 92px}
+.app{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:13px 12px 28px}
 .sec{display:none}.sec.active{display:block}
 
 /* ════════════════════════════════════════
@@ -517,11 +517,58 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .erow{display:flex;justify-content:space-between;font-size:.68rem;padding:3px 0}
 .elbl{color:var(--muted)}.eval{font-family:var(--mono);font-weight:700}
 .eval.ref{color:var(--green)}.eval.drv{color:var(--pi2)}
+.presentation{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:12px 14px;margin-bottom:11px}
+.pline{display:flex;gap:8px;align-items:flex-start;font-size:.66rem;line-height:1.5;color:var(--muted)}
+.pline+.pline{margin-top:7px}
+.pline b{color:var(--txt)}
+.pic{flex-shrink:0}
+.wallet-gcv{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);
+  font-size:.62rem;color:var(--gold2);display:flex;align-items:center;gap:6px}
+.spin-spot{margin-bottom:11px;background:radial-gradient(circle at 20% 20%,var(--gold2),var(--gold) 65%);
+  border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:13px;color:#3a2500;
+  box-shadow:0 6px 18px rgba(245,166,35,.25);cursor:pointer}
+.spin-wheel{width:48px;height:48px;border-radius:50%;background:#3a2500;color:var(--gold2);
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;
+  animation:rot 6s linear infinite}
+.spin-txt{flex:1}
+.spin-txt b{display:block;font-size:.8rem;font-weight:800}
+.spin-txt span{font-size:.6rem;font-weight:600;opacity:.8}
+.spin-arrow{font-size:1.05rem;font-weight:800}
 .mtxid{font-family:var(--mono);font-size:.56rem;color:var(--pi2);
   background:rgba(10,124,78,.07);padding:5px 9px;border-radius:7px;
   margin-bottom:11px;word-break:break-all}
 
 /* NAV */
+.burger{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--bdr);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;flex-shrink:0}
+.burger span{width:15px;height:2px;background:var(--txt);border-radius:2px}
+.drawer-ovl{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer-ovl.open{opacity:1;pointer-events:auto}
+.drawer-panel{position:fixed;top:0;left:0;bottom:0;width:82%;max-width:320px;background:var(--surf);
+  border-right:1px solid var(--bdr2);padding:18px 14px;display:flex;flex-direction:column;
+  transform:translateX(-100%);transition:transform .22s ease;z-index:201;overflow-y:auto}
+.drawer-ovl.open .drawer-panel{transform:translateX(0)}
+.dp-brand{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.dp-brand .lg{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--pi2),var(--pi3));
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem}
+.dp-brand b{font-size:.86rem}
+.dp-user{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--bdr);
+  border-radius:12px;padding:10px;margin-bottom:14px}
+.dp-user .av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pi2),var(--pi));
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;flex-shrink:0}
+.dp-user .u{font-size:.7rem;font-weight:700}
+.dp-user .s{font-size:.56rem;color:var(--muted)}
+.dp-label{font-family:var(--mono);font-size:.55rem;color:var(--muted);letter-spacing:.08em;
+  text-transform:uppercase;margin:8px 4px 6px}
+.dp-item{display:flex;align-items:center;gap:11px;padding:9px 6px;border-radius:9px;font-size:.74rem;
+  font-weight:600;color:var(--txt);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:var(--fn)}
+.dp-item:active{background:var(--card)}
+.dp-item .i{font-size:.98rem;width:20px;text-align:center}
+.dp-item.soon{color:var(--muted)}
+.dp-item .tag{margin-left:auto;font-size:.48rem;background:rgba(255,152,0,.15);color:#ffb84d;
+  padding:1px 5px;border-radius:5px}
+.dp-spacer{flex:1}
+.dp-signout{color:#ff8a8a}
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:460px;background:rgba(7,18,14,.97);
   backdrop-filter:blur(16px);border-top:1px solid var(--bdr);
@@ -668,28 +715,50 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </style>
 
   <!-- ══ FIREBASE SDK (single init) ══ -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="vendor/firebase-app-compat.js"></script>
+  <script src="vendor/firebase-firestore-compat.js"></script>
   <script>
   (function(){
-    if(firebase.apps.length){return;}
-    firebase.initializeApp({
-      apiKey:"AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
-      authDomain:"pihub-rw.firebaseapp.com",
-      projectId:"pihub-rw",
-      storageBucket:"pihub-rw.firebasestorage.app",
-      messagingSenderId:"1015312593058",
-      appId:"1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
-    });
-    var _db=firebase.firestore();
-    window.db=_db;
-    window.MKT_DB={
-      loadShops:function(){return _db.collection('shops').get().then(function(s){var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;});},
-      saveShop:function(shop){return _db.collection('shops').doc(shop.id).set(shop);},
-      saveOrder:function(o){return _db.collection('orders').doc(o.id).set(o);},
-      markOrderPaid:function(id){return _db.collection('orders').doc(id).update({payoutStatus:'paid'});}
-    };
-    console.log('MarketHub RW Plus: Firebase ready ✅');
+    if(typeof firebase==='undefined'){
+      console.warn('MarketHub RW Plus: Firebase SDK failed to load — app will run without cloud sync.');
+      window.db=null;
+      window.MKT_DB={
+        loadShops:function(){return Promise.reject(new Error('Firebase unavailable'));},
+        saveShop:function(){return Promise.reject(new Error('Firebase unavailable'));},
+        saveOrder:function(){return Promise.reject(new Error('Firebase unavailable'));},
+        markOrderPaid:function(){return Promise.reject(new Error('Firebase unavailable'));}
+      };
+      return;
+    }
+    try{
+      if(firebase.apps.length){return;}
+      firebase.initializeApp({
+        apiKey:"AIzaSyAFKBRu_CwJPHoMK1BP9DPu_uhIfeER48o",
+        authDomain:"pihub-rw.firebaseapp.com",
+        projectId:"pihub-rw",
+        storageBucket:"pihub-rw.firebasestorage.app",
+        messagingSenderId:"1015312593058",
+        appId:"1:1015312593058:web:842f9ad6c3dae4b56fa7fb"
+      });
+      var _db=firebase.firestore();
+      window.db=_db;
+      window.MKT_DB={
+        loadShops:function(){return _db.collection('shops').get().then(function(s){var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;});},
+        saveShop:function(shop){return _db.collection('shops').doc(shop.id).set(shop);},
+        saveOrder:function(o){return _db.collection('orders').doc(o.id).set(o);},
+        markOrderPaid:function(id){return _db.collection('orders').doc(id).update({payoutStatus:'paid'});}
+      };
+      console.log('MarketHub RW Plus: Firebase ready ✅');
+    }catch(e){
+      console.warn('MarketHub RW Plus: Firebase init failed —', e.message);
+      window.db=null;
+      window.MKT_DB={
+        loadShops:function(){return Promise.reject(e);},
+        saveShop:function(){return Promise.reject(e);},
+        saveOrder:function(){return Promise.reject(e);},
+        markOrderPaid:function(){return Promise.reject(e);}
+      };
+    }
   })();
   </script>
 </head>
@@ -698,13 +767,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 <div class="offbar" id="offbar">📴 Offline mode — cached data</div>
 <div class="notif-bar" id="notifBar"><span id="notifIco">✅</span><span id="notifTxt"></span></div>
 
-<!-- SOS BUTTON -->
-<button class="btn btnpi" style="margin-top:8px" onclick="HubQRFlow.openPassengerScanner()">📷 <span data-i18n="scan_bus_qr">Scan Bus QR</span></button>
-<button class="btn btnout" style="margin-top:8px" onclick="HubQRFlow.openDriverDashboard()">🚌 <span data-i18n="driver_dashboard_btn">Driver Dashboard</span></button>
 <!-- AUTH -->
 <div class="auth" id="authScreen">
   <div class="auth-logo">Hub</div>
-  <h1>MarketHub <em>RW</em></h1>
+  <h1>MarketHub <em>RW Plus</em></h1>
   <div class="auth-tag" data-i18n="auth_tagline">RWANDA PI TRANSPORT</div>
   <p class="auth-sub" data-i18n="auth_sub">Urban, intercity & cross-border — paid in Pi.</p>
   <div class="auth-disc" data-i18n="auth_disc">⚠️ Independent app. NOT affiliated with Pi Network Core Team. Pi coin only.</div>
@@ -721,7 +787,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="logo"><div class="logo-mk">Hub</div>MarketHub <em>RW</em></div>
+  <button class="burger" id="burgerBtn" onclick="toggleDrawer()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="logo"><div class="logo-mk">Hub</div>MarketHub <em>RW Plus</em></div>
   <div class="topbar-r">
     <div class="odot" id="odot"></div>
     <div class="peak-pill" id="peakPill">⚡</div>
@@ -738,19 +807,45 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
 </div>
 
+<!-- DRAWER MENU -->
+<div class="drawer-ovl" id="drawerOvl" onclick="if(event.target===this)toggleDrawer()">
+  <div class="drawer-panel">
+    <div class="dp-brand"><div class="lg">Hub</div><b>MarketHub RW Plus</b></div>
+    <div class="dp-user">
+      <div class="av" id="dpAv">T</div>
+      <div><div class="u" id="dpUname">@Theophile0421</div><div class="s" id="dpLoyalty">🏆 —</div></div>
+    </div>
+
+    <div class="dp-label" data-i18n="menu_services">Services</div>
+    <button class="dp-item" onclick="showSec('sec-pispin');toggleDrawer()"><span class="i">🎡</span><span data-i18n="pispin">HubSpin</span></button>
+    <button class="dp-item" onclick="showSec('sec-market');toggleDrawer()"><span class="i">🛒</span><span data-i18n="mkt_nav">Market</span></button>
+    <button class="dp-item" onclick="showSec('sec-transport');toggleDrawer()"><span class="i">🚕</span><span data-i18n="transport">Transport</span></button>
+    <button class="dp-item soon"><span class="i">🛍️</span><span data-i18n="commerce">Commerce</span><span class="tag">Soon</span></button>
+    <button class="dp-item soon"><span class="i">📦</span><span data-i18n="delivery">Delivery</span><span class="tag">Soon</span></button>
+    <button class="dp-item soon"><span class="i">🏨</span><span data-i18n="tourism">Tourism</span><span class="tag">Soon</span></button>
+    <button class="dp-item soon"><span class="i">🤖</span><span data-i18n="ai_svc">AI Services</span><span class="tag">Soon</span></button>
+
+    <div class="dp-spacer"></div>
+
+    <div class="dp-label" data-i18n="menu_account">Account &amp; more</div>
+    <button class="dp-item" onclick="showSec('sec-loyalty');toggleDrawer()"><span class="i">🏆</span><span data-i18n="loyalty">Loyalty</span></button>
+    <button class="dp-item" onclick="showSec('sec-qr');toggleDrawer()"><span class="i">📱</span><span data-i18n="qr_pay">QR Pay</span></button>
+    <button class="dp-item" onclick="showSec('sec-trips');toggleDrawer()"><span class="i">📋</span><span data-i18n="history">History</span></button>
+    <button class="dp-item" onclick="showSec('sec-profile');toggleDrawer()"><span class="i">⚙️</span><span data-i18n="settings">Settings</span></button>
+    <button class="dp-item" onclick="showSec('sec-profile');toggleDrawer()"><span class="i">ℹ️</span><span data-i18n="about_disc">About &amp; disclaimer</span></button>
+    <button class="dp-item dp-signout" onclick="signOut()"><span class="i">🚪</span><span data-i18n="sign_out">Sign Out</span></button>
+  </div>
+</div>
+
 <div class="app">
 
 <!-- ══ HOME ══ -->
 <div class="sec active" id="sec-home">
-  <div class="hero">
-    <div class="mbadge"><div class="mdot"></div><span data-i18n="mod_badge">Module 1 · Transport</span></div>
-    <h1 data-i18n="hero_h">Rwanda<br/><em>Pi Super-App</em></h1>
-    <p data-i18n="hero_p">Transport · Payments · Loyalty · Future Commerce</p>
-  </div>
 
-  <div class="peak-banner" id="peakHome">
-    <span>⚡</span>
-    <div><strong data-i18n="peak_title">Peak hour</strong> — <span id="peakInfoHome"></span> | <span data-i18n="ends_in">Ends in</span> <span id="peakCountdown">—</span></div>
+  <!-- PRESENTATION -->
+  <div class="presentation">
+    <div class="pline"><span class="pic">⚠️</span><span data-i18n="home_disc"><b>Independent Pioneer app</b> — not affiliated with the Pi Core Team.</span></div>
+    <div class="pline"><span class="pic">π</span><span data-i18n="gcv_note">All payments are made in <b>Pi (GCV: 1 π = $314,159)</b>. FRW and USD amounts shown are for reference only.</span></div>
   </div>
 
   <div class="ubanner" id="ubanner" style="display:none">
@@ -758,11 +853,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="uav" id="uav">T</div>
       <div>
         <div class="uname" id="uname">@Theophile0421</div>
-        <div class="utag">✅ <span data-i18n="pi_pioneer">Pi Pioneer Verified</span></div>
+        <div class="utag">✅ <span data-i18n="connected_auto">Signed in automatically via Pi Network</span></div>
         <div class="uloyalty" id="homeLoyalty">🏆 —</div>
       </div>
     </div>
-    <button class="sout" onclick="signOut()" data-i18n="sign_out">Sign Out</button>
   </div>
 
   <!-- WALLET (Alipay style) -->
@@ -774,22 +868,27 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="wallet-frw" id="walletFrw">≈ 0 FRw</div>
     </div>
     <div class="wallet-rate" id="walletRate"></div>
-    <div class="wallet-actions">
-      <div class="wact" onclick="showSec('sec-market')"><span class="wact-ico">🛒</span><span data-i18n="mkt_nav">Market</span></div>
-      <div class="wact" onclick="showSec('sec-pispin')"><span class="wact-ico">🎡</span><span data-i18n="pispin">HubSpin</span></div>
-      <div class="wact" onclick="goT('urban')"><span class="wact-ico">🚕</span><span data-i18n="book">Book</span></div>
-      <div class="wact" onclick="showSec('sec-trips')"><span class="wact-ico">📋</span><span data-i18n="history">History</span></div>
-      <div class="wact" onclick="showSec('sec-loyalty')"><span class="wact-ico">🏆</span><span data-i18n="loyalty">Loyalty</span></div>
-      <div class="wact" onclick="showSec('sec-profile')"><span class="wact-ico">⚙️</span><span data-i18n="settings">Settings</span></div>
-    </div>
+    <div class="wallet-gcv">💠 <span data-i18n="gcv_valued">Valued at GCV — 1 π = $314,159</span></div>
   </div>
 
-  <!-- QUICK ACTIONS -->
-  <div class="quick">
-    <button class="qbtn" onclick="goT('urban')"><span class="qi">🏍️</span><span data-i18n="urban">Urban</span></button>
-    <button class="qbtn" onclick="goT('intercity')"><span class="qi">🚌</span><span data-i18n="intercity">Intercity</span></button>
-    <button class="qbtn" onclick="goT('border')"><span class="qi">🌍</span><span data-i18n="border">Border</span></button>
-    <button class="qbtn" onclick="showSec('sec-qr')"><span class="qi">📱</span><span data-i18n="qr_pay">QR Pay</span></button>
+  <!-- HUBSPIN SPOTLIGHT -->
+  <div class="spin-spot" onclick="showSec('sec-pispin')">
+    <div class="spin-wheel">🎡</div>
+    <div class="spin-txt"><b data-i18n="pispin">HubSpin</b><span data-i18n="hubspin_sub">Spin the wheel, try your luck →</span></div>
+    <div class="spin-arrow">›</div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="card">
+    <div class="chd"><div class="dot"></div><span data-i18n="services_hd">Services</span></div>
+    <div class="miniapps">
+      <div class="miniapp mkt-highlight" onclick="showSec('sec-market')"><span class="ma-ico">🛒</span><span data-i18n="mkt_nav">Market</span></div>
+      <div class="miniapp" onclick="showSec('sec-transport')"><span class="ma-ico">🚕</span><span data-i18n="transport">Transport</span></div>
+      <div class="miniapp"><span class="ma-ico">🛒</span><span data-i18n="commerce">Commerce</span><span class="coming">Soon</span></div>
+      <div class="miniapp"><span class="ma-ico">📦</span><span data-i18n="delivery">Delivery</span><span class="coming">Soon</span></div>
+      <div class="miniapp"><span class="ma-ico">🏨</span><span data-i18n="tourism">Tourism</span><span class="coming">Soon</span></div>
+      <div class="miniapp"><span class="ma-ico">🤖</span><span data-i18n="ai_svc">AI Services</span><span class="coming">Soon</span></div>
+    </div>
   </div>
 
   <!-- FAVORITES -->
@@ -800,43 +899,23 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
   </div>
 
-  <!-- MINI-APPS (Future super-app) -->
-  <div class="card">
-    <div class="chd"><div class="dot"></div><span data-i18n="explore">Explore MarketHub RW Plus</span></div>
-    <div class="miniapps">
-      <div class="miniapp pispin-highlight" onclick="showSec('sec-pispin')"><span class="ma-ico">🎡</span><span data-i18n="pispin">HubSpin</span></div>
-      <div class="miniapp mkt-highlight" onclick="showSec('sec-market')"><span class="ma-ico">🛒</span><span data-i18n="mkt_nav">Market</span></div>
-      <div class="miniapp" onclick="showSec('sec-transport')"><span class="ma-ico">🚕</span><span data-i18n="transport">Transport</span></div>
-      <div class="miniapp"><span class="ma-ico">🛒</span><span data-i18n="commerce">Commerce</span><span class="coming">Soon</span></div>
-      <div class="miniapp"><span class="ma-ico">📦</span><span data-i18n="delivery">Delivery</span><span class="coming">Soon</span></div>
-      <div class="miniapp"><span class="ma-ico">🏨</span><span data-i18n="tourism">Tourism</span><span class="coming">Soon</span></div>
-      <div class="miniapp"><span class="ma-ico">🤖</span><span data-i18n="ai_svc">AI Services</span><span class="coming">Soon</span></div>
-      <div class="miniapp" onclick="showSec('sec-loyalty')"><span class="ma-ico">🏆</span><span data-i18n="loyalty">Loyalty</span></div>
-      <div class="miniapp" onclick="showSec('sec-qr')"><span class="ma-ico">📱</span><span data-i18n="qr_pay">QR Pay</span></div>
-    </div>
+  <div class="notice fraud">
+    <span class="nico">🛡️</span>
+    <span data-i18n="fraud_notice">Protected by 7 anti-fraud shields · Signed QR · Escrow · Anti-scam</span>
   </div>
+</div>
 
+<!-- ══ TRANSPORT ══ -->
+<div class="sec" id="sec-transport">
   <!-- RECENT TRIPS -->
   <div class="card">
     <div class="chd"><div class="dot"></div><span data-i18n="recent">Recent Trips</span></div>
     <div id="txhome"><div class="empty" data-i18n="no_trips">No trips yet</div></div>
   </div>
 
-  <div class="notice fraud">
-    <span class="nico">🛡️</span>
-    <span data-i18n="fraud_notice">Protected by 7 anti-fraud shields · Signed QR · Escrow · Anti-scam</span>
-  </div>
-  <div class="notice warn">
-    <span class="nico">⚠️</span>
-    <span data-i18n="disclaimer">MarketHub RW Plus is independent — NOT affiliated with Pi Core Team.</span>
-  </div>
-</div>
-
-<!-- ══ TRANSPORT ══ -->
-<div class="sec" id="sec-transport">
   <div class="peak-banner" id="peakTransport">
     <span>⚡</span>
-    <div><strong data-i18n="peak_title">Peak hour</strong> — <span id="peakInfoT"></span></div>
+    <div><strong data-i18n="peak_title">Peak hour</strong> — <span id="peakInfoT"></span> | <span data-i18n="ends_in">Ends in</span> <span id="peakCountdown">—</span></div>
   </div>
   <div class="mtabs">
     <button class="mtab active" id="tab-urban" onclick="setMode('urban')">🏍️ <span data-i18n="urban">Urban</span></button>
@@ -1231,6 +1310,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 <!-- ══ QR PAY ══ -->
 <div class="sec" id="sec-qr">
   <div class="card">
+    <div class="chd"><div class="dot"></div><span data-i18n="qr_tools_title">Quick Tools</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btnpi" style="flex:1" onclick="HubQRFlow.openPassengerScanner()">📷 <span data-i18n="scan_bus_qr">Scan Bus QR</span></button>
+      <button class="btn btnout" style="flex:1" onclick="HubQRFlow.openDriverDashboard()">🚌 <span data-i18n="driver_dashboard_btn">Driver Dashboard</span></button>
+    </div>
+  </div>
+  <div class="card">
     <div class="chd"><div class="dot"></div><span data-i18n="qr_pay_title">QR Payment Center</span></div>
     <div style="text-align:center;padding:10px 0">
       <div class="qrwrap" style="margin-bottom:12px"><canvas id="qrLarge" width="200" height="200"></canvas></div>
@@ -1341,15 +1427,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </div><!-- /app -->
 
 <!-- NAV -->
-<div class="bnav">
-  <button class="nbtn active" id="nav-home" onclick="showSec('sec-home')"><span class="nico2">🏠</span><span data-i18n="home">Home</span></button>
-  <button class="nbtn" id="nav-transport" onclick="showSec('sec-transport')"><span class="nico2">🚕</span><span data-i18n="transport">Transport</span></button>
-  <button class="nbtn" id="nav-trips" onclick="showSec('sec-trips')"><span class="nico2">📋</span><span data-i18n="trips">Trips</span></button>
-  <button class="nbtn" id="nav-qr" onclick="showSec('sec-qr')"><span class="nico2">📱</span><span data-i18n="qr_pay">QR</span></button>
-  <button class="nbtn" id="nav-loyalty" onclick="showSec('sec-loyalty')"><span class="nico2">🏆</span><span data-i18n="loyalty">Loyalty</span></button>
-  <button class="nbtn" id="nav-profile" onclick="showSec('sec-profile')"><span class="nico2">⚙️</span><span data-i18n="profile">Profile</span></button>
-</div>
-
 <!-- MODAL -->
 <div class="mov" id="modal">
   <div class="modal">
@@ -1447,6 +1524,13 @@ const I18N = {
     auth_tagline:'RWANDA PI TRANSPORT',
     auth_sub:'Urban, intercity & cross-border — paid in Pi.',
     auth_disc:'⚠️ Independent app. NOT affiliated with Pi Network Core Team.',
+    home_disc:'<b>Independent Pioneer app</b> — not affiliated with the Pi Core Team.',
+    gcv_note:'All payments are made in <b>Pi (GCV: 1 π = $314,159)</b>. FRW and USD amounts shown are for reference only.',
+    connected_auto:'Signed in automatically via Pi Network',
+    gcv_valued:'Valued at GCV — 1 π = $314,159',
+    hubspin_sub:'Spin the wheel, try your luck →',
+    services_hd:'Services',menu_services:'Services',menu_account:'Account &amp; more',
+    about_disc:'About &amp; disclaimer',qr_tools_title:'Quick Tools',
     browse_guest:'👁️ Guest mode',
     f1t:'Anti-Fraud Escrow',f1d:'Secure payment, auto-refund',
     f2t:'Smart GPS',f2d:'Auto distance calculation',
@@ -1592,6 +1676,13 @@ const I18N = {
     auth_tagline:'RWANDA PI TRANSPORT',
     auth_sub:'Transport urbain, intercity & transfrontalier — payé en Pi.',
     auth_disc:'⚠️ Application indépendante. PAS affiliée à Pi Network Core Team.',
+    home_disc:'<b>Application indépendante de Pionnier</b> — non affiliée à Pi Core Team.',
+    gcv_note:'Tous les paiements se font en <b>Pi (GCV : 1 π = 314 159 $)</b>. Les montants en FRW et $ sont indiqués à titre de référence uniquement.',
+    connected_auto:'Connecté automatiquement via Pi Network',
+    gcv_valued:'Valorisé au GCV — 1 π = 314 159 $',
+    hubspin_sub:'Tournez la roue, tentez votre chance →',
+    services_hd:'Services',menu_services:'Services',menu_account:'Compte et plus',
+    about_disc:'À propos et avertissement',qr_tools_title:'Outils rapides',
     browse_guest:'👁️ Mode visiteur',
     f1t:'Escrow Anti-Fraude',f1d:'Paiement sécurisé, remboursement automatique',
     f2t:'GPS Intelligent',f2d:'Distance calculée automatiquement',
@@ -1737,6 +1828,13 @@ const I18N = {
     auth_tagline:'UBUTUMWA BWA PI MU RWANDA',
     auth_sub:"Gutwara mu murwa, hagati y'imijyi no gutwara amahanga — mu Pi.",
     auth_disc:'⚠️ App yigenga. Ntiyunganye na Pi Core Team.',
+    home_disc:'<b>Porogaramu y\'Umwikorezi yigenga</b> — ntiyunganye na Pi Core Team.',
+    gcv_note:'Kwishyura kwose bikorwa muri <b>Pi (GCV: 1 π = $314,159)</b>. Amafaranga muri FRW na USD agaragazwa gusa nk\'urugero.',
+    connected_auto:'Winjiye otomatike binyuze muri Pi Network',
+    gcv_valued:'Agaciro ka GCV — 1 π = $314,159',
+    hubspin_sub:'Zunguza ikiziga, ugerageze amahirwe →',
+    services_hd:'Serivisi',menu_services:'Serivisi',menu_account:'Konti n\'ibindi',
+    about_disc:'Ibijyanye na porogaramu n\'itangazo',qr_tools_title:'Ibikoresho byihuse',
     browse_guest:'👁️ Injira nta konti',
     f1t:'Escrow Anti-Uburiganya',f1d:'Kwishyura mu mutekano, gusubizwa otomatike',
     f2t:'GPS Yihariye',f2d:'Intera ibarwa otomatike',
@@ -1882,6 +1980,13 @@ const I18N = {
     auth_tagline:'USAFIRI WA PI RWANDA',
     auth_sub:'Usafiri wa mjini, baina ya miji na wa kimataifa — kulipwa kwa Pi.',
     auth_disc:'⚠️ Programu huru. HAINA uhusiano na Pi Network Core Team.',
+    home_disc:'<b>Programu huru ya Pioneer</b> — haihusiani na Pi Core Team.',
+    gcv_note:'Malipo yote hufanywa kwa <b>Pi (GCV: 1 π = $314,159)</b>. Kiasi cha FRW na USD kinaonyeshwa kwa marejeo tu.',
+    connected_auto:'Umeingia kiotomatiki kupitia Pi Network',
+    gcv_valued:'Thamani ya GCV — 1 π = $314,159',
+    hubspin_sub:'Zungusha gurudumu, jaribu bahati yako →',
+    services_hd:'Huduma',menu_services:'Huduma',menu_account:'Akaunti na zaidi',
+    about_disc:'Kuhusu na tahadhari',qr_tools_title:'Zana za haraka',
     browse_guest:'👁️ Hali ya mgeni',
     f1t:'Escrow Dhidi ya Udanganyifu',f1d:'Malipo salama, kurejesha kiotomatiki',
     f2t:'GPS Akili',f2d:'Umbali huhesabiwa kiotomatiki',
@@ -2299,20 +2404,19 @@ function getPeakMult(){ const p=getPeakInfo();return p?p.mult:1.0; }
 function updatePeakUI(){
   const peak=getPeakInfo();
   const pill=el('peakPill');
-  const bH=el('peakHome'),bT=el('peakTransport');
+  const bT=el('peakTransport');
   if(peak){
     const pct=Math.round((peak.mult-1)*100);
     if(pill){pill.classList.add('show');pill.textContent='⚡ +'+pct+'%';}
     const now=new Date(),h=now.getHours()+now.getMinutes()/60;
     const minsLeft=Math.round((peak.end-h)*60);
     const info='+'+pct+'% ('+peak.label+')';
-    [bH,bT].forEach(b=>{if(b)b.classList.add('show');});
-    const pHI=el('peakInfoHome');if(pHI)pHI.textContent=info;
+    if(bT)bT.classList.add('show');
     const pTI=el('peakInfoT');if(pTI)pTI.textContent=info;
     const pc=el('peakCountdown');if(pc)pc.textContent=minsLeft+' min';
   }else{
     if(pill)pill.classList.remove('show');
-    [bH,bT].forEach(b=>{if(b)b.classList.remove('show');});
+    if(bT)bT.classList.remove('show');
   }
 }
 
@@ -3737,6 +3841,15 @@ function pispinDoSpin(){
   },4300);
 }
 
+function toggleDrawer(){
+  const ov=el('drawerOvl');if(!ov)return;
+  ov.classList.toggle('open');
+  if(ov.classList.contains('open')){
+    const un=el('uname'),dn=el('dpUname');if(un&&dn)dn.textContent=un.textContent;
+    const ua=el('uav'),da=el('dpAv');if(ua&&da)da.textContent=ua.textContent;
+    const hl=el('homeLoyalty'),dl=el('dpLoyalty');if(hl&&dl)dl.textContent=hl.textContent;
+  }
+}
 function showSec(id){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
   const sec=el(id);if(sec)sec.classList.add('active');
