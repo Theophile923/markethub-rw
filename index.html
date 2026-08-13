@@ -1160,7 +1160,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 <!-- ══ PILOCALMARKET (Module 3) ══ -->
 <div class="sec" id="sec-market">
   <div class="hero" style="padding-bottom:8px">
-    <div class="mbadge"><div class="mdot"></div><span>Module 3 · HubMarket</span></div>
+    <div class="mbadge"><div class="mdot"></div><span data-i18n="mkt_title">HubMarket</span></div>
     <div class="mbadge" id="mktFirebaseBadge" style="background:rgba(22,201,121,.15);border-color:rgba(22,201,121,.3);display:none"><div class="mdot" style="background:var(--pi2)"></div><span style="color:var(--pi2)">🔥 Firebase Live</span></div>
     <h1 style="font-size:1.3rem">🛒 <span data-i18n="mkt_title">HubMarket</span></h1>
     <p data-i18n="mkt_sub">Buy &amp; sell locally with Pi</p>
@@ -3040,6 +3040,7 @@ function mktLoadShops(){
       mktRenderShopsList(mktShops);
       console.log("Shops loaded from Firebase:", mktShops.length);
     }).catch(function(e){
+      console.error('MarketHub RW Plus: Firebase shop LOAD failed —',e&&e.message?e.message:e);
       console.warn("Firebase load failed, using localStorage:", e);
       try{mktShops=JSON.parse(localStorage.getItem(MKT_STORE_KEY)||'[]');}catch(err){mktShops=[];}
     });
@@ -3459,9 +3460,11 @@ function mktSaveShop(){
   localStorage.setItem(MKT_STORE_KEY,JSON.stringify(mktShops));
   // Save to Firebase so ALL Pioneers can see it
   if(window.MKT_DB){
-    window.MKT_DB.saveShop(shop).then(function(ok){
-      if(ok){showNotif(T('mkt_shop_saved')||'Shop saved! Visible to all Pioneers ✅','success');}
-      else{showNotif('Saved locally only (Firebase error)','warning');}
+    window.MKT_DB.saveShop(shop).then(function(){
+      showNotif(T('mkt_shop_saved')||'Shop saved! Visible to all Pioneers ✅','success');
+    }).catch(function(e){
+      console.error('MarketHub RW Plus: Firebase shop save FAILED —',e&&e.message?e.message:e);
+      showNotif('⚠️ Saved on this device only — could not reach Firebase ('+((e&&e.code)||'error')+')','warning');
     });
   } else {
     showNotif(T('mkt_shop_saved')||'Saved!','success');
