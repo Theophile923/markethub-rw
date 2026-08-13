@@ -1261,7 +1261,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn btngreen" style="flex:1" onclick="mktSaveShop()" data-i18n="mkt_save_shop">Save shop</button>
-        <button class="btn" style="background:rgba(244,67,54,.1);border:1px solid rgba(244,67,54,.2);color:#EF5350;padding:12px 14px;font-size:.75rem" onclick="mktResetShop()">🔄 Reset</button>
+        <button class="btn" style="background:rgba(244,67,54,.1);border:1px solid rgba(244,67,54,.2);color:#EF5350;padding:12px 14px;font-size:.75rem" onclick="mktResetShop()">🗑️ <span data-i18n="mkt_delete_shop">Delete My Shop</span></button>
       </div>
     </div>
     <div class="card" id="mktQrCard" style="display:none">
@@ -1661,6 +1661,8 @@ const I18N = {
     mkt_product_name:'Product/Service name',mkt_product_price:'Price (FRw)',
     mkt_product_unit:'Unit',mkt_product_desc:'Description (optional)',
     mkt_add_product:'+ Add product',mkt_save_shop:'Save shop',mkt_shop_saved:'Shop saved!',
+    mkt_delete_shop:'Delete My Shop',
+    mkt_delete_confirm:'Permanently delete your shop? This removes it from Firebase — no other Pioneer will see it anymore. This cannot be undone.',
     mkt_my_products:'My products',mkt_no_products:'No products yet.',
     mkt_delete:'Delete',mkt_units:['piece','kg','g','litre','ml','bottle','portion','glass','plate','metre','lot','service'],
     mkt_receipt:'Receipt',mkt_invoice:'Order details',mkt_today:'Today ',
@@ -1813,6 +1815,8 @@ const I18N = {
     mkt_product_name:'Nom du produit/service',mkt_product_price:'Prix (FRw)',
     mkt_product_unit:'Unité',mkt_product_desc:'Description (optionnel)',
     mkt_add_product:'+ Ajouter',mkt_save_shop:'Enregistrer',mkt_shop_saved:'Boutique enregistrée!',
+    mkt_delete_shop:'Supprimer ma boutique',
+    mkt_delete_confirm:'Supprimer définitivement ta boutique ? Elle sera retirée de Firebase — plus aucun Pionnier ne la verra. Cette action est irréversible.',
     mkt_my_products:'Mes produits',mkt_no_products:'Aucun produit encore.',
     mkt_delete:'Supprimer',mkt_units:['pièce','kg','g','litre','ml','bouteille','portion','verre','assiette','mètre','lot','service'],
     mkt_receipt:'Reçu',mkt_invoice:'Détail commande',mkt_today:"Aujourd'hui ",
@@ -1965,6 +1969,8 @@ const I18N = {
     mkt_product_name:"Izina ry'igicuruzwa",mkt_product_price:"Igiciro (FRw)",
     mkt_product_unit:"Ingano",mkt_product_desc:"Ibisobanuro (ntabwo ari ngombwa)",
     mkt_add_product:"+ Ongeraho",mkt_save_shop:"Bika",mkt_shop_saved:"Iduka ribitswe!",
+    mkt_delete_shop:"Siba iduka ryanjye",
+    mkt_delete_confirm:"Siba burundu iduka ryawe? Rizavaho muri Firebase — nta Pioneer uzongera kuribona. Ibi ntibisubirwaho.",
     mkt_my_products:"Ibicuruzwa byanjye",mkt_no_products:"Nta bicuruzwa.",
     mkt_delete:"Siba",mkt_units:['igice','kg','g','litiro','ml','icupa','ingabo','inzoga','isahane','metero','lot','serivisi'],
     mkt_receipt:"Resiti",mkt_invoice:"Ibisobanuro by'ibyo waguze",mkt_today:"Uyu munsi ",
@@ -2117,6 +2123,8 @@ const I18N = {
     mkt_product_name:'Jina la bidhaa',mkt_product_price:'Bei (FRw)',
     mkt_product_unit:'Kipimo',mkt_product_desc:'Maelezo (si lazima)',
     mkt_add_product:'+ Ongeza',mkt_save_shop:'Hifadhi',mkt_shop_saved:'Duka limehifadhiwa!',
+    mkt_delete_shop:'Futa Duka Langu',
+    mkt_delete_confirm:'Futa duka lako kabisa? Litaondolewa kwenye Firebase — hakuna Pioneer mwingine atakayeliona tena. Hatua hii haiwezi kutenduliwa.',
     mkt_my_products:'Bidhaa zangu',mkt_no_products:'Hakuna bidhaa.',
     mkt_delete:'Futa',mkt_units:['kipande','kg','g','lita','ml','chupa','sehemu','glasi','sahani','mita','lot','huduma'],
     mkt_receipt:'Risiti',mkt_invoice:'Maelezo ya agizo',mkt_today:'Leo ',
@@ -3421,7 +3429,7 @@ function mktRenderMyProducts(){
   list.innerHTML=html;
 }
 function mktResetShop(){
-  if(!confirm('Reset your shop? All products will be cleared.'))return;
+  if(!confirm(T('mkt_delete_confirm')||'Permanently delete your shop? This removes it from Firebase — no other Pioneer will see it anymore. This cannot be undone.'))return;
   var uname=(piSvc.user&&piSvc.user.username)||'guest';
   var myShop=mktShops.find(function(s){return s.owner===uname;});
   if(myShop&&typeof db!=='undefined'){
