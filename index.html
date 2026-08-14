@@ -724,6 +724,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       window.db=null;
       window.MKT_DB={
         loadShops:function(){return Promise.reject(new Error('Firebase unavailable'));},
+        subscribeShops:function(cb){cb([]);return function(){};},
         saveShop:function(){return Promise.reject(new Error('Firebase unavailable'));},
         saveOrder:function(){return Promise.reject(new Error('Firebase unavailable'));},
         markOrderPaid:function(){return Promise.reject(new Error('Firebase unavailable'));}
@@ -744,6 +745,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       window.db=_db;
       window.MKT_DB={
         loadShops:function(){return _db.collection('shops').get().then(function(s){var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;});},
+        subscribeShops:function(cb){
+          return _db.collection('shops').onSnapshot(function(s){
+            var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});
+            cb(r);
+          },function(e){
+            console.error('MarketHub RW Plus: Firebase live sync error —',e&&e.message?e.message:e);
+          });
+        },
         saveShop:function(shop){return _db.collection('shops').doc(shop.id).set(shop);},
         saveOrder:function(o){return _db.collection('orders').doc(o.id).set(o);},
         markOrderPaid:function(id){return _db.collection('orders').doc(id).update({payoutStatus:'paid'});}
@@ -754,6 +763,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       window.db=null;
       window.MKT_DB={
         loadShops:function(){return Promise.reject(e);},
+        subscribeShops:function(cb){cb([]);return function(){};},
         saveShop:function(){return Promise.reject(e);},
         saveOrder:function(){return Promise.reject(e);},
         markOrderPaid:function(){return Promise.reject(e);}
@@ -3040,20 +3050,23 @@ var MKT_SECTORS=[
 function mktSecLabel(s){var l=(S.lang==='kin'||S.lang==='sw')?S.lang:(S.lang==='fr'?'fr':'en');return s[l]||s.en;}
 var mktShops=[],mktCart=[],mktCurrentShopId=null,mktMyShop=null,mktGpsCoords=null;
 var mktActiveSector=null,mktMyProducts=[],mktInitialized=false;
+var mktUnsubscribeShops=null;
 function mktLoadShops(){
-  // Try Firebase first, fallback to localStorage
-  if(window.MKT_DB){
-    window.MKT_DB.loadShops().then(function(shops){
+  // Live real-time sync: any shop created/edited/deleted by ANY Pioneer
+  // updates everyone's "Nearby Shops" instantly, no reload needed.
+  if(window.MKT_DB && window.MKT_DB.subscribeShops){
+    if(mktUnsubscribeShops)mktUnsubscribeShops(); // avoid stacking listeners on repeat visits
+    mktUnsubscribeShops=window.MKT_DB.subscribeShops(function(shops){
       mktShops=shops.filter(function(s){return !s.deleted;});
       mktRenderShopsList(mktShops);
-      console.log("Shops loaded from Firebase:", mktShops.length);
-    }).catch(function(e){
-      console.error('MarketHub RW Plus: Firebase shop LOAD failed —',e&&e.message?e.message:e);
-      console.warn("Firebase load failed, using localStorage:", e);
-      try{mktShops=JSON.parse(localStorage.getItem(MKT_STORE_KEY)||'[]');}catch(err){mktShops=[];}
+      try{localStorage.setItem(MKT_STORE_KEY,JSON.stringify(mktShops));}catch(e){}
+      var myPanelOpen=el('mktPanelShop');
+      if(myPanelOpen&&myPanelOpen.style.display==='block')mktLoadMyShop();
+      console.log("Shops live-synced from Firebase:", mktShops.length);
     });
   } else {
     try{mktShops=JSON.parse(localStorage.getItem(MKT_STORE_KEY)||'[]');}catch(e){mktShops=[];}
+    mktRenderShopsList(mktShops);
   }
 }
 function mktSaveShops(){
@@ -3431,15 +3444,11 @@ function mktRenderMyProducts(){
 function mktResetShop(){
   if(!confirm(T('mkt_delete_confirm')||'Permanently delete your shop? This removes it from Firebase — no other Pioneer will see it anymore. This cannot be undone.'))return;
   var uname=(piSvc.user&&piSvc.user.username)||'guest';
-  var myShop=mktShops.find(function(s){return s.owner===uname;});
-  if(myShop&&typeof db!=='undefined'){
-    db.collection('shops').doc(myShop.id).delete().catch(function(e){console.error('Delete error:',e);});
-  }
   var toDelete=mktShops.filter(function(s){return s.owner===uname;});
   mktShops=mktShops.filter(function(s){return s.owner!==uname;});
   mktSaveShops();mktMyShop=null;mktMyProducts=[];mktGpsCoords=null;
   if(typeof db!=='undefined'){
-    toDelete.forEach(function(s){db.collection('shops').doc(s.id).delete().catch(function(e){console.error(e);});});
+    toDelete.forEach(function(s){db.collection('shops').doc(s.id).delete().catch(function(e){console.error('Delete error:',e);});});
   }
   var sn=el('mktShopName');if(sn)sn.value='';
   var ss=el('mktShopSector');if(ss)ss.value='';
@@ -3497,6 +3506,7 @@ function mktShowTab(i){
     var t=el('mktTab'+j);if(t)t.classList.toggle('active',j===i);
     var p=el(panels[j]);if(p)p.style.display=j===i?'block':'none';
   }
+  if(i===1)mktLoadMyShop();
   if(i===2)mktRenderOrders();
 }
 function mktRenderOrders(){
