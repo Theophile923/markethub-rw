@@ -534,6 +534,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .spin-txt b{display:block;font-size:.8rem;font-weight:800}
 .spin-txt span{font-size:.6rem;font-weight:600;opacity:.8}
 .spin-arrow{font-size:1.05rem;font-weight:800}
+.mkt-shop-chip{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;
+  background:var(--card);border:1px solid var(--bdr);font-size:.72rem;font-weight:700;cursor:pointer;color:var(--muted)}
+.mkt-shop-chip.active{background:linear-gradient(135deg,var(--pi2),var(--pi));border-color:transparent;color:#04150d}
+.mkt-shop-chip.new{background:transparent;border:1px dashed var(--bdr2);color:var(--pi2)}
 .mtxid{font-family:var(--mono);font-size:.56rem;color:var(--pi2);
   background:rgba(10,124,78,.07);padding:5px 9px;border-radius:7px;
   margin-bottom:11px;word-break:break-all}
@@ -1232,7 +1236,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <!-- MY SHOP -->
   <div id="mktPanelShop" style="display:none">
     <div class="card">
-      <div class="chd"><div class="dot"></div><span data-i18n="mkt_tab_shop">My Shop</span></div>
+      <div class="chd"><div class="dot"></div><span data-i18n="mkt_my_shops">My Shops</span></div>
+      <div id="mktMyShopsList" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px"></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div class="dot"></div><span id="mktShopFormTitle" data-i18n="mkt_tab_shop">My Shop</span></div>
       <div class="mkt-form-section">
         <div class="fgroup"><label class="flbl" data-i18n="mkt_shop_name">Shop name</label><input class="finput" type="text" id="mktShopName" placeholder="e.g. My Shop / Mon Commerce"></div>
         <div class="fgroup"><label class="flbl" data-i18n="mkt_shop_sector">Sector</label><select class="finput" id="mktShopSector"></select></div>
@@ -1672,6 +1680,9 @@ const I18N = {
     mkt_product_unit:'Unit',mkt_product_desc:'Description (optional)',
     mkt_add_product:'+ Add product',mkt_save_shop:'Save shop',mkt_shop_saved:'Shop saved!',
     mkt_delete_shop:'Delete My Shop',
+    mkt_my_shops:'My Shops',mkt_create_shop:'Create a shop',mkt_new_shop:'New shop',
+    mkt_new_shop_hint:'Fill in the details for your new shop',mkt_no_shop_selected:'No shop selected to delete',
+    mkt_shop_deleted:'Shop deleted',
     mkt_delete_confirm:'Permanently delete your shop? This removes it from Firebase — no other Pioneer will see it anymore. This cannot be undone.',
     mkt_my_products:'My products',mkt_no_products:'No products yet.',
     mkt_delete:'Delete',mkt_units:['piece','kg','g','litre','ml','bottle','portion','glass','plate','metre','lot','service'],
@@ -1826,6 +1837,9 @@ const I18N = {
     mkt_product_unit:'Unité',mkt_product_desc:'Description (optionnel)',
     mkt_add_product:'+ Ajouter',mkt_save_shop:'Enregistrer',mkt_shop_saved:'Boutique enregistrée!',
     mkt_delete_shop:'Supprimer ma boutique',
+    mkt_my_shops:'Mes boutiques',mkt_create_shop:'Créer une boutique',mkt_new_shop:'Nouvelle boutique',
+    mkt_new_shop_hint:'Remplis les informations de ta nouvelle boutique',mkt_no_shop_selected:'Aucune boutique sélectionnée à supprimer',
+    mkt_shop_deleted:'Boutique supprimée',
     mkt_delete_confirm:'Supprimer définitivement ta boutique ? Elle sera retirée de Firebase — plus aucun Pionnier ne la verra. Cette action est irréversible.',
     mkt_my_products:'Mes produits',mkt_no_products:'Aucun produit encore.',
     mkt_delete:'Supprimer',mkt_units:['pièce','kg','g','litre','ml','bouteille','portion','verre','assiette','mètre','lot','service'],
@@ -1980,6 +1994,9 @@ const I18N = {
     mkt_product_unit:"Ingano",mkt_product_desc:"Ibisobanuro (ntabwo ari ngombwa)",
     mkt_add_product:"+ Ongeraho",mkt_save_shop:"Bika",mkt_shop_saved:"Iduka ribitswe!",
     mkt_delete_shop:"Siba iduka ryanjye",
+    mkt_my_shops:"Amaduka yanjye",mkt_create_shop:"Fungura iduka",mkt_new_shop:"Iduka rishya",
+    mkt_new_shop_hint:"Uzuza amakuru y'iduka ryawe rishya",mkt_no_shop_selected:"Nta duka rihiswemo gusiba",
+    mkt_shop_deleted:"Iduka ryasibwe",
     mkt_delete_confirm:"Siba burundu iduka ryawe? Rizavaho muri Firebase — nta Pioneer uzongera kuribona. Ibi ntibisubirwaho.",
     mkt_my_products:"Ibicuruzwa byanjye",mkt_no_products:"Nta bicuruzwa.",
     mkt_delete:"Siba",mkt_units:['igice','kg','g','litiro','ml','icupa','ingabo','inzoga','isahane','metero','lot','serivisi'],
@@ -2134,6 +2151,9 @@ const I18N = {
     mkt_product_unit:'Kipimo',mkt_product_desc:'Maelezo (si lazima)',
     mkt_add_product:'+ Ongeza',mkt_save_shop:'Hifadhi',mkt_shop_saved:'Duka limehifadhiwa!',
     mkt_delete_shop:'Futa Duka Langu',
+    mkt_my_shops:'Maduka Yangu',mkt_create_shop:'Fungua duka',mkt_new_shop:'Duka jipya',
+    mkt_new_shop_hint:'Jaza maelezo ya duka lako jipya',mkt_no_shop_selected:'Hakuna duka lililochaguliwa kufuta',
+    mkt_shop_deleted:'Duka limefutwa',
     mkt_delete_confirm:'Futa duka lako kabisa? Litaondolewa kwenye Firebase — hakuna Pioneer mwingine atakayeliona tena. Hatua hii haiwezi kutenduliwa.',
     mkt_my_products:'Bidhaa zangu',mkt_no_products:'Hakuna bidhaa.',
     mkt_delete:'Futa',mkt_units:['kipande','kg','g','lita','ml','chupa','sehemu','glasi','sahani','mita','lot','huduma'],
@@ -3061,7 +3081,7 @@ function mktLoadShops(){
       mktRenderShopsList(mktShops);
       try{localStorage.setItem(MKT_STORE_KEY,JSON.stringify(mktShops));}catch(e){}
       var myPanelOpen=el('mktPanelShop');
-      if(myPanelOpen&&myPanelOpen.style.display==='block')mktLoadMyShop();
+      if(myPanelOpen&&myPanelOpen.style.display==='block')mktRenderMyShopsList();
       console.log("Shops live-synced from Firebase:", mktShops.length);
     });
   } else {
@@ -3331,20 +3351,54 @@ function mktPay(){
   }else{setTimeout(doSuccess,1500);}
 }
 // SELLER
-function mktLoadMyShop(){
+function mktFillShopForm(shop){
+  mktMyShop=shop;
+  mktMyProducts=shop?[].concat(shop.products):[];
+  var sn=el('mktShopName');if(sn)sn.value=shop?shop.name:'';
+  var ss=el('mktShopSector');if(ss)ss.value=shop?shop.sector:'';
+  var sa=el('mktShopAddress');if(sa)sa.value=shop?(shop.address||''):'';
+  var sp=el('mktShopPhone');if(sp)sp.value=shop?(shop.phone||''):'';
+  var gs=el('mktGpsStatus');
+  if(shop&&shop.lat){
+    mktGpsCoords={lat:shop.lat,lng:shop.lng};
+    if(gs)gs.innerHTML='<span class="mkt-gps-ok">✅ '+mktGpsCoords.lat.toFixed(4)+', '+mktGpsCoords.lng.toFixed(4)+'</span>';
+  }else{
+    mktGpsCoords=null;
+    if(gs)gs.innerHTML='';
+  }
+  var qc=el('mktQrCard');if(qc)qc.style.display=shop?'block':'none';
+  var ft=el('mktShopFormTitle');if(ft)ft.textContent=shop?shop.name:(T('mkt_new_shop')||'New shop');
+  mktRenderMyProducts();
+  mktRenderMyShopsList();
+}
+function mktGetMyShops(){
   var uname=(piSvc.user&&piSvc.user.username)||'guest';
-  mktMyShop=mktShops.find(function(s){return s.owner===uname;})||null;
-  mktMyProducts=mktMyShop?[].concat(mktMyShop.products):[];
-  if(mktMyShop){
-    var sn=el('mktShopName');if(sn)sn.value=mktMyShop.name;
-    var ss=el('mktShopSector');if(ss)ss.value=mktMyShop.sector;
-    var sa=el('mktShopAddress');if(sa)sa.value=mktMyShop.address||'';
-    var sp=el('mktShopPhone');if(sp)sp.value=mktMyShop.phone||'';
-    if(mktMyShop.lat){
-      mktGpsCoords={lat:mktMyShop.lat,lng:mktMyShop.lng};
-      var gs=el('mktGpsStatus');
-      if(gs)gs.innerHTML='<span class="mkt-gps-ok">✅ '+mktGpsCoords.lat.toFixed(4)+', '+mktGpsCoords.lng.toFixed(4)+'</span>';
-    }
+  return mktShops.filter(function(s){return s.owner===uname;});
+}
+function mktRenderMyShopsList(){
+  var box=el('mktMyShopsList');if(!box)return;
+  var mine=mktGetMyShops();
+  var html='';
+  mine.forEach(function(s){
+    var active=mktMyShop&&mktMyShop.id===s.id;
+    html+='<div class="mkt-shop-chip'+(active?' active':'')+'" onclick="mktSelectShop(\''+s.id+'\')">🏪 '+s.name+'</div>';
+  });
+  html+='<div class="mkt-shop-chip new" onclick="mktNewShop()">＋ <span data-i18n="mkt_create_shop">Create a shop</span></div>';
+  box.innerHTML=html;
+}
+function mktSelectShop(shopId){
+  var shop=mktShops.find(function(s){return s.id===shopId;});
+  if(shop)mktFillShopForm(shop);
+}
+function mktNewShop(){
+  mktFillShopForm(null);
+  showNotif(T('mkt_new_shop_hint')||'Fill in the details for your new shop','info');
+}
+function mktOpenMyShopTab(){
+  mktRenderMyShopsList();
+  if(!mktMyShop){
+    var mine=mktGetMyShops();
+    if(mine.length>0)mktFillShopForm(mine[0]);
   }
 }
 function mktGetGPS(){
@@ -3442,19 +3496,18 @@ function mktRenderMyProducts(){
   list.innerHTML=html;
 }
 function mktResetShop(){
-  if(!confirm(T('mkt_delete_confirm')||'Permanently delete your shop? This removes it from Firebase — no other Pioneer will see it anymore. This cannot be undone.'))return;
-  var uname=(piSvc.user&&piSvc.user.username)||'guest';
-  var toDelete=mktShops.filter(function(s){return s.owner===uname;});
-  mktShops=mktShops.filter(function(s){return s.owner!==uname;});
-  mktSaveShops();mktMyShop=null;mktMyProducts=[];mktGpsCoords=null;
+  if(!mktMyShop){showNotif(T('mkt_no_shop_selected')||'No shop selected to delete','warning');return;}
+  if(!confirm(T('mkt_delete_confirm')||'Permanently delete this shop? This removes it from Firebase — no other Pioneer will see it anymore. This cannot be undone.'))return;
+  var toDelete=mktMyShop;
+  mktShops=mktShops.filter(function(s){return s.id!==toDelete.id;});
+  mktSaveShops();
   if(typeof db!=='undefined'){
-    toDelete.forEach(function(s){db.collection('shops').doc(s.id).delete().catch(function(e){console.error('Delete error:',e);});});
+    db.collection('shops').doc(toDelete.id).delete().catch(function(e){console.error('Delete error:',e);});
   }
-  var sn=el('mktShopName');if(sn)sn.value='';
-  var ss=el('mktShopSector');if(ss)ss.value='';
-  var gs=el('mktGpsStatus');if(gs)gs.innerHTML='';
   var qc=el('mktQrCard');if(qc)qc.style.display='none';
-  mktRenderMyProducts();showNotif('🔄 Shop reset','info');
+  var mine=mktGetMyShops();
+  mktFillShopForm(mine.length>0?mine[0]:null);
+  showNotif('🗑️ '+(T('mkt_shop_deleted')||'Shop deleted'),'info');
 }
 function mktSaveShop(){
   var name=(el('mktShopName')?el('mktShopName').value:'').trim();
@@ -3473,6 +3526,7 @@ function mktSaveShop(){
   var idx=mktShops.findIndex(function(s){return s.id===shopId;});
   if(idx>=0)mktShops[idx]=shop;else mktShops.push(shop);
   mktMyShop=shop;
+  mktRenderMyShopsList();
   // Save to localStorage as backup
   localStorage.setItem(MKT_STORE_KEY,JSON.stringify(mktShops));
   // Save to Firebase so ALL Pioneers can see it
@@ -3506,7 +3560,7 @@ function mktShowTab(i){
     var t=el('mktTab'+j);if(t)t.classList.toggle('active',j===i);
     var p=el(panels[j]);if(p)p.style.display=j===i?'block':'none';
   }
-  if(i===1)mktLoadMyShop();
+  if(i===1)mktOpenMyShopTab();
   if(i===2)mktRenderOrders();
 }
 function mktRenderOrders(){
