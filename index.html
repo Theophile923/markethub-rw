@@ -95,6 +95,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .odot{width:6px;height:6px;border-radius:50%;background:var(--green);
   box-shadow:0 0 5px var(--green);flex-shrink:0;transition:all .3s}
 .odot.off{background:var(--red);box-shadow:0 0 5px var(--red)}
+.qr-quick-btn{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pi2),var(--pi));
+  border:none;color:#04150d;font-size:.9rem;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;box-shadow:0 2px 8px rgba(22,201,121,.35)}
 .peak-pill{font-size:.54rem;font-weight:700;background:rgba(255,152,0,.15);
   border:1px solid rgba(255,152,0,.3);color:var(--orange);
   padding:2px 6px;border-radius:8px;display:none}
@@ -806,6 +809,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </button>
   <div class="logo"><div class="logo-mk">Hub</div>MarketHub <em>RW Plus</em></div>
   <div class="topbar-r">
+    <button class="qr-quick-btn" id="qrQuickBtn" onclick="HubQRFlow.openPassengerScanner()" aria-label="Scan QR" title="Scan QR">📷</button>
     <div class="odot" id="odot"></div>
     <div class="peak-pill" id="peakPill">⚡</div>
     <div class="gcv-pill"><div class="gcv-d"></div>$<span id="gcvDisp">314,159</span></div>
@@ -1180,12 +1184,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <p data-i18n="mkt_sub">Buy &amp; sell locally with Pi</p>
   </div>
   <div class="mkt-tabs">
-    <div class="mkt-tab active" id="mktTab0" onclick="mktShowTab(0)" data-i18n="mkt_tab_browse">Browse</div>
-    <div class="mkt-tab" id="mktTab1" onclick="mktShowTab(1)" data-i18n="mkt_tab_shop">My Shop</div>
-    <div class="mkt-tab" id="mktTab2" onclick="mktShowTab(2)" data-i18n="mkt_tab_orders">Orders</div>
+    <div class="mkt-tab active" id="mktTab0" onclick="mktShowTab(0)" data-i18n="mkt_tab_create">Create a Shop</div>
+    <div class="mkt-tab" id="mktTab1" onclick="mktShowTab(1)" data-i18n="mkt_my_shops">My Shops</div>
+    <div class="mkt-tab" id="mktTab2" onclick="mktShowTab(2)" data-i18n="mkt_tab_nearby">Nearby Shops</div>
+    <div class="mkt-tab" id="mktTab3" onclick="mktShowTab(3)" data-i18n="mkt_tab_orders">Orders</div>
   </div>
   <!-- BROWSE -->
-  <div id="mktPanelBrowse">
+  <div id="mktPanelBrowse" style="display:none">
     <div class="notice" style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);margin-bottom:10px">
       <span class="nico">⚠️</span>
       <span style="font-size:.62rem;color:#FF9800">Shops are stored on Firebase and visible to ALL Pi Pioneers in real time. 🌍</span>
@@ -1235,7 +1240,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
   <!-- MY SHOP -->
   <div id="mktPanelShop" style="display:none">
-    <div class="card">
+    <div class="card" id="mktMyShopsCard">
       <div class="chd"><div class="dot"></div><span data-i18n="mkt_my_shops">My Shops</span></div>
       <div id="mktMyShopsList" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px"></div>
     </div>
@@ -1279,7 +1284,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn btngreen" style="flex:1" onclick="mktSaveShop()" data-i18n="mkt_save_shop">Save shop</button>
-        <button class="btn" style="background:rgba(244,67,54,.1);border:1px solid rgba(244,67,54,.2);color:#EF5350;padding:12px 14px;font-size:.75rem" onclick="mktResetShop()">🗑️ <span data-i18n="mkt_delete_shop">Delete My Shop</span></button>
+        <button class="btn" id="mktDeleteBtn" style="background:rgba(244,67,54,.1);border:1px solid rgba(244,67,54,.2);color:#EF5350;padding:12px 14px;font-size:.75rem" onclick="mktResetShop()">🗑️ <span data-i18n="mkt_delete_shop">Delete My Shop</span></button>
       </div>
     </div>
     <div class="card" id="mktQrCard" style="display:none">
@@ -1355,8 +1360,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
     </div>
    <button class="btn btngold" onclick="copyId()" data-i18n="copy_id">📋 Copy Pi ID</button>
-<button class="btn btnpi" style="margin-top:8px" onclick="HubQRFlow.openPassengerScanner()">📷 <span data-i18n="scan_bus_qr">Scan Bus QR</span></button>
-<button class="btn btnout" style="margin-top:8px" onclick="HubQRFlow.openDriverDashboard()">🚌 <span data-i18n="driver_dashboard_btn">Driver Dashboard</span></button>
   </div>
 </div>
 </div>
@@ -1668,6 +1671,7 @@ const I18N = {
     pispin_discount_applied:'Discount applied',
     mkt_nav:'Market',mkt_title:'HubMarket',mkt_sub:'Buy & sell locally with Pi',
     mkt_tab_browse:'Browse',mkt_tab_shop:'My Shop',mkt_tab_orders:'Orders',
+    mkt_tab_create:'Create a Shop',mkt_tab_nearby:'Nearby Shops',
     mkt_sectors_title:'Browse by sector',mkt_nearby:'Nearby shops',
     mkt_no_shops:'No shops here yet. Be the first!',mkt_search:'Search...',
     mkt_add_to_cart:'Add',mkt_pay:'Pay with Pi',mkt_processing:'Processing...',
@@ -1825,6 +1829,7 @@ const I18N = {
     pispin_discount_applied:'Réduction appliquée',
     mkt_nav:'Marché',mkt_title:'HubMarket',mkt_sub:'Achetez et vendez localement avec Pi',
     mkt_tab_browse:'Explorer',mkt_tab_shop:'Ma Boutique',mkt_tab_orders:'Commandes',
+    mkt_tab_create:'Créer une boutique',mkt_tab_nearby:'Boutiques à proximité',
     mkt_sectors_title:'Parcourir par secteur',mkt_nearby:'Boutiques proches',
     mkt_no_shops:'Aucune boutique ici. Soyez le premier!',mkt_search:'Rechercher...',
     mkt_add_to_cart:'Ajouter',mkt_pay:'Payer avec Pi',mkt_processing:'Traitement...',
@@ -1982,6 +1987,7 @@ const I18N = {
     pispin_discount_applied:"Igabanywa ryashyizweho",
     mkt_nav:"Isoko",mkt_title:"HubMarket",mkt_sub:"Gura no kugurisha ukoresha Pi",
     mkt_tab_browse:"Shakisha",mkt_tab_shop:"Iduka ryanjye",mkt_tab_orders:"Ibibazwa",
+    mkt_tab_create:"Fungura iduka",mkt_tab_nearby:"Amaduka yo hafi",
     mkt_sectors_title:"Shakisha mu nzego",mkt_nearby:"Amaduka ari hafi",
     mkt_no_shops:"Nta duka. Banza!",mkt_search:"Shakisha...",
     mkt_add_to_cart:"Ongeraho",mkt_pay:"Ishyura na Pi",mkt_processing:"Gutunganya...",
@@ -2139,6 +2145,7 @@ const I18N = {
     pispin_discount_applied:'Punguzo limetumika',
     mkt_nav:'Soko',mkt_title:'HubMarket',mkt_sub:'Nunua na uuze kwa Pi',
     mkt_tab_browse:'Vinjari',mkt_tab_shop:'Duka Langu',mkt_tab_orders:'Maagizo',
+    mkt_tab_create:'Fungua duka',mkt_tab_nearby:'Maduka ya karibu',
     mkt_sectors_title:'Vinjari kwa sekta',mkt_nearby:'Maduka karibu',
     mkt_no_shops:'Hakuna maduka. Kuwa wa kwanza!',mkt_search:'Tafuta...',
     mkt_add_to_cart:'Ongeza',mkt_pay:'Lipa kwa Pi',mkt_processing:'Inachakatwa...',
@@ -3131,6 +3138,7 @@ function mktInit(){
   mktLoadShops();
   mktBuildSectorGrid();mktPopulateSelects();mktInitialized=true;
   mktRenderMyProducts();mktRenderOrders();
+  mktShowTab(0);
 }
 function mktBuildSectorGrid(){
   var grid=el('mktSectorsGrid');if(!grid)return;
@@ -3394,13 +3402,7 @@ function mktNewShop(){
   mktFillShopForm(null);
   showNotif(T('mkt_new_shop_hint')||'Fill in the details for your new shop','info');
 }
-function mktOpenMyShopTab(){
-  mktRenderMyShopsList();
-  if(!mktMyShop){
-    var mine=mktGetMyShops();
-    if(mine.length>0)mktFillShopForm(mine[0]);
-  }
-}
+
 function mktGetGPS(){
   var btn=el('mktGpsBtn');
   if(!navigator.geolocation){showNotif('GPS not available','warning');return;}
@@ -3555,13 +3557,27 @@ function mktSaveShop(){
   if(qc)qc.scrollIntoView({behavior:'smooth'});
 }
 function mktShowTab(i){
-  var panels=['mktPanelBrowse','mktPanelShop','mktPanelOrders'];
-  for(var j=0;j<3;j++){
-    var t=el('mktTab'+j);if(t)t.classList.toggle('active',j===i);
-    var p=el(panels[j]);if(p)p.style.display=j===i?'block':'none';
-  }
-  if(i===1)mktOpenMyShopTab();
-  if(i===2)mktRenderOrders();
+  for(var j=0;j<4;j++){var t=el('mktTab'+j);if(t)t.classList.toggle('active',j===i);}
+  var shopPanel=el('mktPanelShop'),browsePanel=el('mktPanelBrowse'),ordersPanel=el('mktPanelOrders');
+  if(shopPanel)shopPanel.style.display=(i===0||i===1)?'block':'none';
+  if(browsePanel)browsePanel.style.display=(i===2)?'block':'none';
+  if(ordersPanel)ordersPanel.style.display=(i===3)?'block':'none';
+  if(i===0)mktEnterCreateMode();
+  if(i===1)mktEnterMyShopsMode();
+  if(i===3)mktRenderOrders();
+}
+function mktEnterCreateMode(){
+  var mc=el('mktMyShopsCard');if(mc)mc.style.display='none';
+  var db2=el('mktDeleteBtn');if(db2)db2.style.display='none';
+  mktFillShopForm(null);
+}
+function mktEnterMyShopsMode(){
+  var mc=el('mktMyShopsCard');if(mc)mc.style.display='block';
+  var db2=el('mktDeleteBtn');if(db2)db2.style.display='inline-block';
+  mktRenderMyShopsList();
+  var mine=mktGetMyShops();
+  if(mine.length>0)mktFillShopForm(mine[0]);
+  else mktFillShopForm(null);
 }
 function mktRenderOrders(){
   var list=el('mktOrdersList');if(!list)return;
