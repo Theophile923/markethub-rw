@@ -838,7 +838,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <button class="dp-item" onclick="showSec('sec-pispin');toggleDrawer()"><span class="i">🎡</span><span data-i18n="pispin">HubSpin</span></button>
     <button class="dp-item" onclick="showSec('sec-market');toggleDrawer()"><span class="i">🛒</span><span data-i18n="mkt_nav">Market</span></button>
     <button class="dp-item" onclick="showSec('sec-transport');toggleDrawer()"><span class="i">🚕</span><span data-i18n="transport">Transport</span></button>
-    <button class="dp-item soon"><span class="i">🛍️</span><span data-i18n="commerce">Commerce</span><span class="tag">Soon</span></button>
     <button class="dp-item soon"><span class="i">📦</span><span data-i18n="delivery">Delivery</span><span class="tag">Soon</span></button>
     <button class="dp-item soon"><span class="i">🏨</span><span data-i18n="tourism">Tourism</span><span class="tag">Soon</span></button>
     <button class="dp-item soon"><span class="i">🤖</span><span data-i18n="ai_svc">AI Services</span><span class="tag">Soon</span></button>
@@ -902,7 +901,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="miniapps">
       <div class="miniapp mkt-highlight" onclick="showSec('sec-market')"><span class="ma-ico">🛒</span><span data-i18n="mkt_nav">Market</span></div>
       <div class="miniapp" onclick="showSec('sec-transport')"><span class="ma-ico">🚕</span><span data-i18n="transport">Transport</span></div>
-      <div class="miniapp"><span class="ma-ico">🛒</span><span data-i18n="commerce">Commerce</span><span class="coming">Soon</span></div>
       <div class="miniapp"><span class="ma-ico">📦</span><span data-i18n="delivery">Delivery</span><span class="coming">Soon</span></div>
       <div class="miniapp"><span class="ma-ico">🏨</span><span data-i18n="tourism">Tourism</span><span class="coming">Soon</span></div>
       <div class="miniapp"><span class="ma-ico">🤖</span><span data-i18n="ai_svc">AI Services</span><span class="coming">Soon</span></div>
@@ -1183,6 +1181,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <h1 style="font-size:1.3rem">🛒 <span data-i18n="mkt_title">HubMarket</span></h1>
     <p data-i18n="mkt_sub">Buy &amp; sell locally with Pi</p>
   </div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="chd"><div class="dot"></div><span data-i18n="mkt_sectors_title">Browse by sector</span></div>
+    <div class="mkt-sectors" id="mktSectorsGrid"></div>
+  </div>
   <div class="mkt-tabs">
     <div class="mkt-tab active" id="mktTab0" onclick="mktShowTab(0)" data-i18n="mkt_tab_create">Create a Shop</div>
     <div class="mkt-tab" id="mktTab1" onclick="mktShowTab(1)" data-i18n="mkt_my_shops">My Shops</div>
@@ -1195,12 +1197,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <span class="nico">⚠️</span>
       <span style="font-size:.62rem;color:#FF9800">Shops are stored on Firebase and visible to ALL Pi Pioneers in real time. 🌍</span>
     </div>
-    <button class="mkt-scan-btn" onclick="mktScanQR()">📷 <span data-i18n="mkt_scan_btn">Scan seller QR</span></button>
     <div class="fgroup" style="margin-bottom:10px"><input class="finput" type="text" id="mktSearch" placeholder="🔍" oninput="mktFilterShops()"></div>
-    <div class="card" style="margin-bottom:10px">
-      <div class="chd"><div class="dot"></div><span data-i18n="mkt_sectors_title">Browse by sector</span></div>
-      <div class="mkt-sectors" id="mktSectorsGrid"></div>
-    </div>
     <div class="card" id="mktShopsCard">
       <div class="chd"><div class="dot"></div><span id="mktShopsTitle" data-i18n="mkt_nearby">Nearby shops</span></div>
       <div id="mktShopsList"></div>
@@ -3169,6 +3166,7 @@ function mktPopulateSelects(){
   }
 }
 function mktSelectSector(sid){
+  mktShowTab(2);
   mktActiveSector=mktActiveSector===sid?null:sid;
   document.querySelectorAll('.mkt-sector').forEach(function(s){s.classList.toggle('active',s.dataset.sid===mktActiveSector);});
   var filtered=mktActiveSector?mktShops.filter(function(s){return s.sector===mktActiveSector;}):mktShops;
